@@ -1,7 +1,20 @@
 import streamlit as st
-
-from utils.sheet_utils import get_gspread_client, ensure_sheet_exists, load_data_from_sheet, save_dataframe_to_sheet
+from utils.sheet_utils import (
+    get_gspread_client,
+    ensure_main_sheet_initialized,
+    load_data_from_sheet,
+    add_data,
+    display_and_merge_data,
+    delete_row,
+    delete_merged_record_by_index
+)
+from constants import SPREADSHEET_ID, MAIN_SHEET
 from utils.data_processing import merge_start_stop, filter_dataframe
+
+client = get_gspread_client()
+spreadsheet = client.open_by_key(SPREADSHEET_ID)
+sheet = ensure_main_sheet_initialized(spreadsheet, MAIN_SHEET)
+
 
 
 def show():

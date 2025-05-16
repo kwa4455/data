@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from modules.authentication import require_login
 from utils.sheet_utils import (
     get_gspread_client,
     ensure_main_sheet_initialized,

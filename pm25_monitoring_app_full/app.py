@@ -6,7 +6,13 @@ from pages import main, data_entry, edit_records, pm_calculation, admin_tools
 st.set_page_config(page_title="PM₂.₅ Monitoring App", layout="wide")
 
 # === Session Login ===
-login()
+# Exported login function
+def login():
+    # Your login UI and logic here
+    ...
+def logout_button():
+    # Logout UI logic (e.g., clearing session state)
+    ...
 
 # === Sidebar Menu ===
 st.sidebar.title("📋 Navigation")

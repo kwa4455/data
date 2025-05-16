@@ -17,16 +17,19 @@ def login(sheet):
     
     name, auth_status, username = authenticator.login("Login", location="main")
 
-    if auth_status is False:
-        st.error("❌ Incorrect username or password")
-    elif auth_status is None:
-        st.info("🕒 Please enter your login credentials")
-    elif auth_status:
+    if auth_status:
         st.session_state["name"] = name
         st.session_state["username"] = username
         st.session_state["role"] = get_user_role(username, sheet)
         return True, authenticator
 
+    # Show login feedback
+    if auth_status is False:
+        st.error("❌ Incorrect username or password")
+    elif auth_status is None:
+        st.info("🕒 Please enter your login credentials")
+
+    # Additional help UI
     from .ui_forms import show_registration_form, show_account_recovery
     st.divider()
     st.subheader("🔧 Need Help?")
@@ -38,7 +41,8 @@ def login(sheet):
         if st.button("🔑 Forgot Password or Username"):
             show_account_recovery(sheet)
 
-    return False, None
+    return False, authenticator
+
 
 def logout_button(authenticator):
     authenticator.logout("Logout", "sidebar")

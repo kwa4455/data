@@ -124,18 +124,62 @@ def login(sheet):
         "abcdef",
         cookie_expiry_days=1
     )
-    name, auth_status, username = authenticator.login("Login", "main")
+
+    # Optional UI header
+    st.title("🌿 PM₂.₅ Monitoring App Login")
+    st.markdown("Please log in to access the system. Contact admin if you don’t have an account.")
+    # You could use st.image("your_logo_url.png", width=100)
+
+    # Login block in main area
+    name, auth_status, username = authenticator.login("Login", location="main")
 
     if auth_status is False:
         st.error("❌ Incorrect username or password")
     elif auth_status is None:
-        st.warning("🕒 Please enter your credentials")
+        st.info("🕒 Please enter your login credentials")
     elif auth_status:
         st.session_state["name"] = name
         st.session_state["username"] = username
         st.session_state["role"] = get_user_role(username, sheet)
         return True, authenticator
+
+    # Show extra tools if not logged in
+    st.divider()
+    st.subheader("🔧 Need Help?")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("🆕 Register New Account"):
+            show_registration_form(sheet)
+    with col2:
+        if st.button("🔑 Forgot Password or Username"):
+            show_account_recovery(sheet)
+
     return False, None
+def show_registration_form(sheet):
+    st.subheader("🆕 Register")
+    with st.form("register_form"):
+        username = st.text_input("Username")
+        name = st.text_input("Full Name")
+        email = st.text_input("Email")
+        password = st.text_input("Password", type="password")
+        confirm = st.text_input("Confirm Password", type="password")
+        role = st.selectbox("Role", ["viewer", "editor"])  # restrict self-registration roles
+        submitted = st.form_submit_button("Register")
+
+        if submitted:
+            if password != confirm:
+                st.error("❌ Passwords do not match")
+            else:
+                success, message = register_user_to_sheet(username, name, email, password, role, sheet)
+                st.success(message) if success else st.error(message)
+def show_account_recovery(sheet):
+    tab1, tab2 = st.tabs(["🔑 Reset Password", "🆔 Recover Username"])
+
+    with tab1:
+        display_password_reset_form(sheet)
+    with tab2:
+        display_username_recovery_form(sheet)
+
 
 def logout_button(authenticator):
     authenticator.logout("Logout", "sidebar")

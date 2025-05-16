@@ -1,6 +1,7 @@
 import streamlit as st
+from modules.authentication import require_role
 
 def show():
-    st.title("🏠 Welcome to PM₂.₅ Monitoring App")
-    st.write(f"👤 Logged in as: {st.session_state.get('username')} ({st.session_state.get('role')})")
-    st.info("Use the sidebar to navigate through the app.")
+    require_role(["viewer", "editor", "admin"])
+    st.title("📊 Main Dashboard")
+    st.write("Welcome to the PM₂.₅ monitoring dashboard.")

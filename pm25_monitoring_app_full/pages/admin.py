@@ -7,9 +7,7 @@ import json
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-def show():
-    st.title("📝 Data Entry")
-    st.write("This page will include a form to input new START/STOP entries.")
+
 
 # === Auth for Google Sheets ===
 creds_json = st.secrets["GOOGLE_CREDENTIALS"]

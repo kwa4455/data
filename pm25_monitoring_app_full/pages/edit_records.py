@@ -9,7 +9,8 @@ from utils.sheet_utils import (
     delete_merged_record_by_index
 )
 from utils.data_processing import merge_start_stop, filter_dataframe
-from constants import MERGED_SHEET
+from constants import SPREADSHEET_ID, MAIN_SHEET, MERGED_SHEET
+
 
 client = get_gspread_client()
 spreadsheet = client.open_by_key(SPREADSHEET_ID)

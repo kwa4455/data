@@ -11,7 +11,13 @@ from utils.sheet_utils import (
 )
 from constants import SPREADSHEET_ID, MAIN_SHEET,MERGED_SHEET
 from utils.data_processing import merge_start_stop, filter_dataframe
+from modules.authentication import require_role
 
+def show():
+    require_role(["editor", "admin"])
+    st.title("📝 Data Entry")
+    st.write("Enter new PM₂.₅ observation data here.")
+    
 client = get_gspread_client()
 spreadsheet = client.open_by_key(SPREADSHEET_ID)
 sheet = ensure_main_sheet_initialized(spreadsheet, MAIN_SHEET)

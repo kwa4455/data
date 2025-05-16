@@ -1,5 +1,6 @@
 
 import streamlit_authenticator as stauth
+import bcrypt
 
 def ensure_users_sheet(spreadsheet):
     try:
@@ -20,8 +21,7 @@ def load_users_from_sheet(sheet):
         }
     return credentials
 
-import bcrypt
-import gspread
+
 
 def register_user_to_sheet(username, name, email, password, role, sheet):
     users = sheet.get_all_records()

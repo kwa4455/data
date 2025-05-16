@@ -6,7 +6,6 @@ import pandas as pd
 from datetime import datetime
 from constants import SPREADSHEET_ID, MAIN_SHEET, MERGED_SHEET, CALC_SHEET
 from utils.data_processing import convert_timestamps_to_string, merge_start_stop, filter_dataframe
-from utils.backup_utils import backup_deleted_row  # Assuming this function is defined elsewhere
 
 # === Google Sheets Auth ===
 def get_gspread_client():

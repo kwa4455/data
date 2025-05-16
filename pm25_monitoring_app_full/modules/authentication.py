@@ -66,6 +66,13 @@ def login(sheet):
 def logout_button(authenticator):
     authenticator.logout("Logout", "sidebar")
 
+def require_login():
+    """Ensure the user is logged in, else redirect to Home page."""
+    if not st.session_state.get("authenticated"):
+        st.error("🔐 You must log in to access this page.")
+        switch_page("Home")
+        st.stop()
+
 def require_role(allowed_roles):
     if not st.session_state.get("authenticated"):
         st.error("🚫 Please log in to access this page.")

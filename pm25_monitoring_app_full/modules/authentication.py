@@ -69,7 +69,7 @@ def logout_button(authenticator):
 def require_role(allowed_roles):
     if not st.session_state.get("authenticated"):
         st.error("🚫 Please log in to access this page.")
-        switch_page("Home")
+        switch_page("app")
         st.stop()
     
     role = st.session_state.get("role", "").lower()
@@ -77,6 +77,6 @@ def require_role(allowed_roles):
 
     if role not in allowed_roles:
         st.error(f"🚫 Access denied for role: {role}")
-        switch_page("Home")
+        switch_page("app")
         st.stop()
 

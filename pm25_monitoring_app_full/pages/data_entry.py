@@ -8,7 +8,7 @@ from utils.sheet_utils import (
     delete_row,
     delete_merged_record_by_index
 )
-from constants import SPREADSHEET_ID, MAIN_SHEET
+from constants import SPREADSHEET_ID, MAIN_SHEET,MERGED_SHEET
 from utils.data_processing import merge_start_stop, filter_dataframe
 
 client = get_gspread_client()

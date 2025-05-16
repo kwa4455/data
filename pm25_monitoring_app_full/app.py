@@ -6,6 +6,7 @@ import streamlit_authenticator as stauth
 from modules.user_management import login, logout_button
 from pages import main, data_entry, edit_records, pm_calculation, admin_tools
 
+
 # === Session Login ===
 # Exported login function
 def login():

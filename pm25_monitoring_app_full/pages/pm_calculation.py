@@ -1,5 +1,6 @@
 import streamlit as st
 from datetime import datetime
+import pandas as pd
 from utils.sheet_utils import (
     get_gspread_client,
     ensure_main_sheet_initialized,

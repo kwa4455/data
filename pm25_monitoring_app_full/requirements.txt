@@ -4,4 +4,6 @@ streamlit-authenticator==0.2.3
 gspread
 oauth2client
 pandas
+streamlit-extras
+
 

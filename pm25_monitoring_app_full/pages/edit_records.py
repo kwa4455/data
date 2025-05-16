@@ -152,7 +152,7 @@ else:
             if st.button("🗑️ Delete Submitted Record"):
                 delete_row(sheet, row_to_delete)
                 st.success("✅ Submitted record deleted and backed up successfully.")
-                st.experimental_rerun()
+               
 
 
 # --- Footer ---

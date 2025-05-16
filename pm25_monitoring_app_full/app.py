@@ -2,6 +2,10 @@ import sys
 sys.path.append("modules")
 
 import streamlit as st
+# === Page Setup ===
+st.set_page_config(page_title="PM₂.₅ Monitoring App", layout="wide")
+
+
 import json
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -10,8 +14,6 @@ from modules.authentication import login, logout_button
 from modules.user_utils import ensure_users_sheet
 from pages import main, data_entry, edit_records, pm_calculation, admin  # Assuming these are your app sections
 
-# === Page Setup ===
-st.set_page_config(page_title="PM₂.₅ Monitoring App", layout="wide")
 
 # === Google Sheets Auth ===
 creds_json = st.secrets["GOOGLE_CREDENTIALS"]

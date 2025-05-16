@@ -31,8 +31,8 @@ def display_password_reset_form(sheet):
 
 def display_username_recovery_form(sheet):
     st.subheader("🆔 Recover Username")
-    email = st.text_input("Enter your email")
-    if st.button("Recover Username"):
+    email = st.text_input("Enter your email", key="recover_email")
+    if st.button("Recover Username", key="recover_username_btn"):
         success, message = recover_username(email, sheet)
         st.success(message) if success else st.error(message)
 

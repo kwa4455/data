@@ -33,4 +33,4 @@ elif menu == "✏️ Edit Records":
 elif menu == "📊 PM Calculation":
     pm_calculation.show()
 elif menu == "🛠 Admin":
-    admin_tools.show()
+    admin.show()

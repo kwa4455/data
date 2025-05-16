@@ -115,3 +115,35 @@ def display_username_recovery_form(sheet):
     if st.button("Recover Username"):
         success, message = recover_username(email, sheet)
         st.success(message) if success else st.error(message)
+
+
+def login(sheet):
+    users = load_users_from_sheet(sheet)
+    authenticator = stauth.Authenticate(
+        users,
+        "pm25_app",
+        "abcdef",
+        cookie_expiry_days=1
+    )
+    name, auth_status, username = authenticator.login("Login", "main")
+
+    if auth_status is False:
+        st.error("❌ Incorrect username or password")
+    elif auth_status is None:
+        st.warning("🕒 Please enter your credentials")
+    elif auth_status:
+        st.session_state["name"] = name
+        st.session_state["username"] = username
+        st.session_state["role"] = get_user_role(username, sheet)
+        return True, authenticator
+    return False, None
+
+def logout_button(authenticator):
+    authenticator.logout("Logout", "sidebar")
+
+def get_user_role(username, sheet):
+    users = sheet.get_all_records()
+    for user in users:
+        if user["Username"] == username:
+            return user["Role"]
+    return "viewer"  # fallback default

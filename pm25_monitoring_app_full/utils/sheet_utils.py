@@ -73,6 +73,10 @@ def delete_row(sheet, row_number):
     row_data = sheet.row_values(row_number)
     backup_deleted_row(row_data, "Main Sheet", row_number)
     sheet.delete_rows(row_number)
+# backup_utils.py
+def backup_deleted_row(row_data):
+    # Logic to back up deleted data (e.g., write to Google Sheet or file)
+    pass
 
 def delete_merged_record_by_index(index_to_delete):
     client = get_gspread_client()

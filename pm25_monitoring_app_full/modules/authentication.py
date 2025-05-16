@@ -1,5 +1,6 @@
 
 import streamlit as st
+from streamlit_extras.switch_page_button import switch_page
 import streamlit_authenticator as stauth
 from .user_utils import load_users_from_sheet, get_user_role
 from .ui_forms import show_registration_form, show_account_recovery
@@ -66,10 +67,16 @@ def logout_button(authenticator):
     authenticator.logout("Logout", "sidebar")
 
 def require_role(allowed_roles):
-    role = st.session_state.get("role")
-    if not role:
-        st.error("🚫 You must be logged in to view this page.")
+    if not st.session_state.get("authenticated"):
+        st.error("🚫 Please log in to access this page.")
+        switch_page("Home")
         st.stop()
-    if role.lower() not in [r.lower() for r in allowed_roles]:
+    
+    role = st.session_state.get("role", "").lower()
+    allowed_roles = [r.lower() for r in allowed_roles]
+
+    if role not in allowed_roles:
         st.error(f"🚫 Access denied for role: {role}")
+        switch_page("Home")
         st.stop()
+

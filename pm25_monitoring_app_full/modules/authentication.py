@@ -15,21 +15,19 @@ def login(sheet):
     st.title("🌿 PM₂.₅ Monitoring App Login")
     st.markdown("Please log in to access the system. Contact admin if you don’t have an account.")
     
-    name, auth_status, username = authenticator.login("Login", location="main")
+    auth_status = authenticator.login("Login", location="main")
 
     if auth_status:
-        st.session_state["name"] = name
-        st.session_state["username"] = username
+        name = st.session_state["name"]
+        username = st.session_state["username"]
         st.session_state["role"] = get_user_role(username, sheet)
         return True, authenticator
 
-    # Show login feedback
     if auth_status is False:
         st.error("❌ Incorrect username or password")
     elif auth_status is None:
         st.info("🕒 Please enter your login credentials")
 
-    # Additional help UI
     from .ui_forms import show_registration_form, show_account_recovery
     st.divider()
     st.subheader("🔧 Need Help?")

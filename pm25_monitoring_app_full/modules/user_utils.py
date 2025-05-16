@@ -1,7 +1,4 @@
-
 import streamlit_authenticator as stauth
-import bcrypt
-import hashlib
 
 def ensure_users_sheet(spreadsheet):
     try:
@@ -22,34 +19,28 @@ def load_users_from_sheet(sheet):
         }
     return credentials
 
-
-
 def register_user_to_sheet(username, name, email, password, role, sheet):
     users = sheet.get_all_records()
-    
-    # Check for duplicate username/email
     for user in users:
         if user["Username"] == username:
             return False, "⚠️ Username already exists."
         if user["Email"] == email:
             return False, "⚠️ Email already registered."
-
-    # Hash the password
-    hashed_pw = hashlib.sha256(password.encode()).hexdigest()
-
-    # Append to the sheet
+    
+    hashed_pw = stauth.Hasher([password]).generate()[0]
     sheet.append_row([username, name, email, hashed_pw, role])
     return True, "✅ Registration successful. You can now log in."
 
-
-def update_user_details_in_sheet(username, new_name=None, new_email=None, new_password=None, sheet=None):
+def update_user_details_in_sheet(username, new_name=None, new_email=None, new_password=None, new_role=None, sheet=None):
     data = sheet.get_all_values()
     for i, row in enumerate(data):
         if i == 0: continue
         if row[0] == username:
             if new_name: data[i][1] = new_name
             if new_email: data[i][2] = new_email
-            if new_password: data[i][3] = stauth.Hasher([new_password]).generate()[0]
+            if new_password:
+                data[i][3] = stauth.Hasher([new_password]).generate()[0]
+            if new_role: data[i][4] = new_role
             sheet.update(f"A{i+1}:E{i+1}", [data[i]])
             return True
     return False
@@ -60,13 +51,14 @@ def get_user_role(username, sheet):
         if user["Username"] == username:
             return user["Role"]
     return "viewer"
+
 def get_all_users(sheet):
     return sheet.get_all_records()
 
 def delete_user_from_sheet(username, sheet):
     data = sheet.get_all_values()
     for i, row in enumerate(data):
-        if i == 0: continue  # Skip header
+        if i == 0: continue
         if row[0] == username:
             sheet.delete_rows(i + 1)
             return True

@@ -1,4 +1,5 @@
 import streamlit as st
+from modules.authentication import require_login
 import pandas as pd
 from utils.sheet_utils import (
     get_gspread_client,

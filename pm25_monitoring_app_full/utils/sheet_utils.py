@@ -18,6 +18,10 @@ def get_gspread_client():
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     return gspread.authorize(creds)
 
+client = get_gspread_client()
+spreadsheet = client.open_by_key(SPREADSHEET_ID)
+
+
 # === Ensure Observations worksheet exists and is initialized ===
 def ensure_main_sheet_initialized(spreadsheet, sheet_name):
     try:

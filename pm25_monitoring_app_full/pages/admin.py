@@ -6,7 +6,12 @@ from modules.user_utils import ensure_users_sheet
 import json
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+from modules.authentication import require_role
 
+def show():
+    require_role(["admin"])
+    st.title("🔐 Admin Panel - User Management")
+    # ... rest of the code ...
 
 
 # === Auth for Google Sheets ===
@@ -26,20 +31,7 @@ SPREADSHEET_ID = st.secrets["SPREADSHEET_ID"]
 spreadsheet = client.open_by_key(SPREADSHEET_ID)
 users_sheet = ensure_users_sheet(spreadsheet)
 
-def show():
-    require_role(["admin"])
 
-    st.title("🔐 Admin Panel - User Management")
-
-    users = get_all_users(users_sheet)
-
-    st.subheader("👥 Registered Users")
-    selected_username = st.selectbox("Select a user", [user["Username"] for user in users])
-
-    user = next((u for u in users if u["Username"] == selected_username), None)
-    if not user:
-        st.error("User not found.")
-        return
 
     with st.form("edit_user_form"):
         new_name = st.text_input("Full Name", value=user["Name"])

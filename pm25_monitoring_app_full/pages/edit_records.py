@@ -11,6 +11,10 @@ from utils.sheet_utils import (
 from utils.data_processing import merge_start_stop, filter_dataframe
 from constants import MERGED_SHEET
 
+client = get_gspread_client()
+spreadsheet = client.open_by_key(SPREADSHEET_ID)
+sheet = ensure_main_sheet_initialized(spreadsheet, MAIN_SHEET)
+
 def show():
     st.title("✏️ Edit Records")
     st.write("This page will display records and allow authorized users to delete or update them.")

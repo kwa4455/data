@@ -1,6 +1,7 @@
 
 import streamlit_authenticator as stauth
 import bcrypt
+import hashlib
 
 def ensure_users_sheet(spreadsheet):
     try:
@@ -25,18 +26,20 @@ def load_users_from_sheet(sheet):
 
 def register_user_to_sheet(username, name, email, password, role, sheet):
     users = sheet.get_all_records()
-
-    # Check for duplicate username or email
+    
+    # Check for duplicate username/email
     for user in users:
-        if user["Username"].lower() == username.lower():
-            return False, "❌ Username already exists"
-        if user["Email"].lower() == email.lower():
-            return False, "❌ Email already registered"
+        if user["Username"] == username:
+            return False, "⚠️ Username already exists."
+        if user["Email"] == email:
+            return False, "⚠️ Email already registered."
 
-    hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    # Hash the password
+    hashed_pw = hashlib.sha256(password.encode()).hexdigest()
 
+    # Append to the sheet
     sheet.append_row([username, name, email, hashed_pw, role])
-    return True, "✅ User registered successfully"
+    return True, "✅ Registration successful. You can now log in."
 
 
 def update_user_details_in_sheet(username, new_name=None, new_email=None, new_password=None, sheet=None):

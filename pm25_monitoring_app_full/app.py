@@ -44,7 +44,7 @@ page = st.sidebar.radio("Go to", ["Main", "Data Entry", "Edit Records", "PM Calc
 logout_button(authenticator)
 
 # === Page Dispatcher ===
-if page == "Main":
+if page == "app":
     main.show()
 elif page == "Data Entry":
     data_entry.show()

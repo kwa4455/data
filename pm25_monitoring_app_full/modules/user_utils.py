@@ -20,14 +20,24 @@ def load_users_from_sheet(sheet):
         }
     return credentials
 
+import bcrypt
+import gspread
+
 def register_user_to_sheet(username, name, email, password, role, sheet):
     users = sheet.get_all_records()
-    if any(user["Username"] == username for user in users):
-        return False, "Username already exists."
 
-    hashed_pw = stauth.Hasher([password]).generate()[0]
+    # Check for duplicate username or email
+    for user in users:
+        if user["Username"].lower() == username.lower():
+            return False, "❌ Username already exists"
+        if user["Email"].lower() == email.lower():
+            return False, "❌ Email already registered"
+
+    hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
     sheet.append_row([username, name, email, hashed_pw, role])
-    return True, "User registered successfully."
+    return True, "✅ User registered successfully"
+
 
 def update_user_details_in_sheet(username, new_name=None, new_email=None, new_password=None, sheet=None):
     data = sheet.get_all_values()

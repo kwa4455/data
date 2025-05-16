@@ -12,16 +12,18 @@ from utils.sheet_utils import (
 )
 from utils.data_processing import merge_start_stop, filter_dataframe
 from constants import SPREADSHEET_ID, MAIN_SHEET, MERGED_SHEET, CALC_SHEET
+from modules.authentication import require_role
+
+def show():
+    require_role(["editor", "admin"])
+    st.title("📈 PM₂.₅ Calculation")
+    st.write("Calculate concentrations and generate reports.")
 
 
 client = get_gspread_client()
 spreadsheet = client.open_by_key(SPREADSHEET_ID)
 sheet = ensure_main_sheet_initialized(spreadsheet, MAIN_SHEET)
 
-
-def show():
-    st.title("📊 PM₂.₅ Calculation")
-    st.write("This page will perform calculations on merged records.")
 
 
 # Load merged records data
@@ -35,9 +37,6 @@ except Exception as e:
     site_ids = []
     site_names = []
 
-# Section Title
-st.title("🧮 PM₂.₅ Concentration Calculation Tool")
-st.markdown("Enter sample data to calculate PM₂.₅ concentrations in µg/m³.")
 
 # Table Form Setup
 rows = st.number_input("Number of entries", min_value=1, max_value=50, value=5)

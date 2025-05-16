@@ -1,13 +1,17 @@
 import streamlit as st
-from modules.user_utils import get_all_users, update_user_details_in_sheet, delete_user_from_sheet
-from modules.authentication import require_role
-from modules.user_utils import ensure_users_sheet
-
 import json
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-# === Auth for Google Sheets ===
+from modules.user_utils import (
+    get_all_users,
+    update_user_details_in_sheet,
+    delete_user_from_sheet,
+    ensure_users_sheet
+)
+from modules.authentication import require_role
+
+# === Authenticate Google Sheets ===
 creds_json = st.secrets["GOOGLE_CREDENTIALS"]
 creds_dict = json.loads(creds_json)
 
@@ -17,6 +21,7 @@ scope = [
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive"
 ]
+
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 
@@ -24,22 +29,26 @@ SPREADSHEET_ID = st.secrets["SPREADSHEET_ID"]
 spreadsheet = client.open_by_key(SPREADSHEET_ID)
 users_sheet = ensure_users_sheet(spreadsheet)
 
+# === Admin Panel Page ===
 def show():
     require_role(["admin"])
-
     st.title("🔐 Admin Panel - User Management")
 
     users = get_all_users(users_sheet)
 
+    if not users:
+        st.info("No registered users found.")
+        return
+
     st.subheader("👥 Registered Users")
-    selected_username = st.selectbox("Select a user", [user["Username"] for user in users])
+    usernames = [user["Username"] for user in users]
+    selected_username = st.selectbox("Select a user", usernames)
 
     user = next((u for u in users if u["Username"] == selected_username), None)
     if not user:
         st.error("User not found.")
         return
 
-    # ✅ This indentation block was likely misaligned
     with st.form("edit_user_form"):
         new_name = st.text_input("Full Name", value=user["Name"])
         new_email = st.text_input("Email", value=user["Email"])

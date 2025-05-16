@@ -70,7 +70,7 @@ def require_login():
     """Ensure the user is logged in, else redirect to Home page."""
     if not st.session_state.get("authenticated"):
         st.error("🔐 You must log in to access this page.")
-        switch_page("Home")
+        switch_page("app")
         st.stop()
 
 def require_role(allowed_roles):

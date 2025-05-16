@@ -79,4 +79,5 @@ def require_role(allowed_roles):
         st.error(f"🚫 Access denied for role: {role}")
         switch_page("app")
         st.stop()
+st.session_state["authenticated"] = True
 

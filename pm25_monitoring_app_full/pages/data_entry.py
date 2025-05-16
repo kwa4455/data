@@ -24,10 +24,6 @@ sheet = ensure_main_sheet_initialized(spreadsheet, MAIN_SHEET)
 
 
 
-def show():
-    st.title("📝 Data Entry")
-    st.write("This page will include a form to input new START/STOP entries.")
-
 # --- Dropdown Options ---
 ids = ["", '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
 sites = ["", 'Kaneshie First Light', 'Tetteh Quarshie', 'Achimota', 'La',

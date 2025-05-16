@@ -2,9 +2,6 @@ import sys
 sys.path.append("modules")
 
 import streamlit as st
-# === Page Setup ===
-st.set_page_config(page_title="PM₂.₅ Monitoring App", layout="wide")
-
 
 import json
 import gspread
@@ -32,10 +29,10 @@ SPREADSHEET_ID = st.secrets["SPREADSHEET_ID"]
 spreadsheet = client.open_by_key(SPREADSHEET_ID)
 users_sheet = ensure_users_sheet(spreadsheet)
 
-# === Login ===
 logged_in, authenticator = login(users_sheet)
 if not logged_in:
     st.stop()
+
 
 # === Sidebar and Page Navigation ===
 st.sidebar.title(f"👋 Welcome {st.session_state['name']}")

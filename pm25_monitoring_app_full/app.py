@@ -19,7 +19,7 @@ def logout_button():
 
 # === Sidebar Menu ===
 st.sidebar.title("📋 Navigation")
-menu = st.sidebar.radio("Go to", ["🏠 Main Page", "📝 Data Entry", "✏️ Edit Records", "📊 PM Calculation", "🛠 Admin Tools"])
+menu = st.sidebar.radio("Go to", ["🏠 Main Page", "📝 Data Entry", "✏️ Edit Records", "📊 PM Calculation", "🛠 Admin"])
 
 
 

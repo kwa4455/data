@@ -1,13 +1,16 @@
-import streamlit as st
-import streamlit_authenticator as stauth
+import sys
+sys.path.append("modules")
 
-from modules.user_management import login, logout_button, ensure_users_sheet
-from pages import main, data_entry, edit_records, pm_calculation, admin
+import streamlit as st
+import json
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-import json
 
-# === Setup Streamlit Page ===
+from modules.authentication import login, logout_button
+from modules.user_utils import ensure_users_sheet
+from pages import main, data_entry, edit_records, pm_calculation, admin  # Assuming these are your app sections
+
+# === Page Setup ===
 st.set_page_config(page_title="PM₂.₅ Monitoring App", layout="wide")
 
 # === Google Sheets Auth ===
@@ -27,34 +30,25 @@ SPREADSHEET_ID = st.secrets["SPREADSHEET_ID"]
 spreadsheet = client.open_by_key(SPREADSHEET_ID)
 users_sheet = ensure_users_sheet(spreadsheet)
 
-# === Authenticate User ===
+# === Login ===
 logged_in, authenticator = login(users_sheet)
 if not logged_in:
     st.stop()
 
-# === Sidebar Navigation ===
-st.sidebar.title("📋 Navigation")
-menu = st.sidebar.radio("Go to", [
-    "🏠 Main Page", 
-    "📝 Data Entry", 
-    "✏️ Edit Records", 
-    "📊 PM Calculation", 
-    "🛠 Admin"
-])
+# === Sidebar and Page Navigation ===
+st.sidebar.title(f"👋 Welcome {st.session_state['name']}")
 
-# === Logout Button ===
+page = st.sidebar.radio("Go to", ["Main", "Data Entry", "Edit Records", "PM Calculation", "Admin"])
 logout_button(authenticator)
 
-# === Page Routing ===
-if menu == "🏠 Main Page":
+# === Page Dispatcher ===
+if page == "Main":
     main.show()
-elif menu == "📝 Data Entry":
+elif page == "Data Entry":
     data_entry.show()
-elif menu == "✏️ Edit Records":
+elif page == "Edit Records":
     edit_records.show()
-elif menu == "📊 PM Calculation":
+elif page == "PM Calculation":
     pm_calculation.show()
-elif menu == "🛠 Admin":
-    from modules.user_management import require_role
-    require_role(["admin"])  # 🚫 Restrict access
+elif page == "Admin":
     admin.show()

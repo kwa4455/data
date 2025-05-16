@@ -13,7 +13,7 @@ from utils.sheet_utils import (
 from constants import SPREADSHEET_ID, MAIN_SHEET,MERGED_SHEET
 from utils.data_processing import merge_start_stop, filter_dataframe
 from modules.authentication import require_role
-
+st.write("DEBUG — session:", dict(st.session_state))
 def show():
     require_role(["editor", "admin"])
     st.title("📝 Data Entry")

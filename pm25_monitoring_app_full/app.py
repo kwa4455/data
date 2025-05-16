@@ -32,5 +32,9 @@ if not logged_in:
 st.sidebar.title(f"👋 Welcome {st.session_state['name']}")
 logout_button(authenticator)
 
-st.title("Welcome to the PM₂.₅ Monitoring App")
+st.session_state["authenticated"] = True
+st.session_state["name"] = name
+st.session_state["username"] = username
+st.session_state["role"] = role
+
 st.markdown("Use the sidebar to navigate through available tools.")

@@ -22,6 +22,7 @@ except Exception:
     st.error("❌ Failed to load merged records. Make sure the merged sheet exists and is accessible.")
     site_ids = []
     site_names = []
+    df_merged = pd.DataFrame()
 
 # --- Input Table Setup ---
 rows = st.number_input("Number of entries", min_value=1, max_value=50, value=5)
@@ -87,13 +88,39 @@ if st.button("✅ Save Valid Entries"):
     valid_rows = []
     errors = []
 
+    # Step 1: Get merged sheet headers
+    try:
+        merged_headers = df_merged.columns.tolist()
+    except Exception:
+        st.error("❌ Failed to get headers from merged sheet.")
+        st.stop()
+
+    # Step 2: Ensure calculated fields are added
+    calc_fields = ["Pre Weight (mg)", "Post Weight (mg)", "PM₂.₅ (µg/m³)"]
+    save_headers = merged_headers.copy()
+    for field in calc_fields:
+        if field not in save_headers:
+            save_headers.append(field)
+
+    # Step 3: Create sheet if missing with headers
+    try:
+        sheet_titles = [ws.title for ws in spreadsheet.worksheets()]
+        if CALC_SHEET not in sheet_titles:
+            calc_ws = spreadsheet.add_worksheet(title=CALC_SHEET, rows="1000", cols="50")
+            calc_ws.append_row(save_headers)
+        else:
+            calc_ws = spreadsheet.worksheet(CALC_SHEET)
+    except Exception as e:
+        st.error(f"❌ Failed to prepare worksheet: {e}")
+        st.stop()
+
+    # Step 4: Build and validate rows
     for idx, row in edited_df.iterrows():
         try:
             elapsed = float(row["Elapsed Time (min)"])
             flow = float(row["Flow Rate (L/min)"])
             pre = float(row["Pre Weight (mg)"])
             post = float(row["Post Weight (mg)"])
-            mass = post - pre
             pm = calculate_pm(row)
             site_id = str(row["Site ID"]).strip()
             site = str(row["Site"]).strip()
@@ -114,34 +141,42 @@ if st.button("✅ Save Valid Entries"):
                 errors.append(f"Row {idx + 1}: Missing required fields (Site ID, Site, Officer)")
                 continue
 
-            valid_rows.append([
-                date, site_id, site, officer, elapsed, flow, pre, post, pm
-            ])
+            # Step 5: Build a complete row dict
+            row_dict = {key: "" for key in save_headers}
+
+            # Populate known/calculated values
+            row_dict["Date"] = str(date)
+            row_dict["Site ID"] = site_id
+            row_dict["Site"] = site
+            row_dict["Officer(s)"] = officer
+            row_dict["Elapsed Time (min)"] = elapsed
+            row_dict["Flow Rate (L/min)"] = flow
+            row_dict["Pre Weight (mg)"] = pre
+            row_dict["Post Weight (mg)"] = post
+            row_dict["PM₂.₅ (µg/m³)"] = pm
+
+            # Copy any additional fields from merged headers
+            for col in merged_headers:
+                if col in row and col not in row_dict:
+                    row_dict[col] = row[col]
+
+            # Assemble row in header order
+            valid_rows.append([row_dict.get(h, "") for h in save_headers])
+
         except Exception as e:
             errors.append(f"Row {idx + 1}: Error parsing row - {e}")
 
+    # Step 6: Save valid rows
     if valid_rows:
         try:
-            # Create sheet if missing
-            sheet_titles = [ws.title for ws in spreadsheet.worksheets()]
-            if CALC_SHEET not in sheet_titles:
-                calc_ws = spreadsheet.add_worksheet(title=CALC_SHEET, rows="1000", cols="20")
-                header = ["Date", "Site ID", "Site", "Officer(s)", "Elapsed Time (min)", "Flow Rate (L/min)",
-                          "Pre Weight (mg)", "Post Weight (mg)", "PM₂.₅ (µg/m³)"]
-                calc_ws.append_row(header)
-            else:
-                calc_ws = spreadsheet.worksheet(CALC_SHEET)
-
-            # Append valid rows
-            for row in valid_rows:
-                calc_ws.append_row(row)
-
+            calc_ws.append_rows(valid_rows)
             st.success(f"✅ Saved {len(valid_rows)} valid entries.")
         except Exception as e:
             st.error(f"❌ Failed to save data: {e}")
     else:
         st.warning("⚠ No valid rows to save.")
 
+    # Step 7: Show validation errors
     if errors:
         st.error("Some rows were invalid:")
         for e in errors:

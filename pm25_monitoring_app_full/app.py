@@ -22,6 +22,7 @@ client = get_gspread_client()
 spreadsheet = client.open_by_key(st.secrets["SPREADSHEET_ID"])
 users_sheet = ensure_users_sheet(spreadsheet)
 
+
 # === LOGIN ===
 logged_in, authenticator = login(users_sheet)
 if not logged_in:

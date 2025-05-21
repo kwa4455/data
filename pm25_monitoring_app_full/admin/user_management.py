@@ -1,14 +1,8 @@
 import streamlit as st
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-
-def get_gspread_client():
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
-    return gspread.authorize(creds)
 
 from modules.authentication import require_role
 from modules.user_utils import (
+    get_gspread_client,
     load_users_from_sheet,
     get_user_role,
     approve_user,

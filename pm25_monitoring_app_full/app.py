@@ -71,15 +71,14 @@ with st.sidebar:
     choice = st.selectbox("Go to", pages)
     logout_button(authenticator)
 
-# Load data
 if "df" not in st.session_state:
     with st.spinner("🔄 Loading data..."):
-        
-        spreadsheet = get_spreadsheet()
+        # You already defined `spreadsheet` and `sheet` above
         df = load_data_from_sheet(sheet)
         st.session_state.df = df
         st.session_state.sheet = sheet
         st.session_state.spreadsheet = spreadsheet
+
 
 # Page Routing
 if choice == "📥 Data Entry Form":

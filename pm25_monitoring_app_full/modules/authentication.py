@@ -74,18 +74,12 @@ def require_login():
         st.stop()
 
 def require_role(allowed_roles):
-    role = st.session_state.get("role")
-    if role not in allowed_roles:
+    if not st.session_state.get("authenticated"):
+        st.error("🚫 Please log in to access this page.")
+        st.stop()
+
+    role = st.session_state.get("role", "").lower()
+    if role not in [r.lower() for r in allowed_roles]:
         st.error("⛔ You are not authorized to view this page.")
         st.stop()
-
-    
-    role = st.session_state.get("role", "").lower()
-    allowed_roles = [r.lower() for r in allowed_roles]
-
-    if role not in allowed_roles:
-        st.error(f"🚫 Access denied for role: {role}")
-        switch_page("app")
-        st.stop()
-st.session_state["authenticated"] = True
 

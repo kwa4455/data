@@ -73,7 +73,7 @@ with st.sidebar:
 # Load data
 if "df" not in st.session_state:
     with st.spinner("🔄 Loading data..."):
-        sheet = spreadsheet.worksheet("YourDataSheetName")  # Adjust as needed
+        sheet = spreadsheet.worksheet("Observations")  # Adjust as needed
         st.session_state.df = load_data_from_sheet(sheet)
         st.session_state.sheet = sheet
         st.session_state.spreadsheet = spreadsheet

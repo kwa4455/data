@@ -5,19 +5,19 @@ from .user_utils import load_users_from_sheet, get_user_role
 from .ui_forms import show_registration_form, show_account_recovery
 
 def login(sheet):
-    """Handles user login with registration and recovery support."""
     users = load_users_from_sheet(sheet)
 
     authenticator = stauth.Authenticate(
         users,
         "pm25_app",
-        "abcdef",  # 🔒 Replace with secure key in production
+        "abcdef",
         cookie_expiry_days=1
     )
 
     st.title("🌿 PM₂.₅ Monitoring App Login")
     st.markdown("Please log in to access the system. Contact admin if you don’t have an account.")
 
+    # === Authenticator Login ===
     name, auth_status, username = authenticator.login("Login", location="main")
 
     if auth_status is False:
@@ -25,22 +25,24 @@ def login(sheet):
     elif auth_status is None:
         st.info("🕒 Please enter your login credentials")
     elif auth_status:
-        # ✅ Successful login
+        # Successful login
         st.session_state["name"] = name
         st.session_state["username"] = username
         st.session_state["role"] = get_user_role(username, sheet)
-        st.session_state["authenticated"] = True
+        st.session_state["authenticated"] = True  # Mark the user as authenticated
 
-        # Clear any form flags
-        st.session_state["show_register"] = False
-        st.session_state["show_recovery"] = False
-        st.experimental_rerun()
+        # Clear any form flags on successful login
+        st.session_state.show_register = False
+        st.session_state.show_recovery = False
 
-    # Handle form toggles
+        # Return status and authenticator object
+        return True, authenticator
+
+    # === Handle Form State Flags ===
     if "show_register" not in st.session_state:
-        st.session_state["show_register"] = False
+        st.session_state.show_register = False
     if "show_recovery" not in st.session_state:
-        st.session_state["show_recovery"] = False
+        st.session_state.show_recovery = False
 
     st.divider()
     st.subheader("🔧 Need Help?")
@@ -63,7 +65,6 @@ def login(sheet):
         show_account_recovery(sheet)
 
     return False, None
-
 def logout_button(authenticator):
     """Logout button in the sidebar."""
     authenticator.logout("Logout", "sidebar")

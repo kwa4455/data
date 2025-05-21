@@ -64,7 +64,6 @@ def login(sheet):
 
     return False, None
 
-
 def logout_button(authenticator):
     authenticator.logout("Logout", "sidebar")
 

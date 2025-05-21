@@ -8,7 +8,7 @@ from constants import MERGED_SHEET, CALC_SHEET
 def show():
     st.subheader("📥 PM25 Calculation")
 
-
+require_role(["admin", "editor"])
 # Inject Google Fonts and custom CSS for glassmorphism and font clarity
 st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">

@@ -9,7 +9,12 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 from admin.show import show
 from admin.user_management import admin_panel
-
+from components import (
+    data_entry_form,
+    edit_data_entry_form,
+    pm25_calculation,
+    supervisor_review_section
+)
 
 from modules.authentication import login, logout_button,require_role,require_login
 from modules.user_utils import ensure_users_sheet, get_gspread_client

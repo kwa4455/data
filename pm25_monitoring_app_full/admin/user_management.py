@@ -2,7 +2,7 @@ import streamlit as st
 from utils.authentication import require_role
 from utils.user_utils import (
     get_gspread_client, SPREADSHEET_ID, REG_REQUESTS_SHEET,
-    approve_user, delete_registration_request, log_registration_event
+    approve_user, delete_registration_request, log_registration_event,approve_user
 )
 
 require_role(["admin", "administrator"])

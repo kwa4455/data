@@ -6,5 +6,7 @@ oauth2client
 pandas
 streamlit-extras
 requests
+streamlit-option-menu
+
 
 

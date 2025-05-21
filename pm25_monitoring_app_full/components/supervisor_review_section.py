@@ -14,6 +14,7 @@ from resource import (
     sheet,
     spreadsheet
 )
+from modules.authentication import require_role
 from constants import MERGED_SHEET,CALC_SHEET
 
 

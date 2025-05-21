@@ -17,18 +17,7 @@ from modules.authentication import login, logout_button,require_role,require_log
 from modules.user_utils import ensure_users_sheet
 from resource import load_data_from_sheet, add_data, merge_start_stop,save_merged_data_to_sheet,sheet,spreadsheet
 
-# === Google Sheets Auth ===
-creds_dict = json.loads(st.secrets["GOOGLE_CREDENTIALS"])
-scope = [
-    "https://spreadsheets.google.com/feeds",
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive.file",
-    "https://www.googleapis.com/auth/drive"
-]
-creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-client = gspread.authorize(creds)
-spreadsheet = client.open_by_key(st.secrets["SPREADSHEET_ID"])
-users_sheet = ensure_users_sheet(spreadsheet)
+
 
 # === LOGIN ===
 logged_in, authenticator = login(users_sheet)
@@ -65,7 +54,7 @@ with st.sidebar:
         pages = ["📥 Data Entry Form", "✏️ Edit Data Entry Form"]
     elif role == "editor":
         pages = ["✏️ Edit Data Entry Form", "🗂️ PM25 Calculation"]
-    elif role == "viewer":
+    elif role == "supervisor":
         pages = ["🗂️ PM25 Calculation"]
 
     choice = st.selectbox("Go to", pages)

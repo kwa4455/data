@@ -6,6 +6,9 @@ import json
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+from admin.show import show
+from admin.user_management import admin_panel
+
 from modules.authentication import login, logout_button
 from modules.user_utils import ensure_users_sheet
 
@@ -43,7 +46,6 @@ def inject_global_css():
         unsafe_allow_html=True,
     )
 
-inject_global_css()
 st.title("🇬🇭 EPA Ghana | PM2.5 Field Data Platform")
 st.info(f"👤 Logged in as: **{username}** (Role: `{role}`)")
 

@@ -6,7 +6,6 @@ from modules.user_utils import (
     load_users_from_sheet,
     get_user_role,
     approve_user,
-    get_gspread_client,
     delete_registration_request,
     log_registration_event,
     SPREADSHEET_ID,

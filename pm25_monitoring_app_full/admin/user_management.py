@@ -1,8 +1,17 @@
 import streamlit as st
-from utils.authentication import require_role
-from .ui_forms import show_registration_form, show_account_recovery
-from .user_utils import load_users_from_sheet, get_user_role,approve_user
 from modules.authentication import require_role
+from modules.user_utils import (
+    load_users_from_sheet,
+    get_user_role,
+    approve_user,
+    get_gspread_client,
+    delete_registration_request,
+    log_registration_event,
+    SPREADSHEET_ID,
+    REG_REQUESTS_SHEET,
+)
+
+from .ui_forms import show_registration_form, show_account_recovery
 
 require_role(["admin", "supervisor"])
 
@@ -18,9 +27,10 @@ else:
             st.write(f"**Full Name**: {record['name']}")
             st.write(f"**Requested At**: {record['timestamp']}")
 
-            # Role selection dropdown
             selected_role = st.selectbox(
-                "Assign Role", ["collector", "editor", "supervisor", "admin"], key=f"role_{record['username']}"
+                "Assign Role",
+                ["collector", "editor", "supervisor", "admin"],
+                key=f"role_{record['username']}"
             )
 
             col1, col2 = st.columns(2)
@@ -31,7 +41,7 @@ else:
                         "email": record["email"],
                         "name": record["name"],
                         "password_hash": record["password_hash"],
-                        "role": selected_role  # Use the selected role
+                        "role": selected_role
                     }
                     approve_user(new_user)
                     delete_registration_request(record["username"])

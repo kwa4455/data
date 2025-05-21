@@ -11,12 +11,13 @@ from resource import (
     display_and_merge_data
 )
 from constants import MERGED_SHEET
+
 from modules.authentication import require_role
 
 def show():
+    require_role(["admin", "collector","editor"])
     st.subheader("📥 Data Entry Form")
-    
-require_role(["admin", "collector","editor"])
+     st.write("This is where the data entry form would go.")
 
 # Inject Google Fonts and custom CSS for glassmorphism and font clarity
 st.markdown("""

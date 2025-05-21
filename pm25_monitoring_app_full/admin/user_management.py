@@ -12,7 +12,6 @@ from modules.user_utils import (
     REG_REQUESTS_SHEET,
 )
 
-from .ui_forms import show_registration_form, show_account_recovery
 
 def admin_panel():
     require_role(["admin", "supervisor"])

@@ -23,7 +23,7 @@ def show():
 
 
 
-
+require_role(["admin", "supervisor"])
 
 
 

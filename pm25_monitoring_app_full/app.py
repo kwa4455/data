@@ -17,12 +17,15 @@ from resource import load_data_from_sheet, add_data, merge_start_stop,save_merge
 
 from constants import MERGED_SHEET,MERGED_SHEET,CALC_SHEET,USERS_SHEET
 
-# Setup client and get the Users sheet
-client = get_gspread_client()
-spreadsheet = client.open_by_key(st.secrets["SPREADSHEET_ID"])
+creds_dict = json.loads(st.secrets["GOOGLE_CREDENTIALS"])
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
+         "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+client = gspread.authorize(creds)
+
+SPREADSHEET_ID = st.secrets["SPREADSHEET_ID"]
+spreadsheet = client.open_by_key(SPREADSHEET_ID)
 users_sheet = ensure_users_sheet(spreadsheet)
-
-
 # === LOGIN ===
 logged_in, authenticator = login(users_sheet)
 if not logged_in:

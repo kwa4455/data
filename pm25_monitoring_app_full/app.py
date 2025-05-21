@@ -10,7 +10,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from admin.show import show
 from admin.user_management import admin_panel
 
-admin_panel()  # this line runs the UI
+
 
 
 from modules.authentication import login, logout_button,require_role,require_login

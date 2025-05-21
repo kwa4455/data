@@ -11,6 +11,7 @@ from resource import (
     display_and_merge_data
 )
 from constants import MERGED_SHEET
+from modules.authentication import require_role
 
 def show():
     st.subheader("📥 Data Entry Form")

@@ -14,7 +14,7 @@ scope = [
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 spreadsheet = client.open_by_key(st.secrets["SPREADSHEET_ID"])
-users_sheet = ensure_users_sheet(spreadsheet)
+
 
 def ensure_users_sheet(spreadsheet):
     """
@@ -26,6 +26,8 @@ def ensure_users_sheet(spreadsheet):
         sheet = spreadsheet.add_worksheet("Users", rows="100", cols="5")
         sheet.append_row(["Username", "Name", "Email", "Password", "Role"])
         return sheet
+
+users_sheet = ensure_users_sheet(spreadsheet)
 
 def approve_user(user_data):
     """

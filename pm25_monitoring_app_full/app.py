@@ -52,42 +52,52 @@ def inject_global_css():
         unsafe_allow_html=True,
     )
 
+# App header
 st.title("🇬🇭 EPA Ghana | PM2.5 Field Data Platform")
 st.info(f"👤 Logged in as: **{username}** (Role: `{role}`)")
 
-# Sidebar
-with st.sidebar:
-    st.title("📁 Navigation")
-
-    pages = []
-    if role == "admin":
-        pages = ["📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation", "⚙️ Admin Panel"]
-    elif role == "collector":
-        pages = ["📥 Data Entry Form", "✏️ Edit Data Entry Form"]
-    elif role == "editor":
-        pages = ["✏️ Edit Data Entry Form", "🗂️ PM25 Calculation"]
-    elif role == "supervisor":
-        pages = ["🗂️ PM25 Calculation"]
-
-    choice = st.selectbox("Go to", pages)
-    logout_button(authenticator)
-
+# Load data once into session state
 if "df" not in st.session_state:
     with st.spinner("🔄 Loading data..."):
-        df = load_data_from_sheet(sheet)
-        st.session_state.df = df
+        st.session_state.df = load_data_from_sheet(sheet)
         st.session_state.sheet = sheet
         st.session_state.spreadsheet = spreadsheet
 
+role_pages = {
+    "admin": ["📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation", "⚙️ Admin Panel"],
+    "collector": ["📥 Data Entry Form", "✏️ Edit Data Entry Form"],
+    "editor": ["✏️ Edit Data Entry Form", "🗂️ PM25 Calculation"],
+    "viewer": ["🗂️ PM25 Calculation"],
+    "supervisor": ["🗂️ PM25 Calculation", "🗂️ Supervisor Review Section"]
+}
 
+# Assign pages based on the user's role
+pages = role_pages.get(role, [])
 
-# Page Routing
+# Sidebar navigation
+with st.sidebar:
+    st.title("📁 Navigation")
+
+    choice = option_menu(
+        menu_title="Go to",
+        options=pages,
+        icons=["cloud-upload", "pencil", "folder", "gear", "clipboard"][:len(pages)],  # Add icons here as needed
+        menu_icon="cast",
+        default_index=0,
+    )
+
+    st.markdown("---")
+    logout_user()
+
+# Show corresponding page based on the selection
 if choice == "📥 Data Entry Form":
     data_entry_form.show()
 elif choice == "✏️ Edit Data Entry Form":
     edit_data_entry_form.show()
 elif choice == "🗂️ PM25 Calculation":
     pm25_calculation.show()
+elif choice == "🗂️ Supervisor Review Section":
+    supervisor_review_section.show()
 elif choice == "⚙️ Admin Panel":
     admin_panel()
 

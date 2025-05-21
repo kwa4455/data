@@ -15,7 +15,7 @@ from constants import MERGED_SHEET
 def show():
     st.subheader("📥 Data Entry Form")
     
-# Streamlit page config
+require_role(["admin", "collector","editor"])
 
 # Inject Google Fonts and custom CSS for glassmorphism and font clarity
 st.markdown("""

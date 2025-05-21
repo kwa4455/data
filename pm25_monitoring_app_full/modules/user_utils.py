@@ -1,7 +1,7 @@
 import streamlit_authenticator as stauth
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-
+import json
 # === Google Sheets Auth ===
 creds_dict = json.loads(st.secrets["GOOGLE_CREDENTIALS"])
 scope = [

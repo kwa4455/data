@@ -3,6 +3,7 @@ from utils.authentication import require_role
 from .ui_forms import show_registration_form, show_account_recovery
 from .user_utils import load_users_from_sheet, get_user_role,approve_user
 from modules.authentication import require_role
+
 require_role(["admin", "supervisor"])
 
 gc = get_gspread_client()

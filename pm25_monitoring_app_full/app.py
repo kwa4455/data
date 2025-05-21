@@ -14,10 +14,13 @@ from admin.user_management import admin_panel
 
 
 from modules.authentication import login, logout_button,require_role,require_login
-from modules.user_utils import approve_user
+from modules.user_utils import ensure_users_sheet, get_gspread_client
 from resource import load_data_from_sheet, add_data, merge_start_stop,save_merged_data_to_sheet,sheet,spreadsheet
 
-users_sheet = approve_user()
+# Setup client and get the Users sheet
+client = get_gspread_client()
+spreadsheet = client.open_by_key(st.secrets["SPREADSHEET_ID"])
+users_sheet = ensure_users_sheet(spreadsheet)
 
 # === LOGIN ===
 logged_in, authenticator = login(users_sheet)

@@ -11,11 +11,11 @@ from admin.show import show
 from admin.user_management import admin_panel
 
 
-
-
 from modules.authentication import login, logout_button,require_role,require_login
 from modules.user_utils import ensure_users_sheet, get_gspread_client
 from resource import load_data_from_sheet, add_data, merge_start_stop,save_merged_data_to_sheet,sheet,spreadsheet
+
+from constants import MERGED_SHEET,MERGED_SHEET,CALC_SHEET,USERS_SHEET
 
 # Setup client and get the Users sheet
 client = get_gspread_client()
@@ -65,7 +65,8 @@ with st.sidebar:
 
 if "df" not in st.session_state:
     with st.spinner("🔄 Loading data..."):
-        # You already defined `spreadsheet` and `sheet` above
+        sheet = get_sheet()
+        spreadsheet = get_spreadsheet()
         df = load_data_from_sheet(sheet)
         st.session_state.df = df
         st.session_state.sheet = sheet

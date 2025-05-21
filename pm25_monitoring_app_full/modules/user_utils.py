@@ -11,24 +11,28 @@ def ensure_users_sheet(spreadsheet):
         sheet.append_row(["Username", "Name", "Email", "Password", "Role"])
         return sheet
 
-def submit_registration_request(username, name, email, password):
-    gc = get_gspread_client()
-    reg_sheet = gc.open_by_key(SPREADSHEET_ID).worksheet(REG_REQUESTS_SHEET)
-    existing = reg_sheet.get_all_records()
+def approve_user(user_data):
+    """
+    Approves a user by moving their registration data from the registration sheet 
+    to the Users sheet with an assigned role. Password is assumed to be hashed already.
+    """
+    # Ensure the Users sheet exists
+    users_sheet = ensure_users_sheet(get_gspread_client().open_by_key(SPREADSHEET_ID))
 
-    # Prevent duplicate username/email
-    for entry in existing:
-        if entry["username"] == username:
-            st.warning("⚠️ Username already exists in pending requests.")
-            return
-        if entry["email"] == email:
-            st.warning("⚠️ Email already registered in pending requests.")
-            return
-
-    hashed_pw = stauth.Hasher([password]).generate()[0]
-    reg_sheet.append_row([username, name, email, hashed_pw, st.session_state.get("timestamp") or ""])
-
-    st.success("✅ Registration submitted! Waiting for admin approval.")
+    # Register the approved user to the Users sheet
+    success, message = register_user_to_sheet(
+        user_data["username"],
+        user_data["name"],
+        user_data["email"],
+        user_data["password_hash"],  # We assume the password is already hashed
+        user_data["role"],  # Role assigned at the time of approval
+        users_sheet,
+        is_hashed=True  # prevent rehashing
+    )
+    
+    if not success:
+        return f"⚠️ Failed to approve user: {message}"
+    return f"✅ User {user_data['username']} approved successfully with role '{user_data['role']}'."
 
 
 def load_users_from_sheet(sheet):
@@ -83,17 +87,7 @@ def update_user_details_in_sheet(username, new_name=None, new_email=None, new_pa
             return True
     return False
 
-def approve_user(user_data):
-    users_sheet = ensure_users_sheet(get_gspread_client().open_by_key(SPREADSHEET_ID))
-    register_user_to_sheet(
-        user_data["username"],
-        user_data["name"],
-        user_data["email"],
-        user_data["password_hash"],
-        user_data["role"],
-        users_sheet,
-        is_hashed=True  # prevent rehashing
-    )
+
 
 def get_user_role(username, sheet):
     """

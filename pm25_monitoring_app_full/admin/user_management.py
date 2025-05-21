@@ -5,7 +5,7 @@ from utils.user_utils import (
     approve_user, delete_registration_request, log_registration_event,approve_user
 )
 
-require_role(["admin", "administrator"])
+require_role(["admin", "supervisor"])
 
 gc = get_gspread_client()
 reg_sheet = gc.open_by_key(SPREADSHEET_ID).worksheet(REG_REQUESTS_SHEET)
@@ -21,7 +21,7 @@ else:
 
             # Role selection dropdown
             selected_role = st.selectbox(
-                "Assign Role", ["User", "Editor", "Viewer", "Admin"], key=f"role_{record['username']}"
+                "Assign Role", ["collector", "editor", "supervisor", "admin"], key=f"role_{record['username']}"
             )
 
             col1, col2 = st.columns(2)

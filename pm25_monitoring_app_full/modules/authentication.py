@@ -73,6 +73,23 @@ def require_login():
         st.error("🔐 You must log in to access this page.")
         switch_page("app")  # Redirect to the main app page
         st.stop()
+        
+def require_role(required_roles):
+    # Check if the user is logged in (i.e., username is in session state)
+    if "username" not in st.session_state:
+        st.error("🚫 Please log in to access this page.")  # Show error if not logged in
+        st.stop()  # Stop further execution
+
+    # Ensure the role is available in session state
+    user_role = st.session_state.get("role")
+    if not user_role:
+        st.error("🚫 User role not found.")
+        st.stop()  # Stop further execution
+
+    # Check if the user's role matches one of the required roles
+    if user_role not in required_roles:
+        st.error("🚫 You do not have permission to access this page.")
+        st.stop()  # Stop further execution
 
 def require_role(allowed_roles):
     if not st.session_state.get("authenticated", False):  # Ensure `authenticated` is checked

@@ -20,11 +20,12 @@ from constants import MERGED_SHEET,CALC_SHEET
 
 
 def show():
+    require_role(["admin", "supervisor"])
     st.subheader("📥 Supervisor Review Section")
+    st.write("This is where the data entry form would go.")
 
 
 
-require_role(["admin", "supervisor"])
 
 
 

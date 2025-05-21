@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-from utils import spreadsheet
+from resource import spreadsheet
 from constants import MERGED_SHEET, CALC_SHEET
 
 

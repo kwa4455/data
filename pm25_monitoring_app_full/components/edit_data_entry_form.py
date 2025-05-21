@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-from utils import (
+from resource import (
     load_data_from_sheet,
     add_data,
     merge_start_stop,

@@ -36,10 +36,7 @@ logged_in, authenticator = login(users_sheet)
 if not logged_in:
     st.stop()
 
-# === AFTER LOGIN ===
-name = st.session_state.get("name")
-username = st.session_state.get("username")
-role = st.session_state.get("role")
+
 
 # Header and Styling
 def inject_global_css():
@@ -52,6 +49,10 @@ def inject_global_css():
         unsafe_allow_html=True,
     )
 
+# Role and user info
+username = st.session_state.get("username")
+role = st.session_state.get("role")
+
 # App header
 st.title("🇬🇭 EPA Ghana | PM2.5 Field Data Platform")
 st.info(f"👤 Logged in as: **{username}** (Role: `{role}`)")
@@ -63,6 +64,7 @@ if "df" not in st.session_state:
         st.session_state.sheet = sheet
         st.session_state.spreadsheet = spreadsheet
 
+# Sidebar navigation
 role_pages = {
     "admin": ["📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation", "⚙️ Admin Panel"],
     "collector": ["📥 Data Entry Form", "✏️ Edit Data Entry Form"],
@@ -70,35 +72,34 @@ role_pages = {
     "viewer": ["🗂️ PM25 Calculation"],
     "supervisor": ["🗂️ PM25 Calculation", "🗂️ Supervisor Review Section"]
 }
-
-# Assign pages based on the user's role
 pages = role_pages.get(role, [])
 
-# Sidebar navigation
 with st.sidebar:
     st.title("📁 Navigation")
-
     choice = option_menu(
         menu_title="Go to",
         options=pages,
-        icons=["cloud-upload", "pencil", "folder", "gear", "clipboard"][:len(pages)],  # Add icons here as needed
+        icons=["cloud-upload", "pencil", "folder", "gear"][:len(pages)],
         menu_icon="cast",
         default_index=0,
     )
 
     st.markdown("---")
-    logout_user()
+    logout_button(authenticator)
 
-# Show corresponding page based on the selection
+# Page Routing
 if choice == "📥 Data Entry Form":
+    require_role(["admin", "collector", "editor"])  # Check role
     data_entry_form.show()
 elif choice == "✏️ Edit Data Entry Form":
+    require_role(["admin", "editor", "collector"])  # Check role
     edit_data_entry_form.show()
 elif choice == "🗂️ PM25 Calculation":
+    require_role(["admin", "editor", "supervisor", "viewer"])  # Check role
     pm25_calculation.show()
 elif choice == "🗂️ Supervisor Review Section":
+    require_role(["supervisor"])  # Only supervisor can access
     supervisor_review_section.show()
 elif choice == "⚙️ Admin Panel":
+    require_role(["admin"])  # Only admin can access
     admin_panel()
-
-st.markdown("Use the sidebar to navigate through available tools.")

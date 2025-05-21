@@ -14,10 +14,10 @@ from admin.user_management import admin_panel
 
 
 from modules.authentication import login, logout_button,require_role,require_login
-from modules.user_utils import ensure_users_sheet
+from modules.user_utils import approve_user
 from resource import load_data_from_sheet, add_data, merge_start_stop,save_merged_data_to_sheet,sheet,spreadsheet
 
-users_sheet = ensure_users_sheet()
+users_sheet = approve_user()
 
 # === LOGIN ===
 logged_in, authenticator = login(users_sheet)

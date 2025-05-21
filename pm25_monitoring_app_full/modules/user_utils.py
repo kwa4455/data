@@ -12,6 +12,7 @@ LOG_SHEET = "Registration Log"
 
 # === GSpread Client ===
 def get_gspread_client():
+    import json
     creds_dict = st.secrets["GOOGLE_CREDENTIALS"]
     scope = [
         "https://spreadsheets.google.com/feeds",

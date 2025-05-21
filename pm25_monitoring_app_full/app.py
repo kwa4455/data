@@ -9,7 +9,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from admin.show import show
 from admin.user_management import admin_panel
 
-from modules.authentication import login, logout_button
+from modules.authentication import login, logout_button,require_role
 from modules.user_utils import ensure_users_sheet
 
 # === Google Sheets Auth ===

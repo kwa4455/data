@@ -6,7 +6,7 @@ from .ui_forms import show_registration_form, show_account_recovery
 
 
 def login(sheet):
-    inject_login_css()
+    
 
 
     users = load_users_from_sheet(sheet)
@@ -64,38 +64,6 @@ def login(sheet):
     return False, None
 
 
-def inject_login_css():
-    st.markdown("""
-    <style>
-    
-
-    
-
-    input {
-        background-color: rgba(255,255,255,0.2) !important;
-        color: white !important;
-        border: none !important;
-    }
-
-    input::placeholder {
-        color: #ccc !important;
-    }
-
-    button[kind="primary"] {
-        width: 100%;
-        padding: 10px;
-        border-radius: 25px;
-        background-color: #ffffffcc !important;
-        color: #000 !important;
-        font-weight: bold;
-    }
-
-    button[kind="primary"]:hover {
-        background-color: #fff !important;
-        color: #000 !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
 
 

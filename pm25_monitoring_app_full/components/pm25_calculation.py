@@ -98,11 +98,11 @@ else:
 
 # --- Date Filter ---
 if "Date _Start" in filtered_df.columns:
-    filtered_df["Date _Start"] = pd.to_datetime(filtered_df["Date_Start"], errors="coerce")
-    filtered_df.dropna(subset=["Date_Start"], inplace=True)
+    filtered_df["Date _Start"] = pd.to_datetime(filtered_df["Date _Start"], errors="coerce")
+    filtered_df.dropna(subset=["Date _Start"], inplace=True)
 
-    min_date = filtered_df["Date_Start"].min().date()
-    max_date = filtered_df["Date_Start"].max().date()
+    min_date = filtered_df["Date _Start"].min().date()
+    max_date = filtered_df["Date _Start"].max().date()
 
     st.subheader("📅 Filter by Start Date")
     date_range = st.date_input("Select Date Range", value=(min_date, max_date), min_value=min_date, max_value=max_date)

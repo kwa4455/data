@@ -8,7 +8,6 @@ from modules.authentication import require_role
 def show():
     require_role(["admin", "editor"])
     st.subheader("📥 PM25 Calculation")
-    st.write("This is where the data entry form would go.")
 
 
 # Inject Google Fonts and custom CSS for glassmorphism and font clarity

@@ -30,9 +30,9 @@ def ensure_users_sheet(spreadsheet):
 
 def ensure_reg_requests_sheet(spreadsheet):
     try:
-        return spreadsheet.worksheet("Registration Requests")
+        return spreadsheet.worksheet("REG_REQUESTS_SHEET")
     except gspread.exceptions.WorksheetNotFound:
-        sheet = spreadsheet.add_worksheet("Registration Requests", rows="100", cols="5")
+        sheet = spreadsheet.add_worksheet("REG_REQUESTS_SHEET", rows="100", cols="5")
         sheet.append_row(["Username", "Name", "Email", "Password", "Role"])
         return sheet
 

@@ -60,11 +60,14 @@ def register_user_request(username, name, email, password, role, spreadsheet):
         if user["Email"].lower() == email.lower():
             return False, "Email already requested."
 
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Hash the password before saving it to the sheet
     password_hash = hash_password(password)
-    sheet.append_row([timestamp, username, name, email, password,role, "pending"])
-    return True, "✅ Registration request submitted."
 
+    # Append the registration request with hashed password
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    sheet.append_row([timestamp, username, name, email, password_hash, role, "pending"])
+
+    return True, "✅ Registration request submitted."
 
 
 

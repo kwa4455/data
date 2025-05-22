@@ -45,7 +45,7 @@ logged_in, authenticator = login(users_sheet)
 if not logged_in:
     st.stop()
 
-inject_global_css(theme)
+
 
 
 

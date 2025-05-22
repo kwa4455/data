@@ -99,7 +99,7 @@ def approve_user(user_data, admin_username, spreadsheet):
     users_sheet = ensure_users_sheet(spreadsheet)
     success, message = register_user_to_sheet(
         username=user_data["Username"],
-        name=user_data["Name"],
+        name=user_data["Full Name"],
         email=user_data["Email"],
         password=user_data["Password"],
         role=user_data["Role"],  # <-- admin-assigned role

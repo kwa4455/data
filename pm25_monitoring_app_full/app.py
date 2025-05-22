@@ -45,7 +45,17 @@ logged_in, authenticator = login(users_sheet)
 if not logged_in:
     st.stop()
 
-inject_global_css()
+theme = {
+    "text": "#1b4332",
+    "background": "#f8fdfc",
+    "input_bg": "rgba(255,255,255,0.15)",
+    "button": "#74c69d",
+    "hover": "#52b788",
+    "text_color": "#000"
+}
+
+inject_global_css(theme, font_size=16)
+
 
 
 

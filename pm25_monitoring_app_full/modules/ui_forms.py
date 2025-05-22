@@ -305,5 +305,5 @@ def inject_global_css():
         backdrop-filter: blur(8px);
     }}
     </style>
-    """
+    """, unsafe_allow_html=True)
 

@@ -47,15 +47,9 @@ username = st.session_state.get("username")
 role = st.session_state.get("role")
 st.info(f"👤 Logged in as: **{username}** (Role: `{role}`)")
 
-def local_css(file_name):
-    import os
-    if not os.path.exists(file_name):
-        st.error(f"CSS file not found: {file_name}")
-        return
-    with open(file_name) as f:
-        css = f.read()
-        st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
-local_css("styles.css")
+import os
+st.write("Current directory:", os.getcwd())
+st.write("Files in current directory:", os.listdir())
 
 
 # === Load Data Once ===

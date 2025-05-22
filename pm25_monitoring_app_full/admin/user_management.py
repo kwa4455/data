@@ -28,6 +28,7 @@ def admin_panel():
             with st.expander(f"Request from {user['Username']}"):
                 st.write(f"Name: {user['Full Name']}")
                 st.write(f"Email: {user['Email']}")
+                st.write(f"Password: {user['Password']}")
                 st.write(f"Requested Role: {user['Role']}")
 
                 assigned_role = st.selectbox(

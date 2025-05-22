@@ -68,55 +68,56 @@ def login(sheet):
 def inject_login_css():
     st.markdown("""
     <style>
-    body {
+    /* Make background cover full screen */
+    html, body, [data-testid="stAppViewContainer"] {
         background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    .main > div {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 90vh;
-    }
-    section[data-testid="stVerticalBlock"] {
+
+    /* Login form container styling */
+    [data-testid="stVerticalBlock"] > div:first-child {
         background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(12px);
         border-radius: 20px;
         padding: 40px;
-        width: 350px;
+        margin: auto;
+        max-width: 420px;
         color: white;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
         border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
     }
+
+    /* Inputs */
     input {
         background-color: rgba(255,255,255,0.2) !important;
         color: white !important;
         border: none !important;
     }
+
     input::placeholder {
         color: #ccc !important;
     }
-    .stButton>button {
+
+    /* Buttons */
+    button[kind="primary"] {
         width: 100%;
         padding: 10px;
-        border: none;
         border-radius: 25px;
-        background-color: #ffffffaa;
-        color: #000;
+        background-color: #ffffffcc !important;
+        color: #000 !important;
         font-weight: bold;
-        cursor: pointer;
     }
-    .stButton>button:hover {
-        background-color: #fff;
-        color: #000;
+
+    button[kind="primary"]:hover {
+        background-color: #fff !important;
+        color: #000 !important;
     }
     </style>
-    """, unsafe_allow_html=True
+    """, unsafe_allow_html=True)
+
 
 
 

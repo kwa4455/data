@@ -47,20 +47,6 @@ def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-def set_background(image_path):
-    with open(image_path, "rb") as image_file:
-        encoded = base64.b64encode(image_file.read()).decode()
-        st.markdown(
-            f"""
-            <style>
-            body {{
-                background-image: url("data:image/png;base64,{encoded}");
-                background-size: cover;
-            }}
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
 
 # Call these with correct paths
 local_css("pm25_monitoring_app_full/styles.css")

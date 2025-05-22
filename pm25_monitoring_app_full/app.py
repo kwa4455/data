@@ -50,8 +50,7 @@ if "theme" not in st.session_state:
 if "font_size" not in st.session_state:
     st.session_state.font_size = "Medium"
 
-# Sidebar - Appearance Controls
-st.sidebar.header("🎨 Appearance Settings")
+
 
 # Theme selection
 theme_choice = st.sidebar.selectbox(

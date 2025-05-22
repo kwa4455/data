@@ -35,7 +35,7 @@ def ensure_reg_requests_sheet(spreadsheet):
     except gspread.exceptions.WorksheetNotFound:
         # If the sheet doesn't exist, create it
         sheet = spreadsheet.add_worksheet(title=REG_REQUESTS_SHEET, rows=100, cols=6)  # 6 columns for the headers
-        sheet.append_row(["username", "name", "email", "password_hash", "role", "timestamp"])  # Adding headers
+        sheet.append_row(["Username", "Name", "Email", "Password", "Role"])  # Adding headers
         return sheet
     except Exception as e:
         # Catch any other exceptions (e.g., permission errors, API issues)

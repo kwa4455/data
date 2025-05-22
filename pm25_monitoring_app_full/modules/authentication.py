@@ -69,17 +69,7 @@ def inject_login_css():
     <style>
     
 
-    [data-testid="stVerticalBlock"] > div:first-child {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(12px);
-        border-radius: 20px;
-        padding: 40px;
-        margin: auto;
-        max-width: 420px;
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-    }
+    
 
     input {
         background-color: rgba(255,255,255,0.2) !important;

@@ -6,6 +6,7 @@ from .ui_forms import show_registration_form, show_account_recovery
 
 
 def login(sheet):
+    inject_login_css()
 
     users = load_users_from_sheet(sheet)
 

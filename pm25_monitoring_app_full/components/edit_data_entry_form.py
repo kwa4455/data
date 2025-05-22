@@ -13,8 +13,7 @@ from resource import (
     restore_specific_deleted_record,
     sheet,
     spreadsheet,
-    display_and_merge_data,
-    require_roles
+    display_and_merge_data
 )
 from constants import MERGED_SHEET
 from modules.authentication import require_role

@@ -65,7 +65,11 @@ def set_background(image_path):
 # Call these with correct paths
 local_css("pm25_monitoring_app_full/styles.css")
 
-
+# Inject HTML block for the card
+st.markdown("""
+<div class="login_card">
+    <h3>Login</h3>
+""", unsafe_allow_html=True)
 
 # === Header ===
 st.title("🇬🇭 EPA Ghana | PM2.5 Field Data Platform")

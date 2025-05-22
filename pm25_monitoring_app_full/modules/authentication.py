@@ -18,10 +18,7 @@ def login(sheet):
     )
 
     with st.container():
-        st.markdown("## 🔐 Login to EPA Ghana")
-        st.markdown("🌿 PM₂.₅ Monitoring App Login")
-        st.markdown("Please log in to access the system. Contact admin if you don’t have an account.")
-
+        
         name, auth_status, username = authenticator.login("Login", location="main")
 
         if auth_status is False:

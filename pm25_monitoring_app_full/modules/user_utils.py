@@ -4,24 +4,24 @@ from oauth2client.service_account import ServiceAccountCredentials
 import streamlit_authenticator as stauth
 from datetime import datetime
 
-# === Constants ===
-SPREADSHEET_ID = st.secrets["SPREADSHEET_ID"]
-REG_REQUESTS_SHEET = "Registration Requests"
-USERS_SHEET = "Users"
-LOG_SHEET = "Registration Log"
+from constants import SPREADSHEET_ID,REG_REQUESTS_SHEET,USERS_SHEET,LOG_SHEET
 
-# === GSpread Client ===
-def get_gspread_client():
-    import json
-    creds_dict = st.secrets["GOOGLE_CREDENTIALS"]
-    scope = [
-        "https://spreadsheets.google.com/feeds",
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.file",
-        "https://www.googleapis.com/auth/drive"
-    ]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    return gspread.authorize(creds)
+
+# === Google Sheets Setup ===
+creds_json = st.secrets["GOOGLE_CREDENTIALS"]
+creds_dict = json.loads(creds_json)
+
+scope = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/drive"
+]
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+client = gspread.authorize(creds)
+
+spreadsheet = client.open_by_key(SPREADSHEET_ID)
+
 
 # === Ensure Users Sheet Exists ===
 def ensure_users_sheet(spreadsheet):

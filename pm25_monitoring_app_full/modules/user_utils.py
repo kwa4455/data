@@ -62,6 +62,9 @@ def register_user_request(username, name, email, password, role, spreadsheet):
 
     # Hash the password before saving it to the sheet
     password_hash = hash_password(password)
+    
+    # Print the password hash to the console for debugging
+    print("Generated Password Hash:", password_hash)
 
     # Append the registration request with hashed password
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

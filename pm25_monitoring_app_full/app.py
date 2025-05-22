@@ -51,6 +51,8 @@ if not st.session_state.authenticated:
         st.stop()  # prevent further rendering
 
 
+def clear_custom_css():
+    st.markdown("<style></style>", unsafe_allow_html=True)
 
 
 

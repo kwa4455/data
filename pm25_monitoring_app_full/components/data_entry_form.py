@@ -18,9 +18,7 @@ def show():
     st.subheader("📥 Data Entry Form")
     st.write("This is where the data entry form would go.")
 
-    from datetime import datetime
-    import streamlit as st
-
+    
     # Inject Google Fonts and custom CSS for glassmorphism and font clarity
     st.markdown("""
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">

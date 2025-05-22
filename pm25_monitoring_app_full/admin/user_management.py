@@ -44,7 +44,7 @@ def admin_panel():
                     
                     # Set a flag in session state to rerun
                     st.session_state.approve_user_rerun = True
-                    st.experimental_rerun()
+                    st.rerun()
 
     # -- Section 2: Delete Approved Users --
     st.subheader("🗑 Manage Existing Users")
@@ -75,7 +75,7 @@ def admin_panel():
                 
                 # Set a flag in session state to rerun
                 st.session_state.delete_user_rerun = True
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error(f"Failed to delete user '{user_to_delete}'.")
         elif confirm_delete == "No":

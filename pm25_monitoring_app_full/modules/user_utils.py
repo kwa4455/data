@@ -30,7 +30,7 @@ def ensure_users_sheet(spreadsheet):
         return spreadsheet.worksheet(USERS_SHEET)
     except gspread.exceptions.WorksheetNotFound:
         sheet = spreadsheet.add_worksheet(USERS_SHEET, rows="100", cols="5")
-        sheet.append_row(["Username", "Name", "Email", "Password", "Role"])
+        sheet.append_row(["Username", "Full Name", "Email", "Password", "Role"])
         return sheet
 
 def ensure_reg_requests_sheet(spreadsheet):

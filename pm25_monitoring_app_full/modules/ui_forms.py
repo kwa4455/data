@@ -3,7 +3,7 @@ import streamlit as st
 from .user_utils import register_user_request
 from .recovery import reset_password, recover_username
 
-def show_registration_form(sheet):
+def show_registration_form(spreadsheet):
     st.subheader("🆕 Register")
 
     # Registration form
@@ -24,7 +24,7 @@ def show_registration_form(sheet):
                 st.error("❌ All fields must be filled in.")
             else:
                 # Register user and move the data to the registration request sheet
-                success, message = register_user_request(username, name, email, password, role)
+                success, message = register_user_request(username, name, email, password, role,spreadsheet)
                 if success:
                     st.success(message)
                 else:

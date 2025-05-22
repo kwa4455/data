@@ -3,6 +3,7 @@ from modules.authentication import require_role
 from modules.user_utils import (
     spreadsheet,
     approve_user,
+    ensure_users_sheet,
     delete_registration_request,
     log_registration_event,
     ensure_reg_requests_sheet

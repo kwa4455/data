@@ -1,32 +1,12 @@
 import streamlit as st
-import gspread
-import json
-from oauth2client.service_account import ServiceAccountCredentials
-
 from modules.authentication import require_role
 from modules.user_utils import (
+    spreadsheet,
     approve_user,
     delete_registration_request,
-    log_registration_event,
+    log_registration_event
 )
-from constants import SPREADSHEET_ID, REG_REQUESTS_SHEET
-
-
-# === Google Sheets Setup ===
-creds_json = st.secrets["GOOGLE_CREDENTIALS"]
-creds_dict = json.loads(creds_json)
-
-scope = [
-    "https://spreadsheets.google.com/feeds",
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive.file",
-    "https://www.googleapis.com/auth/drive"
-]
-
-creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-client = gspread.authorize(creds)
-spreadsheet = client.open_by_key(SPREADSHEET_ID)
-
+from constants import REG_REQUESTS_SHEET
 
 def admin_panel():
     require_role(["admin", "supervisor"])
@@ -57,7 +37,7 @@ def admin_panel():
                         "username": record["username"],
                         "email": record["email"],
                         "name": record["name"],
-                        "password_hash": record["password_hash"],  # or "password"
+                        "password_hash": record["password_hash"],
                         "role": selected_role
                     }
                     approve_user(new_user)

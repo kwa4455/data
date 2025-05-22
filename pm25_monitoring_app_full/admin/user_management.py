@@ -26,7 +26,7 @@ def admin_panel():
 
     for user in requests:
         with st.expander(f"Request from {user['Username']}"):
-            st.write(f"Name: {user['Name']}")
+            st.write(f"Name: {user['Full Name']}")
             st.write(f"Email: {user['Email']}")
             st.write(f"Requested Role: {user['Role']}")
 

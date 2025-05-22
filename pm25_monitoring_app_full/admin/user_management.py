@@ -41,10 +41,8 @@ def admin_panel():
                     user["Role"] = assigned_role
                     msg = approve_user(user, admin_username, spreadsheet)
                     st.success(msg)
-                    
-                    # Set a flag in session state to rerun
-                    st.session_state.approve_user_rerun = True
-                    st.experimental_rerun()
+                    st.session_state.user_approved = user["Username"]  # Flag for approval
+                    st.session_state.approval_message = msg  # Store the message to display later
 
     # -- Section 2: Delete Approved Users --
     st.subheader("🗑 Manage Existing Users")
@@ -72,16 +70,20 @@ def admin_panel():
             if deleted_from_users and deleted_from_requests:
                 log_registration_event(user_to_delete, "deleted", admin_username, spreadsheet)
                 st.success(f"User '{user_to_delete}' has been successfully deleted.")
-                
-                # Set a flag in session state to rerun
-                st.session_state.delete_user_rerun = True
-                st.experimental_rerun()
-            else:
-                st.error(f"Failed to delete user '{user_to_delete}'.")
-        elif confirm_delete == "No":
-            st.info(f"User deletion of '{user_to_delete}' was cancelled.")
+                st.session_state.user_deleted = user_to_delete  # Flag for deletion
+                st.session_state.deletion_message = f"User '{user_to_delete}' deleted successfully."
+
     else:
         st.info("No approved users to manage.")
+
+    # Conditional display based on session state
+    if "user_approved" in st.session_state:
+        st.success(f"User '{st.session_state.user_approved}' has been approved.")
+        del st.session_state.user_approved  # Clear after showing the message
+
+    if "user_deleted" in st.session_state:
+        st.success(st.session_state.deletion_message)
+        del st.session_state.user_deleted  # Clear after showing the message
 
 def delete_user_from_users_sheet(username, users_sheet):
     """

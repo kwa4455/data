@@ -47,6 +47,11 @@ username = st.session_state.get("username")
 role = st.session_state.get("role")
 st.info(f"👤 Logged in as: **{username}** (Role: `{role}`)")
 
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+local_css("styles.css")
 # === Load Data Once ===
 if "df" not in st.session_state:
     with st.spinner("🔄 Loading data..."):

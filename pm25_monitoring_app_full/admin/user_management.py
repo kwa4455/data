@@ -42,8 +42,8 @@ def admin_panel():
                     msg = approve_user(user, admin_username, spreadsheet)
                     st.success(msg)
                     
-                    # Debugging log to check if rerun happens
-                    st.write("Action successful, triggering rerun...")
+                    # Set a flag in session state to rerun
+                    st.session_state.approve_user_rerun = True
                     st.experimental_rerun()
 
     # -- Section 2: Delete Approved Users --
@@ -57,7 +57,6 @@ def admin_panel():
         user_to_delete = st.selectbox("Select a user to delete:", usernames)
         
         if st.button("🚨 Delete Selected User"):
-            # Confirmation before deleting user
             confirm_delete = st.confirm(f"Are you sure you want to delete user {user_to_delete}?")
             if confirm_delete:
                 # Delete from the users sheet
@@ -68,8 +67,8 @@ def admin_panel():
                     log_registration_event(user_to_delete, "deleted", admin_username, spreadsheet)
                     st.success(f"User '{user_to_delete}' has been successfully deleted.")
                     
-                    # Debugging log to check if rerun happens
-                    st.write("User deleted successfully, triggering rerun...")
+                    # Set a flag in session state to rerun
+                    st.session_state.delete_user_rerun = True
                     st.experimental_rerun()
                 else:
                     st.error(f"Failed to delete user '{user_to_delete}'.")

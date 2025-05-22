@@ -12,7 +12,7 @@ from constants import  USERS_SHEET
 def admin_panel():
     require_role(["admin", "supervisor"])
 
-    reg_sheet = spreadsheet.worksheet(REG_REQUESTS_SHEET)
+    reg_sheet = spreadsheet.worksheet(USERS_SHEET)
     records = reg_sheet.get_all_records()
 
     if not records:

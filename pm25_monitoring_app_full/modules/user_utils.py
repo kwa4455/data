@@ -1,16 +1,15 @@
 import streamlit as st
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-import streamlit_authenticator as stauth
-from datetime import datetime
 import json
-from constants import SPREADSHEET_ID,REG_REQUESTS_SHEET,USERS_SHEET,LOG_SHEET
+from oauth2client.service_account import ServiceAccountCredentials
+from datetime import datetime
+import streamlit_authenticator as stauth
 
+from constants import SPREADSHEET_ID, USERS_SHEET, REG_REQUESTS_SHEET, LOG_SHEET
 
-# === Google Sheets Setup ===
+# Google Sheets Setup
 creds_json = st.secrets["GOOGLE_CREDENTIALS"]
 creds_dict = json.loads(creds_json)
-
 scope = [
     "https://spreadsheets.google.com/feeds",
     "https://www.googleapis.com/auth/spreadsheets",
@@ -19,11 +18,8 @@ scope = [
 ]
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
-
 spreadsheet = client.open_by_key(SPREADSHEET_ID)
 
-
-# === Ensure Users Sheet Exists ===
 def ensure_users_sheet(spreadsheet):
     try:
         return spreadsheet.worksheet(USERS_SHEET)
@@ -32,11 +28,8 @@ def ensure_users_sheet(spreadsheet):
         sheet.append_row(["Username", "Name", "Email", "Password", "Role"])
         return sheet
 
-# === Register Approved User ===
 def approve_user(user_data):
-    spreadsheet = client.open_by_key(SPREADSHEET_ID)
     users_sheet = ensure_users_sheet(spreadsheet)
-
     success, message = register_user_to_sheet(
         username=user_data["username"],
         name=user_data["name"],
@@ -46,25 +39,20 @@ def approve_user(user_data):
         sheet=users_sheet,
         is_hashed=True
     )
-    if not success:
-        return f"⚠️ Failed to approve user: {message}"
-    return f"✅ User {user_data['username']} approved successfully with role '{user_data['role']}'."
+    return message
 
-# === Register Function ===
 def register_user_to_sheet(username, name, email, password, role, sheet, is_hashed=False):
     users = sheet.get_all_records()
-
     for user in users:
         if user["Username"] == username:
-            return False, "⚠️ Username already exists."
+            return False, "Username already exists."
         if user["Email"] == email:
-            return False, "⚠️ Email already registered."
+            return False, "Email already registered."
 
     final_pw = password if is_hashed else stauth.Hasher([password]).generate()[0]
     sheet.append_row([username, name, email, final_pw, role])
-    return True, "✅ Registration successful."
+    return True, "Registration successful."
 
-# === Load Users ===
 def load_users_from_sheet(sheet):
     users = sheet.get_all_records()
     credentials = {"usernames": {}}
@@ -76,7 +64,6 @@ def load_users_from_sheet(sheet):
         }
     return credentials
 
-# === Get Role ===
 def get_user_role(username, sheet):
     users = sheet.get_all_records()
     for user in users:
@@ -84,10 +71,8 @@ def get_user_role(username, sheet):
             return user["Role"]
     return "viewer"
 
-# === Delete Registration Request ===
 def delete_registration_request(username):
-    
-    sheet = client.open_by_key(SPREADSHEET_ID).worksheet(REG_REQUESTS_SHEET)
+    sheet = spreadsheet.worksheet(REG_REQUESTS_SHEET)
     data = sheet.get_all_values()
     for i, row in enumerate(data):
         if i == 0:
@@ -97,14 +82,11 @@ def delete_registration_request(username):
             return True
     return False
 
-# === Log Registration Event ===
 def log_registration_event(username, action, admin_username):
-   
-    spreadsheet = client.open_by_key(SPREADSHEET_ID)
     try:
         log_sheet = spreadsheet.worksheet(LOG_SHEET)
     except gspread.exceptions.WorksheetNotFound:
         log_sheet = spreadsheet.add_worksheet(LOG_SHEET, rows="100", cols="5")
         log_sheet.append_row(["Username", "Action", "By", "Timestamp"])
 
-    log_sheet.append_row([username, action, admin_username, datetime.now().isoformat()])
+    log_sheet.append_row([username, action, admin_username, datetime.now().strftime("%Y-%m-%d %H:%M:%S")])

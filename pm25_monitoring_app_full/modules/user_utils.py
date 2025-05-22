@@ -30,11 +30,16 @@ def ensure_users_sheet(spreadsheet):
 
 def ensure_reg_requests_sheet(spreadsheet):
     try:
+        # Try to fetch the existing sheet
         return spreadsheet.worksheet(REG_REQUESTS_SHEET)
     except gspread.exceptions.WorksheetNotFound:
-        sheet = spreadsheet.add_worksheet(REG_REQUESTS_SHEET, rows="100", cols="5")
-        sheet.append_row(["username", "name", "email", "password_hash", "timestamp"])
+        # If the sheet doesn't exist, create it
+        sheet = spreadsheet.add_worksheet(title=REG_REQUESTS_SHEET, rows=100, cols=6)  # 6 columns for the headers
+        sheet.append_row(["username", "name", "email", "password_hash", "role", "timestamp"])  # Adding headers
         return sheet
+    except Exception as e:
+        # Catch any other exceptions (e.g., permission errors, API issues)
+        raise Exception(f"Error while ensuring the registration requests sheet: {str(e)}")
 
 def ensure_reg_requests_sheet(spreadsheet):
     try:

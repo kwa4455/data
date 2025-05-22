@@ -64,7 +64,7 @@ def set_background(image_path):
 
 # Call these with correct paths
 local_css("pm25_monitoring_app_full/assets/styles.css")
-set_background("pm25_monitoring_app_full/assets/img/background.png")
+
 
 
 # === Header ===

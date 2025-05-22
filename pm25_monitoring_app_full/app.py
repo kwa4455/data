@@ -63,7 +63,7 @@ def set_background(image_path):
         )
 
 # Call these with correct paths
-local_css("pm25_monitoring_app_full/assets/styles.css")
+local_css("pm25_monitoring_app_full/styles.css")
 
 
 

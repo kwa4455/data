@@ -30,31 +30,35 @@ def ensure_users_sheet(spreadsheet):
 
 def ensure_reg_requests_sheet(spreadsheet):
     try:
-        # Try to fetch the existing sheet
         return spreadsheet.worksheet(REG_REQUESTS_SHEET)
     except gspread.exceptions.WorksheetNotFound:
-        # If the sheet doesn't exist, create it
-        sheet = spreadsheet.add_worksheet(title=REG_REQUESTS_SHEET, rows=100, cols=6)  # 6 columns for the headers
-        sheet.append_row(["Username", "Name", "Email", "Password", "Role"])  # Adding headers
+        sheet = spreadsheet.add_worksheet(REG_REQUESTS_SHEET, rows="100", cols="5")
+        sheet.append_row(["Username", "Name", "Email", "Password", "Role"])
         return sheet
-    except Exception as e:
-        # Catch any other exceptions (e.g., permission errors, API issues)
-        raise Exception(f"Error while ensuring the registration requests sheet: {str(e)}")
+
+def ensure_log_sheet(spreadsheet):
+    try:
+        return spreadsheet.worksheet(LOG_SHEET)
+    except gspread.exceptions.WorksheetNotFound:
+        sheet = spreadsheet.add_worksheet(LOG_SHEET, rows="100", cols="5")
+        sheet.append_row(["Username", "Action", "By", "Timestamp"])
+        return sheet
+
+def register_user_request(username, name, email, password, role, spreadsheet):
+    sheet = ensure_reg_requests_sheet(spreadsheet)
+    requests = sheet.get_all_records()
+
+    for user in requests:
+        if user["Username"] == username:
+            return False, "Username already requested."
+        if user["Email"] == email:
+            return False, "Email already requested."
+
+    password_hash = stauth.Hasher([password]).generate()[0]
+    sheet.append_row([username, name, email, password_hash, role])
+    return True, "✅ Registration request submitted."
 
 
-
-def approve_user(user_data):
-    users_sheet = ensure_users_sheet(spreadsheet)
-    success, message = register_user_to_sheet(
-        username=user_data["username"],
-        name=user_data["name"],
-        email=user_data["email"],
-        password=user_data["password_hash"],
-        role=user_data["role"],
-        sheet=users_sheet,
-        is_hashed=True
-    )
-    return message
 
 def register_user_to_sheet(username, name, email, password, role, sheet, is_hashed=False):
     users = sheet.get_all_records()
@@ -66,7 +70,39 @@ def register_user_to_sheet(username, name, email, password, role, sheet, is_hash
 
     final_pw = password if is_hashed else stauth.Hasher([password]).generate()[0]
     sheet.append_row([username, name, email, final_pw, role])
-    return True, "Registration successful."
+    return True, "User approved and added."
+
+def delete_registration_request(username, spreadsheet):
+    sheet = ensure_reg_requests_sheet(spreadsheet)
+    data = sheet.get_all_values()
+    for i, row in enumerate(data):
+        if i == 0:
+            continue
+        if row[0] == username:
+            sheet.delete_rows(i + 1)
+            return True
+    return False
+
+def log_registration_event(username, action, admin_username, spreadsheet):
+    sheet = ensure_log_sheet(spreadsheet)
+    sheet.append_row([username, action, admin_username, datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
+
+def approve_user(user_data, admin_username, spreadsheet):
+    users_sheet = ensure_users_sheet(spreadsheet)
+    success, message = register_user_to_sheet(
+        username=user_data["Username"],
+        name=user_data["Name"],
+        email=user_data["Email"],
+        password=user_data["Password"],
+        role=user_data["Role"],  # <-- admin-assigned role
+        sheet=users_sheet,
+        is_hashed=True
+    )
+
+    if success:
+        delete_registration_request(user_data["Username"], spreadsheet)
+        log_registration_event(user_data["Username"], "approved", admin_username, spreadsheet)
+    return message
 
 def load_users_from_sheet(sheet):
     users = sheet.get_all_records()
@@ -86,22 +122,3 @@ def get_user_role(username, sheet):
             return user["Role"]
     return "viewer"
 
-def delete_registration_request(username):
-    sheet = spreadsheet.worksheet(REG_REQUESTS_SHEET)
-    data = sheet.get_all_values()
-    for i, row in enumerate(data):
-        if i == 0:
-            continue
-        if row[0] == username:
-            sheet.delete_rows(i + 1)
-            return True
-    return False
-
-def log_registration_event(username, action, admin_username):
-    try:
-        log_sheet = spreadsheet.worksheet(LOG_SHEET)
-    except gspread.exceptions.WorksheetNotFound:
-        log_sheet = spreadsheet.add_worksheet(LOG_SHEET, rows="100", cols="5")
-        log_sheet.append_row(["Username", "Action", "By", "Timestamp"])
-
-    log_sheet.append_row([username, action, admin_username, datetime.now().strftime("%Y-%m-%d %H:%M:%S")])

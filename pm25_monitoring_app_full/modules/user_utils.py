@@ -34,7 +34,6 @@ def ensure_users_sheet(spreadsheet):
 
 # === Register Approved User ===
 def approve_user(user_data):
-    client = get_gspread_client()
     spreadsheet = client.open_by_key(SPREADSHEET_ID)
     users_sheet = ensure_users_sheet(spreadsheet)
 
@@ -87,7 +86,7 @@ def get_user_role(username, sheet):
 
 # === Delete Registration Request ===
 def delete_registration_request(username):
-    client = get_gspread_client()
+    
     sheet = client.open_by_key(SPREADSHEET_ID).worksheet(REG_REQUESTS_SHEET)
     data = sheet.get_all_values()
     for i, row in enumerate(data):
@@ -100,7 +99,7 @@ def delete_registration_request(username):
 
 # === Log Registration Event ===
 def log_registration_event(username, action, admin_username):
-    client = get_gspread_client()
+   
     spreadsheet = client.open_by_key(SPREADSHEET_ID)
     try:
         log_sheet = spreadsheet.worksheet(LOG_SHEET)

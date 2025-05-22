@@ -6,7 +6,7 @@ from .ui_forms import show_registration_form, show_account_recovery
 
 
 def login(sheet):
-    inject_login_css()
+
 
     users = load_users_from_sheet(sheet)
 
@@ -66,54 +66,6 @@ def login(sheet):
     return False, None
 
 
-def inject_login_css():
-    st.markdown("""
-    <style>
-    html, body, [data-testid="stAppViewContainer"] {
-        background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-
-    [data-testid="stVerticalBlock"] > div:first-child {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(12px);
-        border-radius: 20px;
-        padding: 40px;
-        margin: auto;
-        max-width: 420px;
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    input {
-        background-color: rgba(255,255,255,0.2) !important;
-        color: white !important;
-        border: none !important;
-    }
-
-    input::placeholder {
-        color: #ccc !important;
-    }
-
-    button[kind="primary"] {
-        width: 100%;
-        padding: 10px;
-        border-radius: 25px;
-        background-color: #ffffffcc !important;
-        color: #000 !important;
-        font-weight: bold;
-    }
-
-    button[kind="primary"]:hover {
-        background-color: #fff !important;
-        color: #000 !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
 
 

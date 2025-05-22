@@ -4,9 +4,10 @@ from modules.user_utils import (
     spreadsheet,
     approve_user,
     delete_registration_request,
-    log_registration_event
+    log_registration_event,
+    ensure_users_sheet
 )
-from constants import REG_REQUESTS_SHEET
+from constants import  USERS_SHEET
 
 def admin_panel():
     require_role(["admin", "supervisor"])

@@ -28,7 +28,6 @@ def admin_panel():
             with st.expander(f"Request from {user['Username']}"):
                 st.write(f"Name: {user['Full Name']}")
                 st.write(f"Email: {user['Email']}")
-                st.write(f"Password: {user['Password']}")
                 st.write(f"Requested Role: {user['Role']}")
 
                 assigned_role = st.selectbox(
@@ -42,6 +41,9 @@ def admin_panel():
                     user["Role"] = assigned_role
                     msg = approve_user(user, admin_username, spreadsheet)
                     st.success(msg)
+                    
+                    # Debugging log to check if rerun happens
+                    st.write("Action successful, triggering rerun...")
                     st.experimental_rerun()
 
     # -- Section 2: Delete Approved Users --
@@ -53,13 +55,39 @@ def admin_panel():
 
     if usernames:
         user_to_delete = st.selectbox("Select a user to delete:", usernames)
+        
         if st.button("🚨 Delete Selected User"):
-            deleted = delete_registration_request(user_to_delete, spreadsheet)
-            if deleted:
-                log_registration_event(user_to_delete, "deleted", admin_username, spreadsheet)
-                st.success(f"User '{user_to_delete}' deleted.")
-                st.experimental_rerun()
+            # Confirmation before deleting user
+            confirm_delete = st.confirm(f"Are you sure you want to delete user {user_to_delete}?")
+            if confirm_delete:
+                # Delete from the users sheet
+                deleted_from_users = delete_user_from_users_sheet(user_to_delete, users_sheet)
+                deleted_from_requests = delete_registration_request(user_to_delete, spreadsheet)
+                
+                if deleted_from_users and deleted_from_requests:
+                    log_registration_event(user_to_delete, "deleted", admin_username, spreadsheet)
+                    st.success(f"User '{user_to_delete}' has been successfully deleted.")
+                    
+                    # Debugging log to check if rerun happens
+                    st.write("User deleted successfully, triggering rerun...")
+                    st.experimental_rerun()
+                else:
+                    st.error(f"Failed to delete user '{user_to_delete}'.")
             else:
-                st.error("User not found or could not be deleted.")
+                st.info(f"User deletion of '{user_to_delete}' was cancelled.")
     else:
         st.info("No approved users to manage.")
+
+def delete_user_from_users_sheet(username, users_sheet):
+    """
+    Function to delete the user from the users sheet.
+    Returns True if successfully deleted, otherwise False.
+    """
+    data = users_sheet.get_all_values()
+    for i, row in enumerate(data):
+        if i == 0:  # Skip header row
+            continue
+        if row[0] == username:  # If username matches
+            users_sheet.delete_rows(i + 1)
+            return True
+    return False

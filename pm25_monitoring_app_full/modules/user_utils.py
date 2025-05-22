@@ -39,7 +39,7 @@ def ensure_reg_requests_sheet(spreadsheet):
     except WorksheetNotFound:
         # Create the worksheet if it doesn't exist
         sheet = spreadsheet.add_worksheet(title=REG_REQUESTS_SHEET, rows=100, cols=6)
-        sheet.append_row(["Timestamp", "Username", "Full Name", "Email", "Role", "Status"])  # header
+        sheet.append_row(["Timestamp", "Username", "Full Name", "Email","Password", "Role", "Status"])  # header
         return sheet
 
 def ensure_log_sheet(spreadsheet):

@@ -5,7 +5,7 @@ import streamlit as st
 import json
 import gspread
 import os
-import base64
+
 from oauth2client.service_account import ServiceAccountCredentials
 from streamlit_option_menu import option_menu
 
@@ -42,101 +42,6 @@ users_sheet = ensure_users_sheet(spreadsheet)
 logged_in, authenticator = login(users_sheet)
 if not logged_in:
     st.stop()
-
-
-
-# === CSS as a Python multiline string ===
-CSS = """
-/* === Global Layout === */
-html, body, #root {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', sans-serif;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-}
-
-/* === Login Card Styling === */
-.login_card {
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 24px;
-    padding: 40px;
-    max-width: 400px;
-    width: 90%;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    text-align: center;
-}
-
-/* === Headers === */
-.login_card h3 {
-    margin-bottom: 24px;
-    font-size: 28px;
-    color: #fff;
-}
-
-/* === Inputs === */
-input[type="text"], input[type="password"] {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 10px 0 20px;
-    border-radius: 32px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    outline: none;
-    font-size: 14px;
-    box-sizing: border-box;
-}
-
-input[type="text"]::placeholder, input[type="password"]::placeholder {
-    color: #ddd;
-}
-
-/* === Button Styling === */
-button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 32px;
-    background-color: rgba(255, 255, 255, 0.4);
-    color: #5F2CA7;
-    font-weight: 600;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-}
-
-button:hover {
-    background-color: #5F2CA7;
-    color: #fff;
-}
-
-/* === Responsive === */
-@media (max-width: 500px) {
-    .login_card {
-        padding: 20px;
-    }
-
-    h3 {
-        font-size: 24px;
-    }
-
-    button {
-        font-size: 14px;
-    }
-}
-"""
-
-
 
 
 

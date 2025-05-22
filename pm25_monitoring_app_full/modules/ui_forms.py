@@ -24,7 +24,7 @@ def show_registration_form(sheet):
                 st.error("❌ All fields must be filled in.")
             else:
                 # Register user and move the data to the registration request sheet
-                success, message = register_user_request(username, name, email, password, role, spreadsheet)
+                success, message = register_user_request(username, name, email, password, role)
                 if success:
                     st.success(message)
                 else:

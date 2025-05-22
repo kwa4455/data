@@ -73,9 +73,7 @@ username = st.session_state.get("username")
 role = st.session_state.get("role")
 st.info(f"👤 Logged in as: **{username}** (Role: `{role}`)")
 
-import os
-st.write("Current directory:", os.getcwd())
-st.write("Files in current directory:", os.listdir())
+
 
 
 # === Load Data Once ===

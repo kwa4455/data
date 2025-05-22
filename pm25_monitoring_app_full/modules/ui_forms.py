@@ -2,6 +2,7 @@
 import streamlit as st
 from .user_utils import register_user_request
 from .recovery import reset_password, recover_username
+from constants import REG_REQUESTS_SHEET, LOG_SHEET
 
 def show_registration_form(sheet):
     st.subheader("🆕 Register")

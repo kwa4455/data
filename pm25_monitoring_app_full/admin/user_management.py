@@ -55,25 +55,31 @@ def admin_panel():
 
     if usernames:
         user_to_delete = st.selectbox("Select a user to delete:", usernames)
-        
-        if st.button("🚨 Delete Selected User"):
-            confirm_delete = st.confirm(f"Are you sure you want to delete user {user_to_delete}?")
-            if confirm_delete:
-                # Delete from the users sheet
-                deleted_from_users = delete_user_from_users_sheet(user_to_delete, users_sheet)
-                deleted_from_requests = delete_registration_request(user_to_delete, spreadsheet)
+
+        # Ask for confirmation before deleting
+        confirm_delete = st.radio(
+            "Are you sure you want to delete this user?",
+            options=["Yes", "No"],
+            index=1,  # Default to "No"
+            key=f"confirm_delete_{user_to_delete}"
+        )
+
+        if confirm_delete == "Yes" and st.button("🚨 Delete Selected User"):
+            # Proceed to delete the user
+            deleted_from_users = delete_user_from_users_sheet(user_to_delete, users_sheet)
+            deleted_from_requests = delete_registration_request(user_to_delete, spreadsheet)
+            
+            if deleted_from_users and deleted_from_requests:
+                log_registration_event(user_to_delete, "deleted", admin_username, spreadsheet)
+                st.success(f"User '{user_to_delete}' has been successfully deleted.")
                 
-                if deleted_from_users and deleted_from_requests:
-                    log_registration_event(user_to_delete, "deleted", admin_username, spreadsheet)
-                    st.success(f"User '{user_to_delete}' has been successfully deleted.")
-                    
-                    # Set a flag in session state to rerun
-                    st.session_state.delete_user_rerun = True
-                    st.experimental_rerun()
-                else:
-                    st.error(f"Failed to delete user '{user_to_delete}'.")
+                # Set a flag in session state to rerun
+                st.session_state.delete_user_rerun = True
+                st.experimental_rerun()
             else:
-                st.info(f"User deletion of '{user_to_delete}' was cancelled.")
+                st.error(f"Failed to delete user '{user_to_delete}'.")
+        elif confirm_delete == "No":
+            st.info(f"User deletion of '{user_to_delete}' was cancelled.")
     else:
         st.info("No approved users to manage.")
 

@@ -17,7 +17,7 @@ from components import (
     supervisor_review_section
 )
 from modules.authentication import login, logout_button
-from modules.user_utils import get_user_role, spreadsheet
+from modules.user_utils import get_user_role, spreadsheet,ensure_users_sheet,
 from resource import load_data_from_sheet, sheet, spreadsheet
 from constants import MERGED_SHEET, CALC_SHEET, USERS_SHEET
 

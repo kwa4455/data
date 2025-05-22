@@ -20,6 +20,9 @@ creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 spreadsheet = client.open_by_key(SPREADSHEET_ID)
 
+def hash_password(password):
+    return stauth.Hasher([password]).generate()[0]
+
 def ensure_users_sheet(spreadsheet):
     try:
         return spreadsheet.worksheet(USERS_SHEET)
@@ -30,12 +33,11 @@ def ensure_users_sheet(spreadsheet):
 
 def ensure_reg_requests_sheet(spreadsheet):
     try:
-        # Try to access the worksheet within the spreadsheet
         return spreadsheet.worksheet(REG_REQUESTS_SHEET)
-    except gspread.exceptions.WorksheetNotFound:
-        # If worksheet doesn't exist, create it
-        sheet = spreadsheet.add_worksheet(REG_REQUESTS_SHEET, rows="100", cols="5")
-        sheet.append_row(["Username", "Name", "Email", "Password", "Role"])
+    except WorksheetNotFound:
+        # Create the worksheet if it doesn't exist
+        sheet = spreadsheet.add_worksheet(title=REG_REQUESTS_SHEET, rows=100, cols=6)
+        sheet.append_row(["Timestamp", "Username", "Full Name", "Email", "Role", "Status"])  # header
         return sheet
 
 def ensure_log_sheet(spreadsheet):
@@ -51,14 +53,16 @@ def register_user_request(username, name, email, password, role, spreadsheet):
     requests = sheet.get_all_records()
 
     for user in requests:
-        if user["Username"] == username:
+        if user["Username"].lower() == username.lower():
             return False, "Username already requested."
-        if user["Email"] == email:
+        if user["Email"].lower() == email.lower():
             return False, "Email already requested."
 
-    password_hash = stauth.Hasher([password]).generate()[0]
-    sheet.append_row([username, name, email, password_hash, role])
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    password_hash = hash_password(password)
+    sheet.append_row([timestamp, username, name, email, role, "pending"])
     return True, "✅ Registration request submitted."
+
 
 
 

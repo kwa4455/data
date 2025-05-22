@@ -20,7 +20,6 @@ from components import (
 )
 from modules.authentication import login, logout_button
 from modules.user_utils import get_user_role, spreadsheet,ensure_users_sheet
-from modules.ui_forms import inject_global_css
 from resource import load_data_from_sheet, sheet, spreadsheet
 from constants import MERGED_SHEET, CALC_SHEET, USERS_SHEET
 

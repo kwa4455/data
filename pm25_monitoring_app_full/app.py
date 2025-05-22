@@ -3,7 +3,9 @@ sys.path.append("modules")
 
 import streamlit as st
 import json
-import gspread
+import spread
+import os
+import base64
 from oauth2client.service_account import ServiceAccountCredentials
 from streamlit_option_menu import option_menu
 
@@ -40,6 +42,30 @@ users_sheet = ensure_users_sheet(spreadsheet)
 logged_in, authenticator = login(users_sheet)
 if not logged_in:
     st.stop()
+
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+def set_background(image_path):
+    with open(image_path, "rb") as image_file:
+        encoded = base64.b64encode(image_file.read()).decode()
+        st.markdown(
+            f"""
+            <style>
+            body {{
+                background-image: url("data:image/png;base64,{encoded}");
+                background-size: cover;
+            }}
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+
+# Call these with correct paths
+local_css("pm25_monitoring_app_full/assets/styles.css")
+set_background("pm25_monitoring_app_full/assets/img/background.png")
+
 
 # === Header ===
 st.title("🇬🇭 EPA Ghana | PM2.5 Field Data Platform")

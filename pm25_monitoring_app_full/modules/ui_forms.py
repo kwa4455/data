@@ -57,7 +57,7 @@ def show_account_recovery(sheet):
 
 
 
-def inject_global_css():
+def inject_global_css(theme, font_size=16):
     st.markdown("""
     <style>
     html, body, .stApp, [class^="css"], button, input, label, textarea, select {{

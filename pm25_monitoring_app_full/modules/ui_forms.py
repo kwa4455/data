@@ -1,6 +1,6 @@
 
 import streamlit as st
-from .user_utils import register_user_to_sheet
+from .user_utils import register_user_request
 from .recovery import reset_password, recover_username
 
 def show_registration_form(sheet):

@@ -52,7 +52,7 @@ def admin_panel():
     if usernames:
         user_to_delete = st.selectbox("Select a user to delete:", usernames)
         if st.button("🚨 Delete Selected User"):
-            deleted = delete_user(user_to_delete, spreadsheet)
+            deleted = delete_registration_request(user_to_delete, spreadsheet)
             if deleted:
                 log_registration_event(user_to_delete, "deleted", admin_username, spreadsheet)
                 st.success(f"User '{user_to_delete}' deleted.")

@@ -36,6 +36,13 @@ def ensure_reg_requests_sheet(spreadsheet):
         sheet.append_row(["username", "name", "email", "password_hash", "timestamp"])
         return sheet
 
+def ensure_reg_requests_sheet(spreadsheet):
+    try:
+        return spreadsheet.worksheet(REG_REQUESTS_SHEET)
+    except gspread.exceptions.WorksheetNotFound:
+        sheet = spreadsheet.add_worksheet(REG_REQUESTS_SHEET, rows="100", cols="5")
+        sheet.append_row(["username", "name", "email", "password_hash", "timestamp"])
+        return sheet
 
 def approve_user(user_data):
     users_sheet = ensure_users_sheet(spreadsheet)

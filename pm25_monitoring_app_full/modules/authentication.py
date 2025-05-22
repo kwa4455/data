@@ -3,79 +3,14 @@ from streamlit_extras.switch_page_button import switch_page
 import streamlit_authenticator as stauth
 from .user_utils import load_users_from_sheet, get_user_role
 from .ui_forms import show_registration_form, show_account_recovery
-import streamlit as st
-import streamlit_authenticator as stauth
 
-import streamlit as st
-import streamlit_authenticator as stauth
 
 def login(sheet):
+    # Inject styling
+    inject_login_css()
+
     users = load_users_from_sheet(sheet)
 
-    # === Inject background + custom styling ===
-    st.markdown("""
-    <style>
-    /* Full-screen forest background */
-    body {
-        background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    /* Apply glass effect to all main containers */
-    .main > div {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 90vh;
-    }
-
-    section[data-testid="stVerticalBlock"] {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 40px;
-        width: 350px;
-        color: white;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-
-    /* Style Streamlit inputs */
-    input {
-        background-color: rgba(255,255,255,0.2) !important;
-        color: white !important;
-        border: none !important;
-    }
-
-    input::placeholder {
-        color: #ccc !important;
-    }
-
-    /* Style buttons */
-    .stButton>button {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 25px;
-        background-color: #ffffffaa;
-        color: #000;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .stButton>button:hover {
-        background-color: #fff;
-        color: #000;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    # === Authenticator setup ===
     authenticator = stauth.Authenticate(
         users,
         "pm25_app",
@@ -83,7 +18,6 @@ def login(sheet):
         cookie_expiry_days=1
     )
 
-    # === Centered login card ===
     with st.container():
         st.markdown("## 🔐 Login to EPA Ghana")
         st.markdown("🌿 PM₂.₅ Monitoring App Login")
@@ -104,7 +38,7 @@ def login(sheet):
             st.session_state.show_recovery = False
             return True, authenticator
 
-    # === Help buttons outside login card ===
+    # Help options
     st.divider()
     st.subheader("🔧 Need Help?")
     col1, col2 = st.columns(2)
@@ -131,6 +65,9 @@ def login(sheet):
         show_account_recovery(sheet)
 
     return False, None
+
+
+
 
 
 

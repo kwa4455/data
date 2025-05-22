@@ -62,7 +62,7 @@ def register_user_request(username, name, email, password, role, spreadsheet):
 
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     password_hash = hash_password(password)
-    sheet.append_row([timestamp, username, name, email, role, "pending"])
+    sheet.append_row([timestamp, username, name, email, password,role, "pending"])
     return True, "✅ Registration request submitted."
 
 

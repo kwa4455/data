@@ -185,27 +185,7 @@ st.markdown(generate_css(theme, font_size), unsafe_allow_html=True)
 
 
 
-components.html(
-    f"""
-    <div style="background: {theme["button"]}; 
-                padding: 30px; 
-                border-radius: 12px; 
-                color: white; 
-                text-align: center; 
-                font-size: 42px; 
-                font-weight: bold;
-                animation: fadeIn 1.5s ease-out;">
-        👋 Welcome to the Air Quality Dashboard!
-    </div>
-    <style>
-    @keyframes fadeIn {{
-        0% {{opacity: 0; transform: translateY(-20px);}}
-        100% {{opacity: 1; transform: translateY(0);}}
-    }}
-    </style>
-    """,
-    height=120
-)
+
 
 
 

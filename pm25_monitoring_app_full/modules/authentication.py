@@ -6,8 +6,6 @@ from .ui_forms import show_registration_form, show_account_recovery
 
 
 def login(sheet):
-    # Inject styling
-    inject_login_css()
 
     users = load_users_from_sheet(sheet)
 
@@ -70,7 +68,6 @@ def login(sheet):
 def inject_login_css():
     st.markdown("""
     <style>
-    /* Full-screen forest background */
     body {
         background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470');
         background-size: cover;
@@ -79,15 +76,12 @@ def inject_login_css():
         background-attachment: fixed;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
-    /* Center and style the login block */
     .main > div {
         display: flex;
         justify-content: center;
         align-items: center;
         height: 90vh;
     }
-
     section[data-testid="stVerticalBlock"] {
         background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(10px);
@@ -99,19 +93,14 @@ def inject_login_css():
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
         border: 1px solid rgba(255, 255, 255, 0.3);
     }
-
-    /* Style Streamlit input fields */
     input {
         background-color: rgba(255,255,255,0.2) !important;
         color: white !important;
         border: none !important;
     }
-
     input::placeholder {
         color: #ccc !important;
     }
-
-    /* Style buttons */
     .stButton>button {
         width: 100%;
         padding: 10px;
@@ -122,14 +111,12 @@ def inject_login_css():
         font-weight: bold;
         cursor: pointer;
     }
-
     .stButton>button:hover {
         background-color: #fff;
         color: #000;
     }
     </style>
-    """, unsafe_allow_html=True)
-
+    """, unsafe_allow_html=True
 
 
 

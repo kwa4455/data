@@ -69,7 +69,6 @@ def login(sheet):
 def inject_login_css():
     st.markdown("""
     <style>
-    /* Make background cover full screen */
     html, body, [data-testid="stAppViewContainer"] {
         background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470');
         background-size: cover;
@@ -78,7 +77,6 @@ def inject_login_css():
         background-attachment: fixed;
     }
 
-    /* Login form container styling */
     [data-testid="stVerticalBlock"] > div:first-child {
         background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(12px);
@@ -91,7 +89,6 @@ def inject_login_css():
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
     }
 
-    /* Inputs */
     input {
         background-color: rgba(255,255,255,0.2) !important;
         color: white !important;
@@ -102,7 +99,6 @@ def inject_login_css():
         color: #ccc !important;
     }
 
-    /* Buttons */
     button[kind="primary"] {
         width: 100%;
         padding: 10px;

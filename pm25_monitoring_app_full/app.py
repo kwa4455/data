@@ -18,7 +18,7 @@ from components import (
     pm25_calculation,
     supervisor_review_section
 )
-from modules.authentication import login, logout_button
+from modules.authentication import login, logout_button,inject_login_css
 from modules.user_utils import get_user_role, spreadsheet,ensure_users_sheet
 from resource import load_data_from_sheet, sheet, spreadsheet
 from constants import MERGED_SHEET, CALC_SHEET, USERS_SHEET
@@ -44,7 +44,11 @@ logged_in, authenticator = login(users_sheet)
 if not logged_in:
     st.stop()
 
-
+if not st.session_state.authenticated:
+    inject_login_css()  # ✅ Inject CSS only for login screen
+    success, _ = login(sheet=None)  # replace with your sheet logic
+    if not success:
+        st.stop()  # prevent further rendering
 
 
 

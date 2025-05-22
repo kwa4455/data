@@ -6,16 +6,15 @@ from modules.user_utils import (
     approve_user,
     delete_registration_request,
     log_registration_event,
-    SPREADSHEET_ID,
-    REG_REQUESTS_SHEET,
 )
 
+from constants import SPREADSHEET_ID,REG_REQUESTS_SHEET,USERS_SHEET,LOG_SHEET
 
 def admin_panel():
     require_role(["admin", "supervisor"])
 
     # Get registration requests from Google Sheet
-    gc = get_gspread_client()
+    
     reg_sheet = gc.open_by_key(SPREADSHEET_ID).worksheet(REG_REQUESTS_SHEET)
     records = reg_sheet.get_all_records()
 

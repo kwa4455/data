@@ -117,7 +117,7 @@ def load_users_from_sheet(sheet):
     credentials = {"usernames": {}}
     for user in users:
         credentials["usernames"][user["Username"]] = {
-            "name": user["Name"],
+            "name": user["Full Name"],
             "email": user["Email"],
             "password": user["Password"]
         }

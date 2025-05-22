@@ -5,18 +5,15 @@ from resource import spreadsheet
 from constants import MERGED_SHEET, CALC_SHEET
 from modules.authentication import require_role
 
-# Require authenticated role
+import streamlit as st
+import pandas as pd
+
 def show():
     require_role(["admin", "collector", "editor"])
-    st.subheader("📥 Edit Data Entry Form")
-    st.write("This is where the data entry form would go.")
-    
-    # Inject Google Fonts and custom CSS for glassmorphism and font clarity
+    st.subheader("📥 PM25 Calculation")
+    # --- Custom CSS ---
     st.markdown("""
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    
         <style>
-        /* === Global Font and Text Effects === */
         html, body, [class*="css"]  {
             font-family: 'Poppins', sans-serif;
             text-shadow: 0 1px 2px rgba(0,0,0,0.08);
@@ -24,7 +21,6 @@ def show():
             background-color: #f4f7fa;
         }
 
-        /* === App Title Styling === */
         .main > div:first-child h1 {
             color: #0a3d62;
             font-size: 2.8rem;
@@ -32,7 +28,6 @@ def show():
             margin-bottom: 0.5rem;
         }
 
-        /* === Sidebar Glass Effect === */
         section[data-testid="stSidebar"] {
             background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(14px) saturate(160%);
@@ -41,7 +36,6 @@ def show():
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
         }
 
-        /* === Sidebar Navigation Styling === */
         section[data-testid="stSidebar"] .st-radio > div {
             background: rgba(255, 255, 255, 0.85);
             color: #000;
@@ -55,7 +49,6 @@ def show():
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
-        /* === Info box styling === */
         .stAlert {
             background-color: rgba(232, 244, 253, 0.9);
             border-left: 6px solid #1f77b4;
@@ -63,7 +56,6 @@ def show():
             padding: 1rem;
         }
 
-        /* === Success message styling === */
         .stSuccess {
             background-color: rgba(230, 255, 230, 0.9);
             border-left: 6px solid #33cc33;
@@ -73,224 +65,159 @@ def show():
         </style>
     """, unsafe_allow_html=True)
 
-    st.markdown(
-        """
+    # --- Page Title ---
+    st.markdown("""
         <div style='text-align: center;'>
-            <h2>✍🏼 Editor Tools</h2>
-            <p style='color: grey;'>This page allows authorized users to update or delete submitted records.</p>
+            <h2> 🧶 PM₂.₅ Concentration Calculator </h2>
+            <p style='color: grey;'>Enter Pre and Post Weights to calculate PM₂.₅ concentrations in µg/m³ .</p>
         </div>
         <hr>
-        """,
-        unsafe_allow_html=True
+    """, unsafe_allow_html=True)
+
+
+    # --- Load Merged Data ---
+    try:
+        merged_data = spreadsheet.worksheet(MERGED_SHEET).get_all_records()
+        df_merged = pd.DataFrame(merged_data)
+        df_merged.columns = df_merged.columns.str.strip()
+
+        if not {"Elapsed Time Diff (min)", "Average Flow Rate (L/min)"}.issubset(df_merged.columns):
+            st.error("❌ Required columns missing: 'Elapsed Time Diff (min)', 'Average Flow Rate (L/min)'")
+            st.stop()
+    except Exception as e:
+        st.error(f"❌ Failed to load merged sheet: {e}")
+        st.stop()
+
+    # --- Site Filter ---
+    if "Site" in df_merged.columns:
+        try:
+            available_sites = sorted(df_merged["Site"].dropna().unique())
+            site_options = ["All Sites"] + available_sites
+            most_recent_site = df_merged["Site"].dropna().iloc[0] if not df_merged.empty else "All Sites"
+
+            st.subheader("🗺️ Filter by Site")
+            selected_site = st.selectbox("📍 Select Site", options=site_options, index=site_options.index(most_recent_site))
+            if selected_site != "All Sites":
+                filtered_df = df_merged[df_merged["Site"] == selected_site].copy()
+            else:
+                filtered_df = df_merged.copy()
+        except Exception as e:
+            st.warning(f"⚠ Could not auto-select site: {e}")
+            filtered_df = df_merged.copy()
+    else:
+        st.warning("⚠ 'Site' column not found — skipping site filter.")
+        filtered_df = df_merged.copy()
+
+    # --- Date Filter ---
+    if "Date _Start" in filtered_df.columns:
+        try:
+            filtered_df = filtered_df.copy()
+            filtered_df["Date _Start"] = pd.to_datetime(filtered_df["Date _Start"], errors="coerce")
+            filtered_df = filtered_df.dropna(subset=["Date _Start"])
+
+            min_date = filtered_df["Date _Start"].min().date()
+            max_date = filtered_df["Date _Start"].max().date()
+
+            st.subheader("📅 Filter by Start Date")
+            date_range = st.date_input("Select Date Range", value=(min_date, max_date), min_value=min_date, max_value=max_date)
+
+            if isinstance(date_range, tuple) and len(date_range) == 2:
+                start_date, end_date = date_range
+                mask = (filtered_df["Date _Start"].dt.date >= start_date) & (filtered_df["Date _Start"].dt.date <= end_date)
+                filtered_df = filtered_df.loc[mask].copy()
+        except Exception as e:
+            st.warning(f"⚠ Could not filter by date: {e}")
+    else:
+        st.warning("⚠ 'Date_Start' column not found — skipping date filter.")
+
+    # --- Add Pre/Post Weight Columns Safely ---
+    filtered_df = filtered_df.copy()
+    filtered_df["Pre Weight (g)"] = 0.0
+    filtered_df["Post Weight (g)"] = 0.0
+
+    # --- Data Editor ---
+    st.subheader("📊 Enter Weights")
+    editable_columns = ["Pre Weight (g)", "Post Weight (g)"]
+    edited_df = st.data_editor(
+        filtered_df,
+        num_rows="dynamic",
+        use_container_width=True,
+        column_config={
+            "Pre Weight (g)": st.column_config.NumberColumn("Pre Weight (g)", help="Mass before sampling (grams)"),
+            "Post Weight (g)": st.column_config.NumberColumn("Post Weight (g)", help="Mass after sampling (grams)")
+        },
+        disabled=[col for col in filtered_df.columns if col not in editable_columns],
     )
 
-    # --- Utility Functions ---
-    def safe_float(val, default=0.0):
+    # --- PM₂.₅ Calculation Function ---
+    def calculate_pm(row):
         try:
-            return float(val)
-        except (ValueError, TypeError):
-            return default
+            elapsed = float(row["Elapsed Time Diff (min)"])
+            flow = float(row["Average Flow Rate (L/min)"])
+            pre = float(row["Pre Weight (g)"])
+            post = float(row["Post Weight (g)"])
+            mass_mg = (post - pre) * 1000
 
-    def render_record_edit_form(record_data):
-        weather_options = ["Clear", "Cloudy", "Rainy", "Foggy", "Windy", "Hazy", "Dusty", "Other"]
-        wind_dir_options = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "Variable", "Calm"]
+            if elapsed < 1200:
+                return "Elapsed < 1200"
+            if flow <= 0.05:
+                return "Invalid Flow"
+            if post < pre:
+                return "Post < Pre"
 
-        def get_str(key, default=""):
-            return str(record_data.get(key, default))
+            volume_m3 = (flow * elapsed) / 1000
+            if volume_m3 == 0:
+                return "Zero Volume"
 
-        def get_float(key, default=0.0):
-            try:
-                return float(record_data.get(key, default))
-            except (ValueError, TypeError):
-                return default
+            conc = (mass_mg * 1000) / volume_m3
+            return round(conc, 2)
+        except Exception as e:
+            return f"Error: {e}"
 
-        def get_date(key):
-            try:
-                return pd.to_datetime(record_data.get(key)).date()
-            except Exception:
-                return pd.Timestamp.now().date()
+    # --- Calculate PM₂.₅ ---
+    edited_df["PM₂.₅ (µg/m³)"] = edited_df.apply(calculate_pm, axis=1)
 
-        def get_time(key):
-            try:
-                return pd.to_datetime(record_data.get(key)).time()
-            except Exception:
-                return pd.Timestamp.now().time()
+    # --- Display Calculated Data ---
+    st.subheader("📊 Calculated Results")
+    st.dataframe(edited_df, use_container_width=True)
 
-        entry_type = st.selectbox("Entry Type", ["START", "STOP"], index=["START", "STOP"].index(get_str("Entry Type", "START")))
-        site_id = st.text_input("ID", value=get_str("ID"))
-        site = st.text_input("Site", value=get_str("Site"))
-        monitoring_officer = st.text_input("Monitoring Officer", value=get_str("Monitoring Officer"))
-        driver = st.text_input("Driver", value=get_str("Driver"))
-        date = st.date_input("Date", value=get_date("Date"))
-        time = st.time_input("Time", value=get_time("Time"))
-        temperature = st.number_input("Temperature (°C)", value=get_float("Temperature (°C)"), step=0.1)
-        rh = st.number_input("Relative Humidity (%)", value=get_float("RH (%)"), step=0.1)
-        pressure = st.number_input("Pressure (mbar)", value=get_float("Pressure (mbar)"), step=0.1)
+    # --- CSV Export ---
+    csv = edited_df.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label="⬇️ Download Results as CSV",
+        data=csv,
+        file_name="pm25_results.csv",
+        mime="text/csv"
+    )
 
-        weather_value = get_str("Weather", "Other")
-        weather = st.selectbox("Weather", weather_options, index=weather_options.index(weather_value) if weather_value in weather_options else len(weather_options) - 1)
+    if st.button("✅ Save Edited DataFrame"):
+        try:
+            safe_df = edited_df.copy()
+            for col in safe_df.select_dtypes(include=["datetime64[ns]", "datetime64", "object"]):
+                if pd.api.types.is_datetime64_any_dtype(safe_df[col]):
+                    safe_df[col] = safe_df[col].dt.strftime("%Y-%m-%d %H:%M:%S")
+            rows_to_save = safe_df.values.tolist()
+            st.write(f"First row to save: {rows_to_save[0]}")
 
-        wind_speed = st.number_input("Wind Speed (m/s)", value=get_float("Wind Speed (m/s)"), step=0.1)
-        wind_dir_value = get_str("Wind Direction", "Variable")
-        wind_direction = st.selectbox("Wind Direction", wind_dir_options, index=wind_dir_options.index(wind_dir_value) if wind_dir_value in wind_dir_options else wind_dir_options.index("Variable"))
-
-        elapsed_time = st.number_input("Elapsed Time (min)", value=get_float("Elapsed Time (min)"), step=1.0)
-        flow_rate = st.number_input("Flow Rate (L/min)", value=get_float("Flow Rate (L/min)"), step=0.1)
-        observation = st.text_area("Observation", value=get_str("Observation"))
-
-        return [
-            entry_type, site_id, site, monitoring_officer, driver,
-            date.strftime("%Y-%m-%d"), time.strftime("%H:%M:%S"),
-            temperature, rh, pressure, weather,
-            wind_speed, wind_direction,
-            elapsed_time, flow_rate, observation
-        ]
-
-    def handle_merge_logic():
-        df = load_data_from_sheet(sheet)
-        merged_df = merge_start_stop(df)
-
-        if not merged_df.empty:
-            save_merged_data_to_sheet(merged_df, spreadsheet, sheet_name=MERGED_SHEET)
-            st.success("🩸 Merged records updated.")
-            st.dataframe(merged_df, use_container_width=True)
-        else:
-            st.warning("⚠ No matching records to merge.")
-
-    # --- Sidebar Filter Controls ---
-    with st.expander("🔍 Filter Records"):
-        df_all = load_data_from_sheet(sheet)
-        date_column = None
-        for col in df_all.columns:
-            if col.strip().lower() in ["date", "sampling date", "start date"]:
-                date_column = col
-                break
-                if not date_column:
-                    st.error("☠️ No 'Date' column found. Please check your Google Sheet headers.")
-                    st.stop()
-
-    df_all["Date"] = pd.to_datetime(df_all[date_column], errors='coerce').dt.date
-    unique_sites = sorted(df_all["Site"].dropna().unique())
-    selected_site = st.sidebar.selectbox("Filter by Site", ["All"] + unique_sites)
-    selected_date = st.sidebar.date_input("Filter by Date", value=None)
-
-    filtered_df = df_all.copy()
-    if selected_site != "All":
-        filtered_df = filtered_df[filtered_df["Site"] == selected_site]
-    if selected_date:
-        filtered_df = filtered_df[filtered_df["Date"] == selected_date]
-
-    # --- Edit Submitted Record ---
-    def edit_submitted_record():
-        df = filtered_df.copy()
-        if df.empty:
-            st.warning("⚠ No records available to edit with selected filters.")
-            return
-
-        df["Submitted At"] = pd.to_datetime(df["Submitted At"], errors='coerce')
-        df["Row Number"] = df.index + 2
-        df["Record ID"] = df.apply(lambda x: f"{x['Entry Type']} | {x['ID']} | {x['Site']} | {x['Submitted At'].strftime('%Y-%m-%d %H:%M')}", axis=1)
-
-        if 'selected_record' not in st.session_state:
-            st.session_state.selected_record = None
-        if 'edit_expanded' not in st.session_state:
-            st.session_state.edit_expanded = False
-
-        record_options = [""] + df["Record ID"].tolist()
-        selected = st.selectbox("Select a record to edit:", record_options, index=record_options.index(st.session_state.selected_record) if st.session_state.selected_record in record_options else 0)
-
-        if selected and selected != st.session_state.selected_record:
-            st.session_state.selected_record = selected
-            st.session_state.edit_expanded = True
-
-        with st.expander("✍️ Edit Submitted Record", expanded=st.session_state.edit_expanded):
-            if not st.session_state.selected_record:
-                st.info("🧐 Please select a record from the dropdown above.")
+            sheet_titles = [ws.title for ws in spreadsheet.worksheets()]
+            if CALC_SHEET not in sheet_titles:
+                calc_ws = spreadsheet.add_worksheet(title=CALC_SHEET, rows="1000", cols=str(len(safe_df.columns)))
+                calc_ws.append_row(safe_df.columns.tolist())
             else:
-                try:
-                    selected_index = df[df["Record ID"] == st.session_state.selected_record].index[0]
-                    record_data = df.loc[selected_index]
-                    row_number = record_data["Row Number"]
+                calc_ws = spreadsheet.worksheet(CALC_SHEET)
 
-                    with st.form("edit_form"):
-                        updated_data = render_record_edit_form(record_data)
-                        submitted = st.form_submit_button("Update Record")
+            calc_ws.append_rows(rows_to_save, value_input_option="USER_ENTERED")
+            st.success(f"✅ Saved {len(rows_to_save)} rows successfully.")
+        except Exception as e:
+            st.error(f"❌ Error saving data: {e}")
 
-                        if submitted:
-                            for col_index, value in enumerate(updated_data, start=1):
-                                sheet.update_cell(row_number, col_index, value)
-
-                            st.success("🧠 Record updated successfully!")
-                            st.session_state.selected_record = None
-                            st.session_state.edit_expanded = False
-
-                            handle_merge_logic()
-                except Exception as e:
-                    st.error(f"☠️ Error: {e}")
-
-    edit_submitted_record()
-
-    # --- Delete from Submitted Records ---
-    st.subheader("🗑️ Delete from Submitted Records")
-    df_submitted = filtered_df.copy()
-
-    if df_submitted.empty:
-        st.info("No submitted records available with current filter.")
-    else:
-        df_submitted["Row Number"] = df_submitted.index + 2
-        df_submitted["Record ID"] = df_submitted.apply(lambda x: f"{x['Entry Type']} | {x['ID']} | {x['Site']} | {x['Submitted At']}", axis=1)
-        selected_record = st.selectbox("Select submitted record to delete:", [""] + df_submitted["Record ID"].tolist())
-
-        if selected_record:
-            row_to_delete = int(df_submitted[df_submitted["Record ID"] == selected_record]["Row Number"].values[0])
-            if st.checkbox("✅ Confirm deletion of submitted record"):
-                if st.button("🗑️ Delete Submitted Record"):
-                    deleted_by = st.session_state.username
-                    delete_row(sheet, row_to_delete, deleted_by)
-                    st.success(f"✅ Submitted record deleted by {deleted_by} and backed up successfully.")
-                    st.rerun()
-
-    # --- Restore Deleted Records ---
-    st.markdown("---")
-    st.header("🗃️ Restore Deleted Record")
-
-    try:
-        backup_sheet = spreadsheet.worksheet("Deleted Records")
-        deleted_rows = backup_sheet.get_all_values()
-
-        if len(deleted_rows) <= 1:
-            st.info("No deleted records available.")
-        else:
-            headers = deleted_rows[0]
-            records = deleted_rows[1:]
-            df_deleted = pd.DataFrame(records, columns=headers)
-
-            if date_column and date_column in df_deleted.columns:
-                df_deleted["Date"] = pd.to_datetime(df_deleted[date_column], errors='coerce').dt.date
-
-                if selected_site != "All":
-                    df_deleted = df_deleted[df_deleted["Site"] == selected_site]
-                if selected_date:
-                    df_deleted = df_deleted[df_deleted["Date"] == selected_date]
-
-            if df_deleted.empty:
-                st.info("No deleted records match the filter.")
-            else:
-                options = [f"{i + 1}. " + " | ".join(row[:-2]) + f" (Deleted by: {row[-1]})" for i, row in df_deleted.iterrows()]
-                selection_list = [""] + options
-                selected = st.selectbox("Select a deleted record to restore:", selection_list)
-
-                if st.button("↩️ Restore Selected Record", disabled=(selected == "")):
-                    selected_index = options.index(selected)
-                    result = restore_specific_deleted_record(selected_index)
-                    if "🧠" in result:
-                        st.success(result)
-                        st.rerun()
-                    else:
-                        st.error(result)
-
-    except Exception as e:
-        st.error(f"Failed to load deleted records: {e}")
+    if st.checkbox("📖 Show Saved Entries in Sheet"):
+        try:
+            saved_data = spreadsheet.worksheet(CALC_SHEET).get_all_records(head=1)
+            df_saved = pd.DataFrame(saved_data)
+            st.dataframe(df_saved, use_container_width=True)
+        except Exception as e:
+            st.warning(f"⚠ Could not load saved entries: {e}")
 
     # --- Footer ---
     st.markdown("""

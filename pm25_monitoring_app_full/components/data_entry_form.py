@@ -10,9 +10,10 @@ from resource import (
     spreadsheet,
     display_and_merge_data
 )
+from modules.authentication import require_role
 from constants import MERGED_SHEET
 
-from modules.authentication import require_role
+
 
 def show():
     require_role(["admin", "collector","editor"])

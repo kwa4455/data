@@ -5,21 +5,32 @@ from .recovery import reset_password, recover_username
 
 def show_registration_form(sheet):
     st.subheader("🆕 Register")
+
+    # Registration form
     with st.form("register_form"):
         username = st.text_input("Username")
         name = st.text_input("Full Name")
         email = st.text_input("Email")
         password = st.text_input("Password", type="password")
         confirm = st.text_input("Confirm Password", type="password")
-        role = st.selectbox("Role", ["viewer", "editor"])
+        role = st.selectbox("Role", ["viewer", "editor"])  # Can be adjusted later in admin panel
         submitted = st.form_submit_button("Register")
 
         if submitted:
+            # Check if passwords match
             if password != confirm:
                 st.error("❌ Passwords do not match")
+            elif not username or not name or not email or not password:
+                st.error("❌ All fields must be filled in.")
             else:
+                # Register user and move the data to the registration request sheet
                 success, message = register_user_to_sheet(username, name, email, password, role, sheet)
-                st.success(message) if success else st.error(message)
+                if success:
+                    st.success(message)
+                else:
+                    st.error(message)
+
+
 
 def display_password_reset_form(sheet):
     st.subheader("🔑 Reset Password")

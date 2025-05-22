@@ -65,12 +65,7 @@ font_choice = st.sidebar.radio("Font Size", ["Small", "Medium", "Large"],
                                index=["Small", "Medium", "Large"].index(st.session_state.font_size))
 st.session_state.font_size = font_choice
 
-# Reset to default
-if st.sidebar.button("🔄 Reset to Defaults"):
-    st.session_state.theme = "Light"
-    st.session_state.font_size = "Medium"
-    st.success("Reset to Light theme and Medium font!")
-    st.rerun()
+
 
 # Theme settings dictionary
 themes = {
@@ -189,20 +184,6 @@ def generate_css(theme: dict, font_size: str) -> str:
 st.markdown(generate_css(theme, font_size), unsafe_allow_html=True)
 
 
-with st.sidebar:
-    try:
-        st.image("epa-logo.png", width=150)
-    except:
-        pass
-
-    st.markdown("### 🧑‍💻 Developer Information")
-    st.markdown("""
-    - **Developed by:** Clement Mensah Ackaah  
-    - **Email:** clement.ackaah@epa.gov.gh / clementackaah70@gmail.com  
-    - **GitHub:** [Visit GitHub](https://github.com/kwa4455)  
-    - **LinkedIn:** [Visit LinkedIn](https://www.linkedin.com/in/clementmensahackaah)  
-    - **Project Repo:** [Air Quality Dashboard](https://github.com/kwa4455/air-quality-analysis-dashboard)
-    """)
 
 components.html(
     f"""

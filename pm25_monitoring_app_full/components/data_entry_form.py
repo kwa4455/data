@@ -10,7 +10,7 @@ from resource import (
     spreadsheet,
     display_and_merge_data
 )
-from constants import MERGED_SHEET
+from constants import MERGED_SHEET,MAIN_SHEET
 from modules.authentication import require_role
 
 def show():

@@ -5,8 +5,6 @@ from resource import spreadsheet
 from constants import MERGED_SHEET, CALC_SHEET
 from modules.authentication import require_role
 
-import streamlit as st
-import pandas as pd
 
 def show():
     require_role(["admin", "collector", "editor"])

@@ -179,5 +179,4 @@ def show():
         </div>
     """, unsafe_allow_html=True)
 
-# Ensure the show() function is called
-show()
+

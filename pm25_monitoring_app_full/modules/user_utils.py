@@ -5,6 +5,8 @@ from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import streamlit_authenticator as stauth
 
+from gspread.exceptions import WorksheetNotFound 
+
 from constants import SPREADSHEET_ID, USERS_SHEET, REG_REQUESTS_SHEET, LOG_SHEET
 
 # Google Sheets Setup

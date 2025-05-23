@@ -1,112 +1,111 @@
-import sys
-sys.path.append("modules")
-
 import streamlit as st
-import json
-import gspread
-import os
+from modules.authentication import require_role
 
-from oauth2client.service_account import ServiceAccountCredentials
-from streamlit_option_menu import option_menu
+def show():
+    require_role(["admin", "collector", "editor", "supervisor"])
 
-# === Internal Module Imports ===
-from admin.show import show
-from admin.user_management import admin_panel
-from components import (
-    apartment,
-    data_entry_form,
-    edit_data_entry_form,
-    pm25_calculation,
-    supervisor_review_section
-)
-from modules.authentication import login, logout_button
-from modules.user_utils import get_user_role, spreadsheet,ensure_users_sheet
-from resource import load_data_from_sheet, sheet, spreadsheet
-from constants import MERGED_SHEET, CALC_SHEET, USERS_SHEET
+    # Language selection
+    lang = st.selectbox("🌐 Select Language / Pɛ kasa", ["English", "Twi"])
 
-# === Google Sheets Auth ===
-creds_dict = json.loads(st.secrets["GOOGLE_CREDENTIALS"])
-scope = [
-    "https://spreadsheets.google.com/feeds",
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive.file",
-    "https://www.googleapis.com/auth/drive"
-]
-creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-client = gspread.authorize(creds)
+    # Translations
+    text = {
+        "title": {"English": "📋 🛖 Home", "Twi": "📋 🛖 Fie"},
+        "welcome": {
+            "English": "👋 Welcome! We're excited to have you here. Use the navigation below to get started.",
+            "Twi": "👋 Akwaaba! Yɛpɛ sɛ wopɛ sɛ woyɛ adwuma no. Fa akwan no so na yɛ ase."
+        },
+        "nav_instruction": {
+            "English": "🔍 Navigate Based on Your Role",
+            "Twi": "🔍 Fa w'apɛsɛmenmu so kɔ krataa no so"
+        },
+        "note": {
+            "English": "Only the pages for which you have authorization will be available for access.",
+            "Twi": "Wubenya kwan kɔ nkrataa a wunya ho kwan nkutoo so."
+        },
+        "tooltips": {
+            "home": {"English": "Landing page after login", "Twi": "Fie krataa a ɛda kan"},
+            "entry": {"English": "Submit new data entries", "Twi": "To data foforɔ so"},
+            "edit": {"English": "Edit or update submitted entries", "Twi": "Sesa data a wɔde too hɔ"},
+            "calc": {"English": "Calculate PM2.5 concentrations", "Twi": "Bɔ PM2.5 dodow"},
+            "review": {"English": "Supervisors can review and approve entries", "Twi": "Supervisors betumi ahwɛ nsɛm no"},
+            "admin": {"English": "Admin-only access to manage users", "Twi": "Admins nkutoo betumi adi dwuma wɔ ho"}
+        },
+        "footer": {
+            "English": "📢 New updates coming soon! Stay tuned for enhanced analysis features and interactive visualizations.",
+            "Twi": "📢 Nsɛm foforo reba ntɛm! Twɛn nhyehyɛe ne nhwɛanim foforo."
+        },
+        "copyright": {
+            "English": "© 2025 EPA Ghana · Developed by Clement Mensah Ackaah 🦺 · Built with 😍 using Streamlit |",
+            "Twi": "© 2025 EPA Ghana · Clement Mensah Ackaah na ɔbɔɔ ho 🦺 · Yɛde 😍 yɛɛ no wɔ Streamlit so |"
+        },
+        "contact": {"English": "Contact Support", "Twi": "Frɛ Mmoafoɔ"}
+    }
 
-SPREADSHEET_ID = st.secrets["SPREADSHEET_ID"]
-spreadsheet = client.open_by_key(SPREADSHEET_ID)
-users_sheet = ensure_users_sheet(spreadsheet)
-
-
-# === LOGIN GATE ===
-logged_in, authenticator = login(users_sheet)
-if not logged_in:
-    st.stop()
-
-
-
-# === Header ===
-st.title("🇬🇭 EPA Ghana | Air Quality Monitoring| Field Data Entry Platform")
-username = st.session_state.get("username")
-role = st.session_state.get("role")
-st.info(f"👤 Logged in as: **{username}** (Role: `{role}`)")
-
-
-
-
-# === Load Data Once ===
-if "df" not in st.session_state:
-    with st.spinner("🔄 Loading data..."):
-        st.session_state.df = load_data_from_sheet(sheet)
-        st.session_state.sheet = sheet
-        st.session_state.spreadsheet = spreadsheet
-
-# === Navigation ===
-role_pages = {
-    "admin": ["🏘️ Home","📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation", "🗂️ Supervisor Review Section", "⚙️ Admin Panel"],
-    "collector": ["🏘️ Home","📥 Data Entry Form", "✏️ Edit Data Entry Form"],
-    "editor": ["🏘️ Home","📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation"],
-    "supervisor": ["🏘️ Home","⚙️ Admin Panel", "🗂️ Supervisor Review Section"]
-}
-pages = role_pages.get(role, [])
-
-with st.sidebar:
-    st.title("📁 Navigation")
-    if pages:
-        choice = option_menu(
-            menu_title="Go to",
-            options=pages,
-            icons=["cloud-upload", "pencil", "folder", "gear"][:len(pages)],
-            menu_icon="cast",
-            default_index=0,
-        )
-    else:
-        st.warning("No pages available for your role.")
-        choice = None
-
-    st.markdown("---")
-    logout_button(authenticator)
-
-# === Page Routing ===
-if choice == "🏘️ Home":
-    apartment.show()
-elif choice == "📥 Data Entry Form":
-    data_entry_form.show()
-elif choice == "✏️ Edit Data Entry Form":
-    edit_data_entry_form.show()
-elif choice == "🗂️ PM25 Calculation":
-    pm25_calculation.show()
-elif choice == "🗂️ Supervisor Review Section":
-    supervisor_review_section.show()
-elif choice == "⚙️ Admin Panel":
-    admin_panel()
- # --- Footer ---
+    # Custom CSS
     st.markdown("""
+        <style>
+            .nav-item:hover {
+                transform: scale(1.02);
+                transition: transform 0.2s ease;
+                color: #4CAF50 !important;
+            }
+            .footer a {
+                color: inherit;
+                text-decoration: underline;
+            }
+            .home-title {
+                font-size: 2.3em;
+                font-weight: 800;
+                margin-bottom: 0;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Header
+    st.markdown(f"""
+        <div style='text-align: center;'>
+            <div class='home-title'>{text['title'][lang]}</div>
+            <p style='color: grey;'>{text['welcome'][lang]}</p>
+        </div>
+        <hr>
+    """, unsafe_allow_html=True)
+
+    # Navigation
+    st.markdown(f"### {text['nav_instruction'][lang]}")
+    st.markdown(f"""
+        <ul>
+            <li class='nav-item' title="{text['tooltips']['home'][lang]}">🏛️ <strong>{text['title'][lang]}</strong></li>
+            <li class='nav-item' title="{text['tooltips']['entry'][lang]}">🛰️ <strong>Data Entry Form</strong></li>
+            <li class='nav-item' title="{text['tooltips']['edit'][lang]}">🌡️ <strong>Edit Data Form</strong></li>
+            <li class='nav-item' title="{text['tooltips']['calc'][lang]}">🧪 <strong>PM Calculator</strong></li>
+            <li class='nav-item' title="{text['tooltips']['review'][lang]}">📖 <strong>Supervisor & Review Section</strong></li>
+            <li class='nav-item' title="{text['tooltips']['admin'][lang]}">⚙️ <strong>Administrative Panel</strong></li>
+        </ul>
+        <p><em>{text['note'][lang]}</em></p>
+    """, unsafe_allow_html=True)
+
+    # Chat input
+    st.markdown("---")
+    prompt = st.chat_input("Say something and/or attach an image", accept_file=True, file_type=["jpg", "jpeg", "png"])
+    if prompt and prompt.text:
+        st.markdown(prompt.text)
+    if prompt and prompt["files"]:
+        st.image(prompt["files"][0])
+
+    # Feedback
+    sentiment_mapping = ["one", "two", "three", "four", "five"]
+    selected = st.feedback("stars")
+    if selected is not None:
+        st.markdown(f"You selected {sentiment_mapping[selected]} star(s).")
+
+    # Info box
+    st.success(text["footer"][lang])
+
+    # Footer
+    st.markdown(f"""
         <hr style="margin-top: 40px; margin-bottom:10px">
-        <div style='text-align: center; color: grey; font-size: 0.9em;'>
-            © 2025 EPA Ghana · Developed by Clement Mensah Ackaah 🦺 · Built with 😍 using Streamlit | 
-            <a href="mailto:clement.ackaah@epa.gov.gh">Contact Support</a>
+        <div class='footer' style='text-align: center; color: grey; font-size: 0.9em;'>
+            {text['copyright'][lang]}
+            <a href="mailto:clement.ackaah@epa.gov.gh">{text['contact'][lang]}</a>
         </div>
     """, unsafe_allow_html=True)

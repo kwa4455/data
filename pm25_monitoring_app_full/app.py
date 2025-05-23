@@ -89,13 +89,18 @@ pages = role_pages.get(role, [])
 
 with st.sidebar:
     st.title("📁 Navigation")
-    choice = option_menu(
-        menu_title="Go to",
-        options=pages,
-        icons=["cloud-upload", "pencil", "folder", "gear"][:len(pages)],
-        menu_icon="cast",
-        default_index=0,
-    )
+    if pages:
+        choice = option_menu(
+            menu_title="Go to",
+            options=pages,
+            icons=["cloud-upload", "pencil", "folder", "gear"][:len(pages)],
+            menu_icon="cast",
+            default_index=0,
+        )
+    else:
+        st.warning("No pages available for your role.")
+        choice = None
+
     st.markdown("---")
     logout_button(authenticator)
 

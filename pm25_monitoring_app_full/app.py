@@ -52,17 +52,6 @@ if not logged_in:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 # === Header ===
 st.title("🇬🇭 EPA Ghana | Air Quality Monitoring | Field Data Entry Platform")
 username = st.session_state.get("username")

@@ -46,22 +46,6 @@ if not logged_in:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # === Header ===
 st.title("🇬🇭 EPA Ghana | PM2.5 Field Data Platform")
 username = st.session_state.get("username")
@@ -80,10 +64,10 @@ if "df" not in st.session_state:
 
 # === Navigation ===
 role_pages = {
-    "admin": ["📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation", "🗂️ Supervisor Review Section", "⚙️ Admin Panel"],
-    "collector": ["📥 Data Entry Form", "✏️ Edit Data Entry Form"],
-    "editor": ["📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation"],
-    "supervisor": ["⚙️ Admin Panel", "🗂️ Supervisor Review Section"]
+    "admin": ["🏘️ Home","📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation", "🗂️ Supervisor Review Section", "⚙️ Admin Panel"],
+    "collector": ["🏘️ Home","📥 Data Entry Form", "✏️ Edit Data Entry Form"],
+    "editor": ["🏘️ Home","📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation"],
+    "supervisor": ["🏘️ Home","⚙️ Admin Panel", "🗂️ Supervisor Review Section"]
 }
 pages = role_pages.get(role, [])
 
@@ -105,7 +89,9 @@ with st.sidebar:
     logout_button(authenticator)
 
 # === Page Routing ===
-if choice == "📥 Data Entry Form":
+if choice == "🏘️ Home":
+    home.show()
+elif choice == "📥 Data Entry Form":
     data_entry_form.show()
 elif choice == "✏️ Edit Data Entry Form":
     edit_data_entry_form.show()

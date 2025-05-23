@@ -25,7 +25,7 @@ def show():
         html, body, [class*="css"] {
             font-family: 'Poppins', sans-serif;
             background-color: #f4f7fa !important;
-            color: #222 !important;
+            color: #ff0000 !important;
             transition: all 0.3s ease;
         }
 

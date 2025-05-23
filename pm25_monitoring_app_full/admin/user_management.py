@@ -8,7 +8,7 @@ from modules.user_utils import (
     log_registration_event,
     ensure_reg_requests_sheet
 )
-from modules.email_utils import send_email  # <-- Email utility
+from modules.email_utils import send_email
 from constants import REG_REQUESTS_SHEET
 
 def admin_panel():
@@ -78,37 +78,43 @@ def admin_panel():
     usernames = [user["Username"] for user in approved_users]
 
     if usernames:
-        user_to_delete = st.selectbox("","Select a user to delete:", usernames)
+        options = ["-- Select a user --"] + usernames
+        user_to_delete = st.selectbox("Select a user to delete:", options)
 
-        confirm_delete = st.radio(
-            "Are you sure you want to delete this user?",
-            options=["Yes", "No"],
-            index=1,
-            key=f"confirm_delete_{user_to_delete}"
-        )
+        if user_to_delete != "-- Select a user --":
+            confirm_delete = st.radio(
+                "Are you sure you want to delete this user?",
+                options=["Yes", "No"],
+                index=1,
+                key=f"confirm_delete_{user_to_delete}"
+            )
 
-        if confirm_delete == "Yes" and st.button("🚨 Delete Selected User"):
-            deleted_from_users = delete_user_from_users_sheet(user_to_delete, users_sheet)
-            deleted_from_requests = delete_registration_request(user_to_delete, spreadsheet)
+            if confirm_delete == "Yes" and st.button("🚨 Delete Selected User"):
+                deleted_from_users = delete_user_from_users_sheet(user_to_delete, users_sheet)
+                deleted_from_requests = delete_registration_request(user_to_delete, spreadsheet)
 
-            if deleted_from_users and deleted_from_requests:
-                log_registration_event(user_to_delete, "deleted", admin_username, spreadsheet)
-                st.success(f"User '{user_to_delete}' has been successfully deleted.")
-                st.session_state.delete_user_rerun = True
-                st.rerun()
-            else:
-                st.error(f"Failed to delete user '{user_to_delete}'.")
-        elif confirm_delete == "No":
-            st.info(f"User deletion of '{user_to_delete}' was cancelled.")
+                if deleted_from_users or deleted_from_requests:
+                    log_registration_event(user_to_delete, "deleted", admin_username, spreadsheet)
+                    st.success(f"User '{user_to_delete}' has been successfully deleted.")
+                    st.session_state.delete_user_rerun = True
+                    st.rerun()
+                else:
+                    st.error(f"Failed to delete user '{user_to_delete}'.")
+        else:
+            st.info("Please select a user to delete.")
     else:
         st.info("No approved users to manage.")
 
 def delete_user_from_users_sheet(username, users_sheet):
     data = users_sheet.get_all_values()
-    for i, row in enumerate(data):
-        if i == 0:
-            continue
-        if row[0] == username:
-            users_sheet.delete_rows(i + 1)
+    header = data[0]
+    try:
+        username_col_index = header.index("Username")
+    except ValueError:
+        return False
+
+    for i, row in enumerate(data[1:], start=2):  # Skip header
+        if row[username_col_index].strip().lower() == username.strip().lower():
+            users_sheet.delete_rows(i)
             return True
     return False

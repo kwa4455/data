@@ -16,10 +16,8 @@ from modules.authentication import require_role
 
 
 def show():
-    # Require specific roles
     require_role(["admin", "collector", "editor"])
-
-    # Add custom CSS for styling and hover animation
+    # Custom CSS and fonts for styling
     st.markdown("""
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
         <style>
@@ -29,6 +27,7 @@ def show():
             background-color: #f4f7fa;
         }
 
+        /* Header */
         .main > div:first-child h1 {
             color: #0a3d62;
             font-size: 2.5rem;
@@ -37,41 +36,59 @@ def show():
             font-weight: 600;
         }
 
-        .login-box {
-            background-color: rgba(189, 216, 240, 0.65);
-            border-left: 6px solid #1f77b4;
-            border-radius: 12px;
+        /* Sidebar Styling */
+        section[data-testid="stSidebar"] {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
             padding: 1rem;
-            margin: 1rem 0;
+        }
+
+        /* Sidebar Radio Hover Animation */
+        section[data-testid="stSidebar"] .st-radio > div {
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
+            border-radius: 12px;
+            padding: 0.4rem 0.6rem;
+            margin-bottom: 0.6rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .login-box:hover {
-            transform: scale(1.01);
+        section[data-testid="stSidebar"] .st-radio > div:hover {
+            transform: translateY(-4px) scale(1.02);
             box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
         }
 
-        .login-box p {
-            margin: 0;
-            font-size: 1.1rem;
-            color: #0a3d62;
+        /* Alert Boxes */
+        .stAlert, .stSuccess {
+            padding: 1rem 1.25rem;
+            border-left: 6px solid;
+            border-radius: 10px;
+            margin: 1rem 0;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
+        /* Alert hover animation */
+        .stAlert:hover, .stSuccess:hover {
+            transform: scale(1.01);
+        }
+
+        .stAlert {
+            background-color: #e8f4fd;
+            border-color: #1f77b4;
+        }
+
+        .stSuccess {
+            background-color: #e6ffe6;
+            border-color: #33cc33;
+        }
         </style>
     """, unsafe_allow_html=True)
 
-    # Replace these with your actual session values
-    username = "kwabena"
-    role = "supervisor"
-
-    # Display user info with hover animation
-    st.markdown(f"""
-        <div class="login-box">
-            <p>👤 Logged in as: <strong>{username}</strong> (Role: {role})</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # Heading and subtext
+    # Page content
     st.markdown("""
         <div style='text-align: center;'>
             <h2>📋 Field Monitoring Data Entry</h2>

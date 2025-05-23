@@ -4,47 +4,59 @@ from modules.authentication import require_role
 def show():
     require_role(["admin", "collector", "editor", "supervisor"])
 
-    # Custom CSS for hover and responsiveness
-    st.markdown("""
-        <style>
-            .nav-item:hover {
-                transform: scale(1.02);
-                transition: transform 0.2s ease;
-                color: #4CAF50 !important;
-            }
-            .footer a {
-                color: inherit;
-                text-decoration: underline;
-            }
-        </style>
-    """, unsafe_allow_html=True)
+    # Language selection
+    lang = st.selectbox("🌐 Select Language / Pɛ kasa", ["English", "Twi"])
 
-    # Header
-    st.markdown("""
+    text = {
+        "title": {
+            "English": "📋 🛖 Home",
+            "Twi": "📋 🛖 Fie"
+        },
+        "welcome": {
+            "English": "👋 Welcome!",
+            "Twi": "👋 Akwaaba!"
+        },
+        "navigation_instruction": {
+            "English": "Please navigate through the following pages according to your assigned role:",
+            "Twi": "Mesrɛ, kɔ nkɔfa nkrataa yi so sɛnea w'apɛsɛmenmu te:"
+        },
+        "footer": {
+            "English": "📢 New updates coming soon! Stay tuned for enhanced analysis features and interactive visualizations.",
+            "Twi": "📢 Nsɛm foforo reba ntɛm! Twɛn nhyehyɛe foforo ne nhwɛanim a ɛka ho."
+        },
+        "copyright": {
+            "English": "© 2025 EPA Ghana · Developed by Clement Mensah Ackaah 🦺 · Built with 😍 using Streamlit |",
+            "Twi": "© 2025 EPA Ghana · Clement Mensah Ackaah na ɔbɔɔ ho 🦺 · Yɛde 😍 yɛɛ no wɔ Streamlit so |"
+        },
+        "contact": {
+            "English": "Contact Support",
+            "Twi": "Frɛ Mmoafoɔ"
+        }
+    }
+
+    st.markdown(
+        f"""
         <div style='text-align: center;'>
-            <h2>📋 🛖 Home</h2>
-            <p style='color: grey;'>👋 Welcome!</p>
+            <h2>{text['title'][lang]}</h2>
+            <p style='color: grey;'>{text['welcome'][lang]}</p>
         </div>
         <hr>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
 
-    # Navigation
+    st.markdown(f"**{text['navigation_instruction'][lang]}**")
+
     st.markdown("""
-        ### 🔍 Navigate Based on Your Role
-
-        <ul>
-            <li class='nav-item' title='Landing page after login'>🏛️ <strong>Home</strong></li>
-            <li class='nav-item' title='Submit new data entries'>🛰️ <strong>Data Entry Form</strong></li>
-            <li class='nav-item' title='Edit or update submitted entries'>🌡️ <strong>Edit Data Form</strong></li>
-            <li class='nav-item' title='Calculate PM2.5 concentrations from merged entries'>🧪 <strong>PM Calculator</strong></li>
-            <li class='nav-item' title='Supervisors can review and approve entries'>📖 <strong>Supervisor & Review Section</strong></li>
-            <li class='nav-item' title='Admin-only access to manage users and configurations'>⚙️ <strong>Administrative Panel</strong></li>
-        </ul>
-
-        <p><em>Only the pages for which you have authorization will be available for access.</em></p>
+    - 🏛️ Home
+    - 🛰️ Data entry Form &nbsp; ℹ️ <span title='Collector: Enter raw field data'>🧍‍♂️</span>
+    - 🌡️ Edit Data Form &nbsp; ℹ️ <span title='Editor: Modify existing data entries'>✏️</span>
+    - 🧪 PM Calculator &nbsp; ℹ️ <span title='Calculate PM₂.₅ concentration from sample volume and mass'>⚖️</span>
+    - 📖 Supervisor and Review Section &nbsp; ℹ️ <span title='Supervisor: Review submissions and provide feedback'>🔍</span>
+    - ⚙️ Admin Panel &nbsp; ℹ️ <span title='Admin: Manage users, permissions, and system settings'>🛠️</span>
     """, unsafe_allow_html=True)
 
-    # Chat input
+    # Chat Input
     st.markdown("---")
     prompt = st.chat_input("Say something and/or attach an image", accept_file=True, file_type=["jpg", "jpeg", "png"])
     if prompt and prompt.text:
@@ -58,14 +70,16 @@ def show():
     if selected is not None:
         st.markdown(f"You selected {sentiment_mapping[selected]} star(s).")
 
-    # Info box
-    st.success("📢 New updates coming soon! Stay tuned for enhanced analysis features and interactive visualizations.")
+    # Info
+    st.success(text["footer"][lang])
 
-    # Footer
-    st.markdown("""
+    st.markdown(
+        f"""
         <hr style="margin-top: 40px; margin-bottom:10px">
-        <div class='footer' style='text-align: center; color: grey; font-size: 0.9em;'>
-            © 2025 EPA Ghana · Developed by Clement Mensah Ackaah 🦺 · Built with 😍 using Streamlit | 
-            <a href="mailto:clement.ackaah@epa.gov.gh">Contact Support</a>
+        <div style='text-align: center; color: grey; font-size: 0.9em;'>
+            {text["copyright"][lang]} 
+            <a href="mailto:clement.ackaah@epa.gov.gh">{text["contact"][lang]}</a>
         </div>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )

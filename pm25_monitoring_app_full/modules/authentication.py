@@ -4,38 +4,45 @@ import streamlit_authenticator as stauth
 from .user_utils import load_users_from_sheet, get_user_role
 from .ui_forms import show_registration_form, show_account_recovery
 
-
 def login(sheet):
-    
-
+    # 🧹 Fix for incomplete session state (e.g., role missing)
+    if st.session_state.get("authenticated") and "role" not in st.session_state:
+        st.session_state.clear()
+        st.rerun()
 
     users = load_users_from_sheet(sheet)
 
     authenticator = stauth.Authenticate(
         users,
-        "pm25_app",
-        "abcdef",
+        "pm25_app",  # Cookie name
+        "abcdef",    # Secret key (keep secure)
         cookie_expiry_days=1
     )
 
     with st.container():
-        
         name, auth_status, username = authenticator.login("Login", location="main")
 
         if auth_status is False:
             st.error("❌ Incorrect username or password")
+
         elif auth_status is None:
             st.info("🕒 Please enter your login credentials")
+
         elif auth_status:
+            # ✅ Save user session state
             st.session_state["name"] = name
             st.session_state["username"] = username
             st.session_state["role"] = get_user_role(username, sheet)
             st.session_state["authenticated"] = True
             st.session_state.show_register = False
             st.session_state.show_recovery = False
+
+            # Optional: Rerun if you rely on role-based UI on this page
+            # st.rerun()
+
             return True, authenticator
 
-    # Help options
+    # 🧰 Help Section
     st.divider()
     st.subheader("🔧 Need Help?")
     col1, col2 = st.columns(2)

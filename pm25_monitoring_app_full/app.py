@@ -4,16 +4,13 @@ from modules.authentication import require_role
 def show():
     require_role(["admin", "collector", "editor", "supervisor"])
 
-    # Language selection
+    # Language selection first
     lang = st.selectbox("🌐 Select Language / Pɛ kasa", ["English", "Twi"])
 
     # Translations
     text = {
         "title": {"English": "📋 🛖 Home", "Twi": "📋 🛖 Fie"},
-        "welcome": {
-            "English": "👋 Welcome! We're excited to have you here. Use the navigation below to get started.",
-            "Twi": "👋 Akwaaba! Yɛpɛ sɛ wopɛ sɛ woyɛ adwuma no. Fa akwan no so na yɛ ase."
-        },
+        "welcome": {"English": "👋 Welcome!", "Twi": "👋 Akwaaba!"},
         "nav_instruction": {
             "English": "🔍 Navigate Based on Your Role",
             "Twi": "🔍 Fa w'apɛsɛmenmu so kɔ krataa no so"
@@ -41,7 +38,7 @@ def show():
         "contact": {"English": "Contact Support", "Twi": "Frɛ Mmoafoɔ"}
     }
 
-    # Custom CSS
+    # Custom CSS for hover
     st.markdown("""
         <style>
             .nav-item:hover {
@@ -53,18 +50,13 @@ def show():
                 color: inherit;
                 text-decoration: underline;
             }
-            .home-title {
-                font-size: 2.3em;
-                font-weight: 800;
-                margin-bottom: 0;
-            }
         </style>
     """, unsafe_allow_html=True)
 
     # Header
     st.markdown(f"""
         <div style='text-align: center;'>
-            <div class='home-title'>{text['title'][lang]}</div>
+            <h2>{text['title'][lang]}</h2>
             <p style='color: grey;'>{text['welcome'][lang]}</p>
         </div>
         <hr>

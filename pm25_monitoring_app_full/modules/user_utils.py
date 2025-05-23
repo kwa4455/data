@@ -5,6 +5,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import streamlit_authenticator as stauth
 
+from gspread.exceptions import APIError
 from gspread.exceptions import WorksheetNotFound 
 
 from constants import SPREADSHEET_ID, USERS_SHEET, REG_REQUESTS_SHEET, LOG_SHEET
@@ -50,17 +51,7 @@ def ensure_log_sheet(spreadsheet):
         sheet.append_row(["Username", "Action", "By", "Timestamp"])
         return sheet
 
-@st.cache_data(ttl=300)
-def get_all_users(sheet):
-    return sheet.get_all_records()
 
-@st.cache_data(ttl=300)
-def get_all_reg_requests(sheet):
-    return sheet.get_all_records()
-
-@st.cache_data(ttl=300)
-def get_all_values(sheet):
-    return sheet.get_all_values()
 
 
 def register_user_request(username, name, email, password, role, spreadsheet):
@@ -145,8 +136,14 @@ def approve_user(user_data, admin_username, spreadsheet):
         log_registration_event(user_data["Username"], "approved", admin_username, spreadsheet)
     return message
 
+
 def load_users_from_sheet(sheet):
-    users = sheet.get_all_records()
+    try:
+        users = sheet.get_all_records()
+    except APIError as e:
+        st.error("❌ Failed to load users from sheet.")
+        st.write("Error details:", e)
+        raise  # Re-raise the error after logging
     credentials = {"usernames": {}}
     for user in users:
         credentials["usernames"][user["Username"]] = {
@@ -155,6 +152,7 @@ def load_users_from_sheet(sheet):
             "password": user["Password"]
         }
     return credentials
+
 
 def get_user_role(username, sheet):
     users = sheet.get_all_records()

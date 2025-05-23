@@ -13,6 +13,7 @@ from streamlit_option_menu import option_menu
 from admin.show import show
 from admin.user_management import admin_panel
 from components import (
+    apartment,
     data_entry_form,
     edit_data_entry_form,
     pm25_calculation,
@@ -90,7 +91,7 @@ with st.sidebar:
 
 # === Page Routing ===
 if choice == "🏘️ Home":
-    home.show()
+    apartment.show()
 elif choice == "📥 Data Entry Form":
     data_entry_form.show()
 elif choice == "✏️ Edit Data Entry Form":

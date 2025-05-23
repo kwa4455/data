@@ -5,11 +5,6 @@ from modules.authentication import require_role
 def show():
     require_role(["admin", "collector", "editor", "supervisor"])
 
-    
-    def generate_css(theme: dict, font_size: str) -> str:
-        return f"""<style> ... (same CSS content as before) ... </style>"""
-
-    st.markdown(generate_css(theme, font_size), unsafe_allow_html=True)
 
     st.markdown("🛖 Home")
     st.markdown("""

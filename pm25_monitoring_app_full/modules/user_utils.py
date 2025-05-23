@@ -92,10 +92,14 @@ def delete_registration_request(username, spreadsheet):
     for i, row in enumerate(data):
         if i == 0:
             continue
+        print(f"Checking row {i+1}: {row}")
         if row[0] == username:
+            print(f"Deleting row {i+1} for username {username}")
             sheet.delete_rows(i + 1)
             return True
+    print(f"Username {username} not found for deletion.")
     return False
+
 
 def log_registration_event(username, action, admin_username, spreadsheet):
     sheet = ensure_log_sheet(spreadsheet)

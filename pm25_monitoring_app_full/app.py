@@ -1,85 +1,97 @@
 import streamlit as st
-from modules.authentication import require_role
 
-def show():
-    require_role(["admin", "collector", "editor", "supervisor"])
 
-    # Language selection
-    lang = st.selectbox("🌐 Select Language / Pɛ kasa", ["English", "Twi"])
 
-    text = {
-        "title": {
-            "English": "📋 🛖 Home",
-            "Twi": "📋 🛖 Fie"
-        },
-        "welcome": {
-            "English": "👋 Welcome!",
-            "Twi": "👋 Akwaaba!"
-        },
-        "navigation_instruction": {
-            "English": "Please navigate through the following pages according to your assigned role:",
-            "Twi": "Mesrɛ, kɔ nkɔfa nkrataa yi so sɛnea w'apɛsɛmenmu te:"
-        },
-        "footer": {
-            "English": "📢 New updates coming soon! Stay tuned for enhanced analysis features and interactive visualizations.",
-            "Twi": "📢 Nsɛm foforo reba ntɛm! Twɛn nhyehyɛe foforo ne nhwɛanim a ɛka ho."
-        },
-        "copyright": {
-            "English": "© 2025 EPA Ghana · Developed by Clement Mensah Ackaah 🦺 · Built with 😍 using Streamlit |",
-            "Twi": "© 2025 EPA Ghana · Clement Mensah Ackaah na ɔbɔɔ ho 🦺 · Yɛde 😍 yɛɛ no wɔ Streamlit so |"
-        },
-        "contact": {
-            "English": "Contact Support",
-            "Twi": "Frɛ Mmoafoɔ"
-        }
-    }
+import sys
+import os
+from streamlit_option_menu import option_menu
+from auth.login import login_user
+from auth.logout import logout_user
+from components import (
+    data_entry_form,
+    edit_data_entry_form,
+    pm25_calculation,
+    supervisor_review_section,
+    apartment
+)
+from admin.show import show
+from admin.user_management import admin_panel, require_admin
 
+from resource import load_data_from_sheet, sheet, spreadsheet
+
+
+# Inject styles (define CSS globally)
+def inject_global_css():
     st.markdown(
-        f"""
-        <div style='text-align: center;'>
-            <h2>{text['title'][lang]}</h2>
-            <p style='color: grey;'>{text['welcome'][lang]}</p>
-        </div>
-        <hr>
+        """
+        <style>
+        .css-18e3th9 {padding-top: 1rem;}
+        </style>
         """,
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )
 
-    st.markdown(f"**{text['navigation_instruction'][lang]}**")
+inject_global_css()
 
-    st.markdown("""
-    - 🏛️ Home
-    - 🛰️ Data entry Form &nbsp; ℹ️ <span title='Collector: Enter raw field data'>🧍‍♂️</span>
-    - 🌡️ Edit Data Form &nbsp; ℹ️ <span title='Editor: Modify existing data entries'>✏️</span>
-    - 🧪 PM Calculator &nbsp; ℹ️ <span title='Calculate PM₂.₅ concentration from sample volume and mass'>⚖️</span>
-    - 📖 Supervisor and Review Section &nbsp; ℹ️ <span title='Supervisor: Review submissions and provide feedback'>🔍</span>
-    - ⚙️ Admin Panel &nbsp; ℹ️ <span title='Admin: Manage users, permissions, and system settings'>🛠️</span>
-    """, unsafe_allow_html=True)
+# Login check
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
 
-    # Chat Input
+# Show login form if not logged in
+if not st.session_state.logged_in:
+    login_user()
+    st.stop()
+
+# Role and user info
+username = st.session_state.get("username")
+role = st.session_state.get("role")
+
+# App header
+st.title("🇬🇭 EPA Ghana | PM2.5 Field Data Platform")
+st.info(f"👤 Logged in as: **{username}** (Role: `{role}`)")
+
+# Load data once into session state
+if "df" not in st.session_state:
+    with st.spinner("🔄 Loading data..."):
+        st.session_state.df = load_data_from_sheet(sheet)
+        st.session_state.sheet = sheet
+        st.session_state.spreadsheet = spreadsheet
+
+role_pages = {
+    "admin": [ "🏛️ Home","📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation", "⚙️ Admin Panel"],
+    "collector": ["🏛️ Home","📥 Data Entry Form", "✏️ Edit Data Entry Form"],
+    "editor": ["🏛️ Home","✏️ Edit Data Entry Form", "🗂️ PM25 Calculation"],
+    "supervisor": ["🏛️ Home","🗂️ PM25 Calculation", "🗂️ Supervisor Review Section"]
+}
+
+# Assign pages based on the user's role
+pages = role_pages.get(role, [])
+
+# Sidebar navigation
+with st.sidebar:
+    st.title("📁 Navigation")
+
+    choice = option_menu(
+        menu_title="Go to",
+        options=pages,
+        icons=["cloud-upload", "pencil", "folder", "gear", "clipboard"][:len(pages)],  # Add icons here as needed
+        menu_icon="cast",
+        default_index=0,
+    )
+
     st.markdown("---")
-    prompt = st.chat_input("Say something and/or attach an image", accept_file=True, file_type=["jpg", "jpeg", "png"])
-    if prompt and prompt.text:
-        st.markdown(prompt.text)
-    if prompt and prompt["files"]:
-        st.image(prompt["files"][0])
+    logout_user()
 
-    # Feedback
-    sentiment_mapping = ["one", "two", "three", "four", "five"]
-    selected = st.feedback("stars")
-    if selected is not None:
-        st.markdown(f"You selected {sentiment_mapping[selected]} star(s).")
-
-    # Info
-    st.success(text["footer"][lang])
-
-    st.markdown(
-        f"""
-        <hr style="margin-top: 40px; margin-bottom:10px">
-        <div style='text-align: center; color: grey; font-size: 0.9em;'>
-            {text["copyright"][lang]} 
-            <a href="mailto:clement.ackaah@epa.gov.gh">{text["contact"][lang]}</a>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+# Show corresponding page based on the selection
+if choice == "🏛️ Home":
+    apartment.show()
+elif choice == "📥 Data Entry Form":
+    data_entry_form.show()
+elif choice == "✏️ Edit Data Entry Form":
+    edit_data_entry_form.show()
+elif choice == "🗂️ PM25 Calculation":
+    pm25_calculation.show()
+elif choice == "🗂️ Supervisor Review Section":
+    supervisor_review_section.show()
+elif choice == "⚙️ Admin Panel":
+    admin_panel()

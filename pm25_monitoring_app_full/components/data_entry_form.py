@@ -18,58 +18,75 @@ from modules.authentication import require_role
 def show():
     require_role(["admin", "collector", "editor"])
     
-    # --- Custom Dark Mode CSS ---
+    # --- Custom Light Mode CSS with Hover & Animation ---
     st.markdown("""
         <style>
         html, body, [class*="css"]  {
             font-family: 'Poppins', sans-serif;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-            color: #e0e0e0;
-            background-color: #121212;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.08);
+            color: #222222;
+            background-color: #f4f7fa;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .main > div:first-child h1 {
-            color: #82aaff;
+            color: #0a3d62;
             font-size: 2.8rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
             margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
         }
 
         section[data-testid="stSidebar"] {
-            background: rgba(18, 18, 18, 0.85);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(14px) saturate(160%);
             -webkit-backdrop-filter: blur(14px) saturate(160%);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         section[data-testid="stSidebar"] .st-radio > div {
-            background: rgba(40, 40, 40, 0.85);
-            color: #ddd;
+            background: rgba(245, 245, 245, 1);
+            color: #000;
             border-radius: 12px;
             padding: 0.4rem 0.6rem;
             margin-bottom: 0.5rem;
-            transition: all 0.2s ease;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.3s ease;
         }
         section[data-testid="stSidebar"] .st-radio > div:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(130, 170, 255, 0.7);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(10, 61, 98, 0.3);
+            background-color: #e6f0ff;
         }
 
         .stAlert {
-            background-color: rgba(30, 40, 60, 0.9);
-            border-left: 6px solid #82aaff;
+            background-color: rgba(232, 244, 253, 1);
+            border-left: 6px solid #1f77b4;
             border-radius: 8px;
             padding: 1rem;
-            color: #ccc;
+            color: #1a1a1a;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .stSuccess {
-            background-color: rgba(30, 60, 30, 0.9);
+            background-color: rgba(230, 255, 230, 1);
             border-left: 6px solid #33cc33;
             border-radius: 8px;
             padding: 1rem;
-            color: #cceccc;
+            color: #1a1a1a;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        div[style*="text-align: center;"] p {
+            color: #555555;
+            transition: color 0.3s ease;
+        }
+
+        hr {
+            border-color: #ddd;
+            transition: border-color 0.3s ease;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -78,11 +95,11 @@ def show():
     st.markdown("""
         <div style='text-align: center;'>
             <h2> ✍🏼 Enter Field Observations </h2>
-            <p style='color: #aaa;'>Enter Pre and Post Weights to calculate PM₂.₅ concentrations in µg/m³.</p>
+            <p>Enter Pre and Post Weights to calculate PM₂.₅ concentrations in µg/m³.</p>
         </div>
-        <hr style='border-color: #444;'>
+        <hr>
     """, unsafe_allow_html=True)
-
+    
     ids = ["", '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
     site_id_map = {
         '1': 'Kaneshie First Light',

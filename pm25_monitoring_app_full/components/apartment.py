@@ -51,7 +51,7 @@ def show():
     st.markdown("🛖 Home")
     st.markdown("""
     
-    Navigate through these pages based on your role:
+    Please navigate through the following pages according to your assigned role:
 
     - 🏛️ Home
     - 🛰️ Data entry Form
@@ -60,7 +60,7 @@ def show():
     - 📖 Supervisor and Review Section
     - ⚙️ Admin Panel
 
-    Only authorise page will be visible to for navigation!
+    Only the pages for which you have authorization will be available for access.
     """)
 
     # AQI Education Section

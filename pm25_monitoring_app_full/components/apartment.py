@@ -4,93 +4,76 @@ from modules.authentication import require_role
 def show():
     require_role(["admin", "collector", "editor", "supervisor"])
 
-    # Language selection
+    # Language selection first
     lang = st.selectbox("🌐 Select Language / Pɛ kasa", ["English", "Twi"])
 
-    # Multilingual dictionary
+    # Translations
     text = {
-        "title": {
-            "English": "📋 🛖 Home",
-            "Twi": "📋 🛖 Fie"
+        "title": {"English": "📋 🛖 Home", "Twi": "📋 🛖 Fie"},
+        "welcome": {"English": "👋 Welcome!", "Twi": "👋 Akwaaba!"},
+        "nav_instruction": {
+            "English": "🔍 Navigate Based on Your Role",
+            "Twi": "🔍 Fa w'apɛsɛmenmu so kɔ krataa no so"
         },
-        "welcome": {
-            "English": "👋 Welcome!",
-            "Twi": "👋 Akwaaba!"
+        "note": {
+            "English": "Only the pages for which you have authorization will be available for access.",
+            "Twi": "Wubenya kwan kɔ nkrataa a wunya ho kwan nkutoo so."
         },
-        "navigation_instruction": {
-            "English": "Please navigate through the following pages according to your assigned role:",
-            "Twi": "Mesrɛ, kɔ nkɔfa nkrataa yi so sɛnea w'apɛsɛmenmu te:"
+        "tooltips": {
+            "home": {"English": "Landing page after login", "Twi": "Fie krataa a ɛda kan"},
+            "entry": {"English": "Submit new data entries", "Twi": "To data foforɔ so"},
+            "edit": {"English": "Edit or update submitted entries", "Twi": "Sesa data a wɔde too hɔ"},
+            "calc": {"English": "Calculate PM2.5 concentrations", "Twi": "Bɔ PM2.5 dodow"},
+            "review": {"English": "Supervisors can review and approve entries", "Twi": "Supervisors betumi ahwɛ nsɛm no"},
+            "admin": {"English": "Admin-only access to manage users", "Twi": "Admins nkutoo betumi adi dwuma wɔ ho"}
         },
         "footer": {
             "English": "📢 New updates coming soon! Stay tuned for enhanced analysis features and interactive visualizations.",
-            "Twi": "📢 Nsɛm foforo reba ntɛm! Twɛn nhyehyɛe foforo ne nhwɛanim a ɛka ho."
+            "Twi": "📢 Nsɛm foforo reba ntɛm! Twɛn nhyehyɛe ne nhwɛanim foforo."
         },
         "copyright": {
             "English": "© 2025 EPA Ghana · Developed by Clement Mensah Ackaah 🦺 · Built with 😍 using Streamlit |",
             "Twi": "© 2025 EPA Ghana · Clement Mensah Ackaah na ɔbɔɔ ho 🦺 · Yɛde 😍 yɛɛ no wɔ Streamlit so |"
         },
-        "contact": {
-            "English": "Contact Support",
-            "Twi": "Frɛ Mmoafoɔ"
-        },
-        "tooltips": {
-            "data_entry": {
-                "English": "Collector: Enter raw field data",
-                "Twi": "Collector: Kɔ na kɔhyɛ mfidie mu data"
-            },
-            "edit_data": {
-                "English": "Editor: Modify existing data entries",
-                "Twi": "Editor: Sesa data a ɛwɔ hɔ dedaw"
-            },
-            "pm_calc": {
-                "English": "Calculate PM₂.₅ concentration from sample volume and mass",
-                "Twi": "Bɔ PM₂.₅ a ɛwɔ sample ne dodow so"
-            },
-            "supervisor": {
-                "English": "Supervisor: Review submissions and provide feedback",
-                "Twi": "Supervisor: Hwɛ nsɛm a wɔde too hɔ na ma adwenkyerɛ"
-            },
-            "admin": {
-                "English": "Admin: Manage users, permissions, and system settings",
-                "Twi": "Admin: Hwɛ nnipa, mmoa ho kwan, ne nsɛnhyɛsoɔ"
-            }
-        }
+        "contact": {"English": "Contact Support", "Twi": "Frɛ Mmoafoɔ"}
     }
 
+    # Custom CSS for hover
+    st.markdown("""
+        <style>
+            .nav-item:hover {
+                transform: scale(1.02);
+                transition: transform 0.2s ease;
+                color: #4CAF50 !important;
+            }
+            .footer a {
+                color: inherit;
+                text-decoration: underline;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
     # Header
-    st.markdown(
-        f"""
+    st.markdown(f"""
         <div style='text-align: center;'>
             <h2>{text['title'][lang]}</h2>
             <p style='color: grey;'>{text['welcome'][lang]}</p>
         </div>
         <hr>
-        """,
-        unsafe_allow_html=True
-    )
+    """, unsafe_allow_html=True)
 
-    st.markdown(f"**{text['navigation_instruction'][lang]}**")
-
-    # Pages with tooltips
+    # Navigation
+    st.markdown(f"### {text['nav_instruction'][lang]}")
     st.markdown(f"""
-        <ul style="line-height: 2;">
-            <li>🏛️ Home</li>
-            <li>🛰️ Data entry Form 
-                <span title="{text['tooltips']['data_entry'][lang]}">🧍‍♂️</span>
-            </li>
-            <li>🌡️ Edit Data Form 
-                <span title="{text['tooltips']['edit_data'][lang]}">✏️</span>
-            </li>
-            <li>🧪 PM Calculator 
-                <span title="{text['tooltips']['pm_calc'][lang]}">⚖️</span>
-            </li>
-            <li>📖 Supervisor and Review Section 
-                <span title="{text['tooltips']['supervisor'][lang]}">🔍</span>
-            </li>
-            <li>⚙️ Admin Panel 
-                <span title="{text['tooltips']['admin'][lang]}">🛠️</span>
-            </li>
+        <ul>
+            <li class='nav-item' title="{text['tooltips']['home'][lang]}">🏛️ <strong>{text['title'][lang]}</strong></li>
+            <li class='nav-item' title="{text['tooltips']['entry'][lang]}">🛰️ <strong>Data Entry Form</strong></li>
+            <li class='nav-item' title="{text['tooltips']['edit'][lang]}">🌡️ <strong>Edit Data Form</strong></li>
+            <li class='nav-item' title="{text['tooltips']['calc'][lang]}">🧪 <strong>PM Calculator</strong></li>
+            <li class='nav-item' title="{text['tooltips']['review'][lang]}">📖 <strong>Supervisor & Review Section</strong></li>
+            <li class='nav-item' title="{text['tooltips']['admin'][lang]}">⚙️ <strong>Administrative Panel</strong></li>
         </ul>
+        <p><em>{text['note'][lang]}</em></p>
     """, unsafe_allow_html=True)
 
     # Chat input
@@ -107,17 +90,14 @@ def show():
     if selected is not None:
         st.markdown(f"You selected {sentiment_mapping[selected]} star(s).")
 
-    # Info
+    # Info box
     st.success(text["footer"][lang])
 
     # Footer
-    st.markdown(
-        f"""
+    st.markdown(f"""
         <hr style="margin-top: 40px; margin-bottom:10px">
-        <div style='text-align: center; color: grey; font-size: 0.9em;'>
-            {text["copyright"][lang]} 
-            <a href="mailto:clement.ackaah@epa.gov.gh">{text["contact"][lang]}</a>
+        <div class='footer' style='text-align: center; color: grey; font-size: 0.9em;'>
+            {text['copyright'][lang]}
+            <a href="mailto:clement.ackaah@epa.gov.gh">{text['contact'][lang]}</a>
         </div>
-        """,
-        unsafe_allow_html=True
-    )
+    """, unsafe_allow_html=True)

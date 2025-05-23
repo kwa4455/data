@@ -16,8 +16,9 @@ from modules.authentication import require_role
 
 
 def show():
+    # Commented out role requirement (no auth system in use)
     require_role(["admin", "collector", "editor"])
-    # Custom CSS and fonts for styling
+
     st.markdown("""
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
         <style>
@@ -71,7 +72,6 @@ def show():
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
-        /* Alert hover animation */
         .stAlert:hover, .stSuccess:hover {
             transform: scale(1.01);
         }
@@ -88,7 +88,6 @@ def show():
         </style>
     """, unsafe_allow_html=True)
 
-    # Page content
     st.markdown("""
         <div style='text-align: center;'>
             <h2>📋 Field Monitoring Data Entry</h2>

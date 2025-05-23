@@ -16,85 +16,71 @@ from modules.authentication import require_role
 
 
 def show():
-    # Commented out role requirement (no auth system in use)
     require_role(["admin", "collector", "editor"])
-
+    
+    # --- Custom CSS ---
     st.markdown("""
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
         <style>
-        html, body, [class*="css"] {
+        html, body, [class*="css"]  {
             font-family: 'Poppins', sans-serif;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.08);
             color: #1f1f1f;
             background-color: #f4f7fa;
         }
 
-        /* Header */
         .main > div:first-child h1 {
             color: #0a3d62;
-            font-size: 2.5rem;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            font-size: 2.8rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
             margin-bottom: 0.5rem;
-            font-weight: 600;
         }
 
-        /* Sidebar Styling */
         section[data-testid="stSidebar"] {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(14px) saturate(160%);
+            -webkit-backdrop-filter: blur(14px) saturate(160%);
             border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.2);
-            border-radius: 16px;
-            padding: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
         }
 
-        /* Sidebar Radio Hover Animation */
         section[data-testid="stSidebar"] .st-radio > div {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.85);
             color: #000;
             border-radius: 12px;
             padding: 0.4rem 0.6rem;
-            margin-bottom: 0.6rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
         }
-
         section[data-testid="stSidebar"] .st-radio > div:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Alert Boxes */
-        .stAlert, .stSuccess {
-            padding: 1rem 1.25rem;
-            border-left: 6px solid;
-            border-radius: 10px;
-            margin: 1rem 0;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .stAlert:hover, .stSuccess:hover {
-            transform: scale(1.01);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .stAlert {
-            background-color: #e8f4fd;
-            border-color: #1f77b4;
+            background-color: rgba(232, 244, 253, 0.9);
+            border-left: 6px solid #1f77b4;
+            border-radius: 8px;
+            padding: 1rem;
         }
 
         .stSuccess {
-            background-color: #e6ffe6;
-            border-color: #33cc33;
+            background-color: rgba(230, 255, 230, 0.9);
+            border-left: 6px solid #33cc33;
+            border-radius: 8px;
+            padding: 1rem;
         }
         </style>
     """, unsafe_allow_html=True)
 
+    # --- Page Title ---
     st.markdown("""
         <div style='text-align: center;'>
-            <h2>📋 Field Monitoring Data Entry</h2>
-            <p style='color: grey;'>Use this page to input daily observations, instrument readings, and site information.</p>
+            <h2> 🧶 PM₂.₅ Concentration Calculator </h2>
+            <p style='color: grey;'>Enter Pre and Post Weights to calculate PM₂.₅ concentrations in µg/m³ .</p>
         </div>
         <hr>
     """, unsafe_allow_html=True)
+
 
     ids = ["", '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
     site_id_map = {

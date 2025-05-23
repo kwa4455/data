@@ -49,7 +49,7 @@ def show():
         }
 
         section[data-testid="stSidebar"] .st-radio > div {
-            background: #f2f2f2;
+            background: #ff0202;
             color: #111 !important;
             border-radius: 12px;
             padding: 0.4rem 0.6rem;
@@ -66,7 +66,7 @@ def show():
 
         .stAlert {
             background-color: rgba(232, 244, 253, 1);
-            border-left: 6px solid #1f77b4;
+            border-left: 6px solid #144c73;
             border-radius: 8px;
             padding: 1rem;
             color: #111 !important;

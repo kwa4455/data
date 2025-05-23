@@ -48,18 +48,19 @@ def show():
 
     st.markdown(generate_css(theme, font_size), unsafe_allow_html=True)
 
-    st.markdown("## 🌍 About the Dashboard")
+    st.markdown("🛖 Home")
     st.markdown("""
-    ### 📈 Air Quality Analysis Tool
-    Upload, visualize, and monitor air quality data collected from:
+    
+    Navigate through these pages based on your role:
 
-    - 🏛️ Reference Grade Instruments
-    - 🛰️ Quant AQ Monitors
-    - 🌡️ Gravimetric Samplers
-    - 🧪 Clarity Sensors
-    - 📟 AirQo Devices
+    - 🏛️ Home
+    - 🛰️ Data entry Form
+    - 🌡️ Edit Data Form
+    - 🧪 PM Calculator
+    - 📖 Supervisor and Review Section
+    - ⚙️ Admin Panel
 
-    Get insights, analyze seasonal trends, and make informed decisions!
+    Only authorise page will be visible to for navigation!
     """)
 
     # AQI Education Section
@@ -164,12 +165,7 @@ def show():
     # Info
     st.success("📢 New updates coming soon! Stay tuned for enhanced analysis features and interactive visualizations.")
 
-    # Footer
-    st.markdown(f"""
-    <div class="footer">
-        Made with ❤️ by Clement Mensah Ackaah
-    </div>
-    """, unsafe_allow_html=True)
+    
 
     st.markdown("""
         <hr style="margin-top: 40px; margin-bottom:10px">

@@ -82,9 +82,8 @@ if "df" not in st.session_state:
 role_pages = {
     "admin": ["📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation", "🗂️ Supervisor Review Section", "⚙️ Admin Panel"],
     "collector": ["📥 Data Entry Form", "✏️ Edit Data Entry Form"],
-    "editor": ["✏️ Edit Data Entry Form", "🗂️ PM25 Calculation"],
-    "viewer": ["🗂️ PM25 Calculation"],
-    "supervisor": ["🗂️ PM25 Calculation", "🗂️ Supervisor Review Section"]
+    "editor": ["📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation"],
+    "supervisor": ["⚙️ Admin Panel", "🗂️ Supervisor Review Section"]
 }
 pages = role_pages.get(role, [])
 

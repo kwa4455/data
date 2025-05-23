@@ -18,34 +18,34 @@ from modules.authentication import require_role
 def show():
     require_role(["admin", "collector", "editor"])
     
-    # --- Custom CSS ---
+    # --- Custom Dark Mode CSS ---
     st.markdown("""
         <style>
         html, body, [class*="css"]  {
             font-family: 'Poppins', sans-serif;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.08);
-            color: #1f1f1f;
-            background-color: #f4f7fa;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+            color: #e0e0e0;
+            background-color: #121212;
         }
 
         .main > div:first-child h1 {
-            color: #0a3d62;
+            color: #82aaff;
             font-size: 2.8rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
             margin-bottom: 0.5rem;
         }
 
         section[data-testid="stSidebar"] {
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(18, 18, 18, 0.85);
             backdrop-filter: blur(14px) saturate(160%);
             -webkit-backdrop-filter: blur(14px) saturate(160%);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.85);
         }
 
         section[data-testid="stSidebar"] .st-radio > div {
-            background: rgba(255, 255, 255, 0.85);
-            color: #000;
+            background: rgba(40, 40, 40, 0.85);
+            color: #ddd;
             border-radius: 12px;
             padding: 0.4rem 0.6rem;
             margin-bottom: 0.5rem;
@@ -53,21 +53,23 @@ def show():
         }
         section[data-testid="stSidebar"] .st-radio > div:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(130, 170, 255, 0.7);
         }
 
         .stAlert {
-            background-color: rgba(232, 244, 253, 0.9);
-            border-left: 6px solid #1f77b4;
+            background-color: rgba(30, 40, 60, 0.9);
+            border-left: 6px solid #82aaff;
             border-radius: 8px;
             padding: 1rem;
+            color: #ccc;
         }
 
         .stSuccess {
-            background-color: rgba(230, 255, 230, 0.9);
+            background-color: rgba(30, 60, 30, 0.9);
             border-left: 6px solid #33cc33;
             border-radius: 8px;
             padding: 1rem;
+            color: #cceccc;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -75,12 +77,11 @@ def show():
     # --- Page Title ---
     st.markdown("""
         <div style='text-align: center;'>
-            <h2> ✍🏼 Enter Field Obesavations </h2>
-            <p style='color: grey;'>Enter Pre and Post Weights to calculate PM₂.₅ concentrations in µg/m³ .</p>
+            <h2> ✍🏼 Enter Field Observations </h2>
+            <p style='color: #aaa;'>Enter Pre and Post Weights to calculate PM₂.₅ concentrations in µg/m³.</p>
         </div>
-        <hr>
+        <hr style='border-color: #444;'>
     """, unsafe_allow_html=True)
-
 
     ids = ["", '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
     site_id_map = {

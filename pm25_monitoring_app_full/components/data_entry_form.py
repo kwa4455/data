@@ -13,71 +13,72 @@ from resource import (
 from constants import MERGED_SHEET,MAIN_SHEET
 from modules.authentication import require_role
 
-def show():
-    require_role(["admin", "collector", "editor"])
-    
 
-    
-    # Inject Google Fonts and custom CSS for glassmorphism and font clarity
+
+def show():
+    # Require specific roles
+    require_role(["admin", "collector", "editor"])
+
+    # Add custom CSS for styling and hover animation
     st.markdown("""
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
         <style>
-        html, body, [class*="css"]  {
+        html, body, [class*="css"] {
             font-family: 'Poppins', sans-serif;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.08);
             color: #1f1f1f;
             background-color: #f4f7fa;
         }
+
         .main > div:first-child h1 {
             color: #0a3d62;
-            font-size: 2.8rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            font-size: 2.5rem;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.1);
             margin-bottom: 0.5rem;
+            font-weight: 600;
         }
-        section[data-testid="stSidebar"] {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(14px) saturate(160%);
-            -webkit-backdrop-filter: blur(14px) saturate(160%);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-        }
-        section[data-testid="stSidebar"] .st-radio > div {
-            background: rgba(255, 255, 255, 0.85);
-            color: #000;
-            border-radius: 12px;
-            padding: 0.4rem 0.6rem;
-            margin-bottom: 0.5rem;
-            transition: all 0.2s ease;
-        }
-        section[data-testid="stSidebar"] .st-radio > div:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-        .stAlert {
-            background-color: rgba(232, 244, 253, 0.9);
+
+        .login-box {
+            background-color: rgba(189, 216, 240, 0.65);
             border-left: 6px solid #1f77b4;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 1rem;
+            margin: 1rem 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .stSuccess {
-            background-color: rgba(230, 255, 230, 0.9);
-            border-left: 6px solid #33cc33;
-            border-radius: 8px;
-            padding: 1rem;
+
+        .login-box:hover {
+            transform: scale(1.01);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
         }
+
+        .login-box p {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #0a3d62;
+        }
+
         </style>
     """, unsafe_allow_html=True)
 
-    st.markdown(
-        """
+    # Replace these with your actual session values
+    username = "kwabena"
+    role = "supervisor"
+
+    # Display user info with hover animation
+    st.markdown(f"""
+        <div class="login-box">
+            <p>👤 Logged in as: <strong>{username}</strong> (Role: {role})</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Heading and subtext
+    st.markdown("""
         <div style='text-align: center;'>
             <h2>📋 Field Monitoring Data Entry</h2>
             <p style='color: grey;'>Use this page to input daily observations, instrument readings, and site information.</p>
         </div>
         <hr>
-        """,
-        unsafe_allow_html=True
-    )
+    """, unsafe_allow_html=True)
 
     ids = ["", '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
     site_id_map = {

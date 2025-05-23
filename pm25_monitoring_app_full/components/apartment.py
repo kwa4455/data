@@ -15,7 +15,7 @@ def show():
             "Twi": "👋 Akwaaba! Yɛpɛ sɛ wopɛ sɛ woyɛ adwuma no. Fa akwan no so na yɛ ase."
         },
         "nav_instruction": {
-            "English": "🔍 Navigate Based on Your Role",
+            "English": "🔍 Use the Sidebar to Navigate Based on Your Role",
             "Twi": "🔍 Fa w'apɛsɛmenmu so kɔ krataa no so"
         },
         "note": {

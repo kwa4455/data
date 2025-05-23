@@ -78,7 +78,7 @@ def admin_panel():
     usernames = [user["Username"] for user in approved_users]
 
     if usernames:
-        user_to_delete = st.selectbox("Select a user to delete:", usernames)
+        user_to_delete = st.selectbox("","Select a user to delete:", usernames)
 
         confirm_delete = st.radio(
             "Are you sure you want to delete this user?",

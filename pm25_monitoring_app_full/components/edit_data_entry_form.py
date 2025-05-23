@@ -247,10 +247,11 @@ def show():
     except Exception as e:
         st.error(f"Failed to load deleted records: {e}")
 
-    # --- Footer ---
+     # --- Footer ---
     st.markdown("""
         <hr style="margin-top: 40px; margin-bottom:10px">
         <div style='text-align: center; color: grey; font-size: 0.9em;'>
-            © 2025 EPA Ghana · Developed by Clement Mensah Ackaah 🦺 · Built with 😍 using Streamlit
+            © 2025 EPA Ghana · Developed by Clement Mensah Ackaah 🦺 · Built with 😍 using Streamlit | 
+            <a href="mailto:clement.ackaah@epa.gov.gh">Contact Support</a>
         </div>
     """, unsafe_allow_html=True)

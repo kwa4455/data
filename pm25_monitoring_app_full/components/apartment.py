@@ -5,8 +5,16 @@ from modules.authentication import require_role
 def show():
     require_role(["admin", "collector", "editor", "supervisor"])
 
-
-    st.markdown("🛖 Home")
+     st.markdown(
+        """
+        <div style='text-align: center;'>
+            <h2>📋 🛖 Home </h2>
+            <p style='color: grey;'>Use this page to input daily observations, instrument readings, and site information.</p>
+        </div>
+        <hr>
+        """,
+        unsafe_allow_html=True
+    )
     st.markdown("""
     
     Please navigate through the following pages according to your assigned role:

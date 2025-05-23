@@ -8,6 +8,6 @@ streamlit-extras
 requests
 streamlit-option-menu
 smtplib
-email-validator
+email-validator 
 
 

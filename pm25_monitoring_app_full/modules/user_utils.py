@@ -50,6 +50,19 @@ def ensure_log_sheet(spreadsheet):
         sheet.append_row(["Username", "Action", "By", "Timestamp"])
         return sheet
 
+@st.cache_data(ttl=300)
+def get_all_users(sheet):
+    return sheet.get_all_records()
+
+@st.cache_data(ttl=300)
+def get_all_reg_requests(sheet):
+    return sheet.get_all_records()
+
+@st.cache_data(ttl=300)
+def get_all_values(sheet):
+    return sheet.get_all_values()
+
+
 def register_user_request(username, name, email, password, role, spreadsheet):
     sheet = ensure_reg_requests_sheet(spreadsheet)
     requests = sheet.get_all_records()

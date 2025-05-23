@@ -89,16 +89,26 @@ def register_user_to_sheet(username, name, email, password, role, sheet, is_hash
 def delete_registration_request(username, spreadsheet):
     sheet = ensure_reg_requests_sheet(spreadsheet)
     data = sheet.get_all_values()
-    for i, row in enumerate(data):
-        if i == 0:
-            continue
-        print(f"Checking row {i+1}: {row}")
-        if row[0] == username:
-            print(f"Deleting row {i+1} for username {username}")
-            sheet.delete_rows(i + 1)
+
+    # Find the index of the "Username" column in the header row (first row)
+    header = data[0]
+    try:
+        username_col_index = header.index("Username")
+    except ValueError:
+        print("Error: 'Username' column not found in header")
+        return False
+
+    for i, row in enumerate(data[1:], start=2):  # start=2 for 1-based sheet rows skipping header
+        print(f"Checking row {i}: {row}")
+        # Check with case-insensitive comparison and strip whitespace
+        if row[username_col_index].strip().lower() == username.strip().lower():
+            print(f"Deleting row {i} for username '{username}'")
+            sheet.delete_rows(i)
             return True
-    print(f"Username {username} not found for deletion.")
+
+    print(f"Username '{username}' not found for deletion.")
     return False
+
 
 
 def log_registration_event(username, action, admin_username, spreadsheet):

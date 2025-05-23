@@ -64,7 +64,7 @@ if not logged_in:
 
 
 # === Header ===
-st.title("🇬🇭 EPA Ghana | PM2.5 Field Data Platform")
+st.title("🇬🇭 EPA Ghana | Air Quality Monitoring | Field Data Entry Platform")
 username = st.session_state.get("username")
 role = st.session_state.get("role")
 st.info(f"👤 Logged in as: **{username}** (Role: {role})")

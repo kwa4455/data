@@ -3,7 +3,7 @@ import streamlit.components.v1 as cp
 from modules.authentication import require_role
 
 def show():
-    require_role(["admin", "collector", "editor",supervisor])
+    require_role(["admin", "collector", "editor","supervisor"])
 
     # Set defaults
     if "theme" not in st.session_state:

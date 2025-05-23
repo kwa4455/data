@@ -75,7 +75,7 @@ def show():
     # --- Page Title ---
     st.markdown("""
         <div style='text-align: center;'>
-            <h2> 🧶 PM₂.₅ Concentration Calculator </h2>
+            <h2> ✍🏼 Enter Field Obesavations </h2>
             <p style='color: grey;'>Enter Pre and Post Weights to calculate PM₂.₅ concentrations in µg/m³ .</p>
         </div>
         <hr>

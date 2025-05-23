@@ -15,26 +15,29 @@ from modules.authentication import require_role
 
 
 
+
 def show():
     require_role(["admin", "collector", "editor"])
     
-    # --- Custom Light Mode CSS with Hover & Animation ---
+    # --- Custom Light Mode CSS ---
     st.markdown("""
         <style>
-        html, body, [class*="css"]  {
+        html, body, [class*="css"] {
             font-family: 'Poppins', sans-serif;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.08);
-            color: #222222;
-            background-color: #f4f7fa;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: #f4f7fa !important;
+            color: #222 !important;
+            transition: all 0.3s ease;
+        }
+
+        h1, h2, h3, h4, h5, h6, p, label, span, div {
+            color: #222 !important;
         }
 
         .main > div:first-child h1 {
-            color: #0a3d62;
+            color: #0a3d62 !important;
             font-size: 2.8rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
             margin-bottom: 0.5rem;
-            transition: color 0.3s ease;
         }
 
         section[data-testid="stSidebar"] {
@@ -43,21 +46,21 @@ def show():
             -webkit-backdrop-filter: blur(14px) saturate(160%);
             border: 1px solid rgba(0, 0, 0, 0.1);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         section[data-testid="stSidebar"] .st-radio > div {
-            background: rgba(245, 245, 245, 1);
-            color: #000;
+            background: #f2f2f2;
+            color: #111 !important;
             border-radius: 12px;
             padding: 0.4rem 0.6rem;
             margin-bottom: 0.5rem;
             cursor: pointer;
-            transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.3s ease;
+            transition: all 0.25s ease;
         }
+
         section[data-testid="stSidebar"] .st-radio > div:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(10, 61, 98, 0.3);
+            box-shadow: 0 6px 16px rgba(10, 61, 98, 0.2);
             background-color: #e6f0ff;
         }
 
@@ -66,8 +69,7 @@ def show():
             border-left: 6px solid #1f77b4;
             border-radius: 8px;
             padding: 1rem;
-            color: #1a1a1a;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            color: #111 !important;
         }
 
         .stSuccess {
@@ -75,18 +77,15 @@ def show():
             border-left: 6px solid #33cc33;
             border-radius: 8px;
             padding: 1rem;
-            color: #1a1a1a;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            color: #111 !important;
         }
 
         div[style*="text-align: center;"] p {
-            color: #555555;
-            transition: color 0.3s ease;
+            color: #555 !important;
         }
 
         hr {
-            border-color: #ddd;
-            transition: border-color 0.3s ease;
+            border-color: #ddd !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -99,6 +98,7 @@ def show():
         </div>
         <hr>
     """, unsafe_allow_html=True)
+
     
     ids = ["", '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
     site_id_map = {

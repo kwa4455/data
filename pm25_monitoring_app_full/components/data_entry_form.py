@@ -34,7 +34,7 @@ def show():
         }
 
         .main > div:first-child h1 {
-            color: #0a3d62 !important;
+            color: #ff0000 !important;
             font-size: 2.8rem;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
             margin-bottom: 0.5rem;

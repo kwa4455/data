@@ -7,6 +7,7 @@ def show():
     # Language selection
     lang = st.selectbox("🌐 Select Language / Pɛ kasa", ["English", "Twi"])
 
+    # Multilingual dictionary
     text = {
         "title": {
             "English": "📋 🛖 Home",
@@ -31,9 +32,32 @@ def show():
         "contact": {
             "English": "Contact Support",
             "Twi": "Frɛ Mmoafoɔ"
+        },
+        "tooltips": {
+            "data_entry": {
+                "English": "Collector: Enter raw field data",
+                "Twi": "Collector: Kɔ na kɔhyɛ mfidie mu data"
+            },
+            "edit_data": {
+                "English": "Editor: Modify existing data entries",
+                "Twi": "Editor: Sesa data a ɛwɔ hɔ dedaw"
+            },
+            "pm_calc": {
+                "English": "Calculate PM₂.₅ concentration from sample volume and mass",
+                "Twi": "Bɔ PM₂.₅ a ɛwɔ sample ne dodow so"
+            },
+            "supervisor": {
+                "English": "Supervisor: Review submissions and provide feedback",
+                "Twi": "Supervisor: Hwɛ nsɛm a wɔde too hɔ na ma adwenkyerɛ"
+            },
+            "admin": {
+                "English": "Admin: Manage users, permissions, and system settings",
+                "Twi": "Admin: Hwɛ nnipa, mmoa ho kwan, ne nsɛnhyɛsoɔ"
+            }
         }
     }
 
+    # Header
     st.markdown(
         f"""
         <div style='text-align: center;'>
@@ -47,16 +71,29 @@ def show():
 
     st.markdown(f"**{text['navigation_instruction'][lang]}**")
 
-    st.markdown("""
-    - 🏛️ Home
-    - 🛰️ Data entry Form &nbsp; ℹ️ <span title='Collector: Enter raw field data'>🧍‍♂️</span>
-    - 🌡️ Edit Data Form &nbsp; ℹ️ <span title='Editor: Modify existing data entries'>✏️</span>
-    - 🧪 PM Calculator &nbsp; ℹ️ <span title='Calculate PM₂.₅ concentration from sample volume and mass'>⚖️</span>
-    - 📖 Supervisor and Review Section &nbsp; ℹ️ <span title='Supervisor: Review submissions and provide feedback'>🔍</span>
-    - ⚙️ Admin Panel &nbsp; ℹ️ <span title='Admin: Manage users, permissions, and system settings'>🛠️</span>
+    # Pages with tooltips
+    st.markdown(f"""
+        <ul style="line-height: 2;">
+            <li>🏛️ Home</li>
+            <li>🛰️ Data entry Form 
+                <span title="{text['tooltips']['data_entry'][lang]}">🧍‍♂️</span>
+            </li>
+            <li>🌡️ Edit Data Form 
+                <span title="{text['tooltips']['edit_data'][lang]}">✏️</span>
+            </li>
+            <li>🧪 PM Calculator 
+                <span title="{text['tooltips']['pm_calc'][lang]}">⚖️</span>
+            </li>
+            <li>📖 Supervisor and Review Section 
+                <span title="{text['tooltips']['supervisor'][lang]}">🔍</span>
+            </li>
+            <li>⚙️ Admin Panel 
+                <span title="{text['tooltips']['admin'][lang]}">🛠️</span>
+            </li>
+        </ul>
     """, unsafe_allow_html=True)
 
-    # Chat Input
+    # Chat input
     st.markdown("---")
     prompt = st.chat_input("Say something and/or attach an image", accept_file=True, file_type=["jpg", "jpeg", "png"])
     if prompt and prompt.text:
@@ -73,6 +110,7 @@ def show():
     # Info
     st.success(text["footer"][lang])
 
+    # Footer
     st.markdown(
         f"""
         <hr style="margin-top: 40px; margin-bottom:10px">

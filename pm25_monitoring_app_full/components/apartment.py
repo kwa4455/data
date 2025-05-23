@@ -21,14 +21,6 @@ def show():
     Only the pages for which you have authorization will be available for access.
     """)
 
-        # Quick Links
-    st.markdown("### 🔗 Quick Links")
-    st.markdown(f"""
-    <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
-        <a href="https://www.epa.gov.gh/" target="_blank" style="padding: 10px 20px; background: {theme["button"]}; color: white; border-radius: 8px; text-decoration: none;">🌐 EPA Website</a>
-        <a href="https://www.airnow.gov/aqi/aqi-basics/" target="_blank" style="padding: 10px 20px; background: {theme["hover"]}; color: white; border-radius: 8px; text-decoration: none;">📖 Learn about AQI</a>
-    </div>
-    """, unsafe_allow_html=True)
 
     
     # Chat Input

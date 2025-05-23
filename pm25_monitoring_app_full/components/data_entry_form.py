@@ -16,9 +16,6 @@ from modules.authentication import require_role
 def show():
     require_role(["admin", "collector", "editor"])
     
-    st.subheader("📥 Data Entry Form")
-    
-    st.write("This is where the data entry form would go.")
 
     
     # Inject Google Fonts and custom CSS for glassmorphism and font clarity

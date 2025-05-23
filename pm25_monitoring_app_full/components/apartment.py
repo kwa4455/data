@@ -9,7 +9,7 @@ def show():
 
     # Translations
     text = {
-        "title": {"English": "🛖 Home", "Twi": 🛖 Fie"},
+        "title": {"English": "🛖 Home", "Twi": " 🛖 Fie"},
         "welcome": {
             "English": "👋 Welcome! We're excited to have you here. Use the navigation below to get started.",
             "Twi": "👋 Akwaaba! Yɛpɛ sɛ wopɛ sɛ woyɛ adwuma no. Fa akwan no so na yɛ ase."

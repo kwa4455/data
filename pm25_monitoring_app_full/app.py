@@ -226,7 +226,7 @@ st.markdown("""
     /* Dark Mode Table */
     body.dark-mode .stDataFrame, body.dark-mode .stTable {
         background: #161b22cc;
-        border-radius: 10px;
+        border-radius: 5px;
         backdrop-filter: blur(8px);
         font-size: 15px;
         overflow: hidden;

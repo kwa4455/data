@@ -128,7 +128,7 @@ st.markdown("""
 
     /* Buttons */
     .stButton>button, .stDownloadButton>button {
-        background: linear-gradient(135deg, #40916c, #52b788);
+        background: linear-gradient(135deg, #f4f2f4, #a9a9a9);
         color: white;
         border: none;
         border-radius: 10px;

@@ -135,7 +135,7 @@ st.markdown("""
         padding: 0.7em 1.5em;
         font-weight: bold;
         font-size: 1rem;
-        box-shadow: 0 0 15px #52b788;
+        box-shadow: 0 0 15px #f7f7f7;
         transition: 0.3s ease;
     }
     

@@ -4,7 +4,7 @@ import json
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import streamlit_authenticator as stauth
-
+import time
 from gspread.exceptions import APIError
 from gspread.exceptions import WorksheetNotFound 
 
@@ -25,6 +25,11 @@ spreadsheet = client.open_by_key(SPREADSHEET_ID)
 
 def hash_password(password):
     return stauth.Hasher([password]).generate()[0]
+
+
+for _ in range(20):
+    do_some_sheet_read()
+    time.sleep(1.5)  # add delay between calls
 
 @st.cache_data(ttl=600)
 def ensure_users_sheet(spreadsheet):

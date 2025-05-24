@@ -57,6 +57,8 @@ def show_account_recovery(sheet):
 
 
 
+import streamlit as st
+
 def apply_custom_theme():
     if "theme" not in st.session_state:
         st.session_state.theme = "Light"
@@ -64,14 +66,14 @@ def apply_custom_theme():
         st.session_state.font_size = "Medium"
 
     theme_choice = st.sidebar.selectbox(
-        "Choose Theme",
+        "🎨 Choose Theme",
         ["Light", "Dark", "Blue", "Green", "Purple"],
         index=["Light", "Dark", "Blue", "Green", "Purple"].index(st.session_state.theme)
     )
     st.session_state.theme = theme_choice
 
     font_choice = st.sidebar.radio(
-        "Font Size",
+        "🔠 Font Size",
         ["Small", "Medium", "Large"],
         index=["Small", "Medium", "Large"].index(st.session_state.font_size)
     )
@@ -89,49 +91,55 @@ def apply_custom_theme():
             "text": "#004d40",
             "button": "#00796b",
             "hover": "#004d40",
-            "input_bg": "rgba(255, 255, 255, 0.6)"
+            "input_bg": "rgba(255, 255, 255, 0.6)",
+            "font": "'Segoe UI', 'Roboto', sans-serif"
         },
         "Dark": {
             "background":"rgba(22, 27, 34, 0.4)",
             "text": "#e6edf3",
             "button": "#238636",
             "hover": "#2ea043",
-            "input_bg": "rgba(33, 38, 45, 0.6)"
+            "input_bg": "rgba(33, 38, 45, 0.6)",
+            "font": "'Fira Code', monospace"
         },
         "Blue": {
             "background": "rgba(210, 230, 255, 0.4)",
             "text": "#0a2540",
             "button": "#1e88e5",
             "hover": "#1565c0",
-            "input_bg": "rgba(255, 255, 255, 0.6)"
+            "input_bg": "rgba(255, 255, 255, 0.6)",
+            "font": "'Poppins', sans-serif"
         },
         "Green": {
             "background": "rgba(223, 255, 231, 0.4)", 
             "text": "#1b5e20",
             "button": "#43a047",
             "hover": "#2e7d32",
-            "input_bg": "rgba(255, 255, 255, 0.6)"
+            "input_bg": "rgba(255, 255, 255, 0.6)",
+            "font": "'Ubuntu', sans-serif"
         },
         "Purple": {
             "background": "rgba(240, 225, 255, 0.4)",
             "text": "#4a148c",
             "button": "#8e24aa",
             "hover": "#6a1b9a",
-            "input_bg": "rgba(255, 255, 255, 0.6)"
+            "input_bg": "rgba(255, 255, 255, 0.6)",
+            "font": "'Comic Neue', cursive"
         }
     }
 
     font_map = {"Small": "14px", "Medium": "16px", "Large": "18px"}
     theme = themes[st.session_state.theme]
     font_size = font_map[st.session_state.font_size]
+    font_family = theme.get("font", "'Segoe UI', 'Roboto', sans-serif")
 
-    def generate_css(theme: dict, font_size: str) -> str:
+    def generate_css(theme: dict, font_size: str, font_family: str) -> str:
         return f"""
         <style>
         html, body, .stApp, [class^="css"], button, input, label, textarea, select {{
             font-size: {font_size} !important;
             color: {theme["text"]} !important;
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            font-family: {font_family};
         }}
         .stApp {{
             background-color: {theme["background"]} !important;
@@ -154,7 +162,6 @@ def apply_custom_theme():
             color: {theme["text"]} !important;
             border: 1px solid {theme["button"]};
             backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
         }}
         div.stButton > button {{
             background-color: {theme["button"]};
@@ -183,7 +190,6 @@ def apply_custom_theme():
         .glass-container {{
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border-radius: 15px;
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
             padding: 1.5rem;
@@ -191,7 +197,21 @@ def apply_custom_theme():
         }}
         .stContainer {{
             font-size: {font_size};
-            color: {theme.get('text_color', '#000')};
+            color: {theme["text"]};
+        }}
+        .dataframe, .stDataFrame, .stTable {{
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: {theme["text"]} !important;
+            border-radius: 10px;
+        }}
+        .stTable tbody tr:hover {{
+            background-color: rgba(255, 255, 255, 0.2) !important;
+        }}
+        .css-1d391kg, .css-1lcbmhc, .stSidebar, section[data-testid="stSidebar"] {{
+            background-color: {theme["background"]} !important;
+            color: {theme["text"]} !important;
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255,255,255,0.2);
         }}
         ::-webkit-scrollbar {{
             width: 8px;
@@ -224,12 +244,56 @@ def apply_custom_theme():
             box-shadow: 0px -2px 10px rgba(0,0,0,0.1);
             backdrop-filter: blur(8px);
         }}
+        /* Animations */
+        .fade-in {{
+            animation: fadeIn 1s ease-in;
+        }}
+        .slide-in {{
+            animation: slideIn 0.8s ease-out;
+        }}
+        @keyframes fadeIn {{
+            0% {{ opacity: 0; }}
+            100% {{ opacity: 1; }}
+        }}
+        @keyframes slideIn {{
+            0% {{ transform: translateY(20px); opacity: 0; }}
+            100% {{ transform: translateY(0); opacity: 1; }}
+        }}
         </style>
         """
 
-    # Inject Dynamic Theme
-    st.markdown(generate_css(theme, font_size), unsafe_allow_html=True)
+    st.markdown(generate_css(theme, font_size, font_family), unsafe_allow_html=True)
 
+# Call theming setup
+apply_custom_theme()
 
+# Icon per theme
+theme_icon_map = {
+    "Light": "🌞",
+    "Dark": "🌙",
+    "Blue": "💧",
+    "Green": "🌿",
+    "Purple": "🔮"
+}
+icon = theme_icon_map[st.session_state.theme]
 
+# Content with animation
+st.markdown('<div class="slide-in">', unsafe_allow_html=True)
+st.title(f"{icon} Custom Themed Streamlit App")
+st.markdown('</div>', unsafe_allow_html=True)
 
+# Example content
+st.write("This app demonstrates dynamic theming with animations, persistent settings, and a polished UI using `st.session_state`.")
+
+import pandas as pd
+st.markdown("### Sample Table")
+df = pd.DataFrame({
+    "Feature": ["Theme", "Font Size", "Animation", "Glass Effect"],
+    "Enabled": ["✅", "✅", "✅", "✅"]
+})
+st.dataframe(df, use_container_width=True)
+
+# Footer
+st.markdown(f"""
+    <div class="footer">🌟 Themed Streamlit UI • Current Theme: {st.session_state.theme}</div>
+""", unsafe_allow_html=True)

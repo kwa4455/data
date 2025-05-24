@@ -81,15 +81,15 @@ pages = role_pages.get(role, [])
 st.markdown("""
 <style>
 .option-menu .nav-link svg {
-    width: 32px !important;
-    height: 32px !important;
-    fill: #1E90FF !important;
-    margin-right: 12px !important;
+    width: 40px !important;
+    height: 40px !important;
+    fill: #FF5722 !important;  /* Deep orange */
+    margin-right: 15px !important;
 }
 .option-menu .nav-link {
-    font-size: 18px !important;
-    font-weight: 600 !important;
-    padding: 10px 15px !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    padding: 15px 20px !important;
 }
 </style>
 """, unsafe_allow_html=True)

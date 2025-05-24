@@ -80,6 +80,9 @@ pages = role_pages.get(role, [])
 
 st.markdown("""
 <style>
+.option-menu .nav-link {
+    background-color: yellow !important;
+}
 .option-menu .nav-link svg {
     width: 40px !important;
     height: 40px !important;

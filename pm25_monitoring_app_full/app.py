@@ -110,7 +110,6 @@ icon = theme_icon_map[st.session_state.theme]
 
 # Content with animation
 st.markdown('<div class="slide-in">', unsafe_allow_html=True)
-st.title(f"{icon} Custom Themed Streamlit App")
 st.markdown('</div>', unsafe_allow_html=True)
 
 

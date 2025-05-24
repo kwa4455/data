@@ -9,60 +9,7 @@ from modules.authentication import require_role
 def show():
     require_role(["admin", "collector", "editor"])
     
-    # --- Custom CSS ---
-    st.markdown("""
-        <style>
-        html, body, [class*="css"]  {
-            font-family: 'Poppins', sans-serif;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.08);
-            color: #1f1f1f;
-            background-color: #f4f7fa;
-        }
-
-        .main > div:first-child h1 {
-            color: #0a3d62;
-            font-size: 2.8rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
-            margin-bottom: 0.5rem;
-        }
-
-        section[data-testid="stSidebar"] {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(14px) saturate(160%);
-            -webkit-backdrop-filter: blur(14px) saturate(160%);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-        }
-
-        section[data-testid="stSidebar"] .st-radio > div {
-            background: rgba(255, 255, 255, 0.85);
-            color: #000;
-            border-radius: 12px;
-            padding: 0.4rem 0.6rem;
-            margin-bottom: 0.5rem;
-            transition: all 0.2s ease;
-        }
-        section[data-testid="stSidebar"] .st-radio > div:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .stAlert {
-            background-color: rgba(232, 244, 253, 0.9);
-            border-left: 6px solid #1f77b4;
-            border-radius: 8px;
-            padding: 1rem;
-        }
-
-        .stSuccess {
-            background-color: rgba(230, 255, 230, 0.9);
-            border-left: 6px solid #33cc33;
-            border-radius: 8px;
-            padding: 1rem;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
+    
     # --- Page Title ---
     st.markdown("""
         <div style='text-align: center;'>

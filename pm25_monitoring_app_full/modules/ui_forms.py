@@ -88,7 +88,7 @@ def apply_custom_theme():
     themes = {
         "Light": {
             "background": "rgba(255, 255, 255, 0.4)",
-            "text": "#004d40",
+            "text": "#ff0000",
             "button": "#00796b",
             "hover": "#004d40",
             "input_bg": "rgba(255, 255, 255, 0.6)",

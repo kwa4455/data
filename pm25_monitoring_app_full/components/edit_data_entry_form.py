@@ -22,13 +22,6 @@ def show():
     require_role(["admin", "collector", "editor"])
 
     st.markdown("""
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-        <style>
-        /* Custom styles here... (same as your original CSS block) */
-        </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
         <div style='text-align: center;'>
             <h2>✍🏼 Editor Tools</h2>
             <p style='color: grey;'>This page allows authorized users to update or delete submitted records.</p>

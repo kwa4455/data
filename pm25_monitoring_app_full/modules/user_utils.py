@@ -4,7 +4,7 @@ import json
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import streamlit_authenticator as stauth
-import time
+
 from gspread.exceptions import APIError
 from gspread.exceptions import WorksheetNotFound 
 
@@ -165,14 +165,3 @@ def get_user_role(username, sheet):
             return user["Role"]
     return "collector"
 
-# ========================== 🚀 Initialization ==========================
-# Move sheet logic below function definitions
-users_sheet = ensure_users_sheet(spreadsheet)
-
-# Optional: quota-safe warm-up
-for _ in range(20):
-    try:
-        users_sheet.get_all_records()
-    except APIError as e:
-        st.warning(f"Quota warning: {e}")
-    time.sleep(1.5)

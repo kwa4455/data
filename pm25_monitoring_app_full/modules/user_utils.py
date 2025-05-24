@@ -26,6 +26,7 @@ spreadsheet = client.open_by_key(SPREADSHEET_ID)
 def hash_password(password):
     return stauth.Hasher([password]).generate()[0]
 
+@st.cache_data(ttl=600)
 def ensure_users_sheet(spreadsheet):
     try:
         return spreadsheet.worksheet(USERS_SHEET)
@@ -34,6 +35,7 @@ def ensure_users_sheet(spreadsheet):
         sheet.append_row(["Username", "Full Name", "Email", "Password", "Role"])
         return sheet
 
+@st.cache_data(ttl=600)
 def ensure_reg_requests_sheet(spreadsheet):
     try:
         return spreadsheet.worksheet(REG_REQUESTS_SHEET)
@@ -43,6 +45,7 @@ def ensure_reg_requests_sheet(spreadsheet):
         sheet.append_row(["Timestamp", "Username", "Full Name", "Email","Password", "Role", "Status"])  # header
         return sheet
 
+@st.cache_data(ttl=600)
 def ensure_log_sheet(spreadsheet):
     try:
         return spreadsheet.worksheet(LOG_SHEET)
@@ -53,7 +56,7 @@ def ensure_log_sheet(spreadsheet):
 
 
 
-
+@st.cache_data(ttl=600)
 def register_user_request(username, name, email, password, role, spreadsheet):
     sheet = ensure_reg_requests_sheet(spreadsheet)
     requests = sheet.get_all_records()
@@ -76,8 +79,7 @@ def register_user_request(username, name, email, password, role, spreadsheet):
 
     return True, "✅ Registration request submitted."
 
-
-
+@st.cache_data(ttl=600)
 def register_user_to_sheet(username, name, email, password, role, sheet, is_hashed=False):
     users = sheet.get_all_records()
     for user in users:
@@ -114,7 +116,7 @@ def delete_registration_request(username, spreadsheet):
     return False
 
 
-
+@st.cache_data(ttl=600)
 def log_registration_event(username, action, admin_username, spreadsheet):
     sheet = ensure_log_sheet(spreadsheet)
     sheet.append_row([username, action, admin_username, datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
@@ -136,7 +138,7 @@ def approve_user(user_data, admin_username, spreadsheet):
         log_registration_event(user_data["Username"], "approved", admin_username, spreadsheet)
     return message
 
-
+@st.cache_data(ttl=600)
 def load_users_from_sheet(sheet):
     try:
         users = sheet.get_all_records()

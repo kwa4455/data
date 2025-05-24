@@ -50,7 +50,7 @@ if not logged_in:
 
 
 
-apply_custom_theme()
+
 
 
 # === Header ===
@@ -95,7 +95,7 @@ with st.sidebar:
     st.markdown("---")
     logout_button(authenticator)
 
-
+apply_custom_theme()
 # === Page Routing ===
 if choice == "🏛️ Home":
     apartment.show()

@@ -21,6 +21,7 @@ def login(sheet):
 
     with st.container():
         name, auth_status, username = authenticator.login("Login", location="main")
+        st.title("🇬🇭 EPA Ghana | Air Quality Monitoring | Field Data Entry Platform")
 
         if auth_status is False:
             st.error("❌ Incorrect username or password")

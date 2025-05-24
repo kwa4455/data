@@ -140,7 +140,7 @@ def approve_user(user_data, admin_username, spreadsheet):
         log_registration_event(user_data["Username"], "approved", admin_username, spreadsheet)
     return message
 
-@st.cache_data(ttl=600)
+
 def load_users_from_sheet(sheet):
     try:
         users = sheet.get_all_records()

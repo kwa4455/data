@@ -49,7 +49,7 @@ if not logged_in:
 
 
 
-
+apply_custom_theme()
 
 
 # === Header ===

@@ -84,7 +84,7 @@ with st.sidebar:
         choice = option_menu(
             menu_title="Go to",
             options=pages,
-            icons=["house", "pencil", "pen", "folder", "gear"][:len(pages)],
+            icons=["house", "pencil", "pen", "calculator","review", "gear"][:len(pages)],
             menu_icon="cast",
             default_index=0,
         )

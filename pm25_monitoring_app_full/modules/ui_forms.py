@@ -90,7 +90,7 @@ def apply_custom_theme():
             "background": "rgba(255, 255, 255, 0.4)",
             "text": "#000000",
             "button": "#f5f5f5",
-            "hover": "#004d40",
+            "hover": "#b1b1b1",
             "input_bg": "rgba(255, 255, 255, 0.6)",
             "font": "'Segoe UI', 'Roboto', sans-serif"
         },

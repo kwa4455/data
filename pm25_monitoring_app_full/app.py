@@ -78,6 +78,24 @@ role_pages = {
 }
 pages = role_pages.get(role, [])
 
+st.markdown("""
+<style>
+/* Bigger, colorful icons in sidebar option menu */
+[data-testid="stSidebar"] .nav-link svg {
+    width: 32px !important;
+    height: 32px !important;
+    fill: #1E90FF !important;  /* DodgerBlue color */
+    margin-right: 12px;
+}
+
+/* Increase font size and weight for menu text */
+[data-testid="stSidebar"] .nav-link {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 10px 15px;
+}
+</style>
+""", unsafe_allow_html=True)
 
 with st.sidebar:
     st.title("📁 Navigation")

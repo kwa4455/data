@@ -19,6 +19,14 @@ from modules.authentication import require_role
 def show():
     require_role(["admin", "collector", "editor"])
     
+    st.markdown("""
+        <div style='text-align: center;'>
+            <h2>🦚 Field Monitoring Data Entry</h2>
+            <p style='color: grey;'> Use this page to input daily observations, instrument readings, and site information.</p>
+        </div>
+        <hr>
+    """, unsafe_allow_html=True)
+    
     
     ids = ["", '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
     site_id_map = {

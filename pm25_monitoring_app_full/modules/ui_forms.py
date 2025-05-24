@@ -264,36 +264,5 @@ def apply_custom_theme():
 
     st.markdown(generate_css(theme, font_size, font_family), unsafe_allow_html=True)
 
-# Call theming setup
-apply_custom_theme()
 
-# Icon per theme
-theme_icon_map = {
-    "Light": "🌞",
-    "Dark": "🌙",
-    "Blue": "💧",
-    "Green": "🌿",
-    "Purple": "🔮"
-}
-icon = theme_icon_map[st.session_state.theme]
 
-# Content with animation
-st.markdown('<div class="slide-in">', unsafe_allow_html=True)
-st.title(f"{icon} Custom Themed Streamlit App")
-st.markdown('</div>', unsafe_allow_html=True)
-
-# Example content
-st.write("This app demonstrates dynamic theming with animations, persistent settings, and a polished UI using `st.session_state`.")
-
-import pandas as pd
-st.markdown("### Sample Table")
-df = pd.DataFrame({
-    "Feature": ["Theme", "Font Size", "Animation", "Glass Effect"],
-    "Enabled": ["✅", "✅", "✅", "✅"]
-})
-st.dataframe(df, use_container_width=True)
-
-# Footer
-st.markdown(f"""
-    <div class="footer">🌟 Themed Streamlit UI • Current Theme: {st.session_state.theme}</div>
-""", unsafe_allow_html=True)

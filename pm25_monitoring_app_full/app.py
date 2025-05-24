@@ -173,7 +173,7 @@ st.markdown("""
 
     /* Download Button Specific */
     .stDownloadButton>button {
-        background: linear-gradient(135deg, #1b4332, #2d6a4f);
+        background: linear-gradient(135deg, #f4f2f4, #a9a9a9);
         box-shadow: 0 0 10px #1b4332;
     }
 

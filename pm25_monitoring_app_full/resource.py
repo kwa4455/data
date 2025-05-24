@@ -3,6 +3,9 @@ import pandas as pd
 import gspread
 from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
+from gspread.exceptions import APIError,WorksheetNotFound 
+
+
 
 
 import json

@@ -226,7 +226,7 @@ def apply_custom_theme():
         .glow-text {{
             text-align: center;
             font-size: 3em;
-            color: #52b788;
+            color: #ff0000;
             text-shadow: 0 0 5px #52b788, 0 0 10px #52b788, 0 0 20px #52b788;
             margin-bottom: 20px;
         }}

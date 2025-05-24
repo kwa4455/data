@@ -140,7 +140,7 @@ st.markdown("""
     }
     
     .stButton>button:hover, .stDownloadButton>button:hover {
-        background: linear-gradient(135deg, #2d6a4f, #40916c);
+        background: linear-gradient(135deg, #f4f2f4, #a9a9a9);
         box-shadow: 0 0 25px #74c69d, 0 0 35px #74c69d;
         transform: scale(1.05);
     }

@@ -5,6 +5,7 @@ from .user_utils import load_users_from_sheet, get_user_role
 from .ui_forms import show_registration_form, show_account_recovery
 
 def login(sheet):
+    st.title("🇬🇭 EPA Ghana | Air Quality Monitoring | Field Data Entry Platform")
     # 🧹 Fix for incomplete session state (e.g., role missing)
     if st.session_state.get("authenticated") and "role" not in st.session_state:
         st.session_state.clear()

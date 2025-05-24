@@ -104,14 +104,7 @@ with st.sidebar:
 
 
 
-# Call theming setup
-apply_custom_theme()
 
-
-
-# Content with animation
-st.markdown('<div class="slide-in">', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
 
 
 

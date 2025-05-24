@@ -71,10 +71,10 @@ if "df" not in st.session_state:
 
 # === Navigation ===
 role_pages = {
-    "admin": ["🏛️ Home","📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation", "🗂️ Supervisor Review Section", "⚙️ Admin Panel"],
-    "collector": ["🏛️ Home","📥 Data Entry Form", "✏️ Edit Data Entry Form"],
-    "editor": ["🏛️ Home","📥 Data Entry Form", "✏️ Edit Data Entry Form", "🗂️ PM25 Calculation"],
-    "supervisor": ["🏛️ Home","⚙️ Admin Panel", "🗂️ Supervisor Review Section"]
+    "admin": ["Home","Data Entry Form", "Edit Data Entry Form", "PM25 Calculation", "Supervisor Review Section", "Admin Panel"],
+    "collector": ["Home","Data Entry Form", "Edit Data Entry Form"],
+    "editor": ["Home","Data Entry Form", "Edit Data Entry Form", "PM25 Calculation"],
+    "supervisor": ["Home","Admin Panel", "Supervisor Review Section"]
 }
 pages = role_pages.get(role, [])
 
@@ -84,7 +84,7 @@ with st.sidebar:
         choice = option_menu(
             menu_title="Go to",
             options=pages,
-            icons=["cloud-upload", "pencil", "folder", "gear"][:len(pages)],
+            icons=["house", "pencil", "pen", "folder", "gear"][:len(pages)],
             menu_icon="cast",
             default_index=0,
         )
@@ -109,17 +109,17 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 
 # === Page Routing ===
-if choice == "🏛️ Home":
+if choice == "Home":
     apartment.show()
-elif choice == "📥 Data Entry Form":
+elif choice == "Data Entry Form":
     data_entry_form.show()
-elif choice == "✏️ Edit Data Entry Form":
+elif choice == "Edit Data Entry Form":
     edit_data_entry_form.show()
-elif choice == "🗂️ PM25 Calculation":
+elif choice == "PM25 Calculation":
     pm25_calculation.show()
-elif choice == "🗂️ Supervisor Review Section":
+elif choice == "Supervisor Review Section":
     supervisor_review_section.show()
-elif choice == "⚙️ Admin Panel":
+elif choice == "Admin Panel":
     admin_panel()
     
  # --- Footer ---

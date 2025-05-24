@@ -57,3 +57,179 @@ def show_account_recovery(sheet):
 
 
 
+def apply_custom_theme():
+    if "theme" not in st.session_state:
+        st.session_state.theme = "Light"
+    if "font_size" not in st.session_state:
+        st.session_state.font_size = "Medium"
+
+    theme_choice = st.sidebar.selectbox(
+        "Choose Theme",
+        ["Light", "Dark", "Blue", "Green", "Purple"],
+        index=["Light", "Dark", "Blue", "Green", "Purple"].index(st.session_state.theme)
+    )
+    st.session_state.theme = theme_choice
+
+    font_choice = st.sidebar.radio(
+        "Font Size",
+        ["Small", "Medium", "Large"],
+        index=["Small", "Medium", "Large"].index(st.session_state.font_size)
+    )
+    st.session_state.font_size = font_choice
+
+    if st.sidebar.button("🔄 Reset to Defaults"):
+        st.session_state.theme = "Light"
+        st.session_state.font_size = "Medium"
+        st.success("Reset to Light theme and Medium font!")
+        st.rerun()
+
+    themes = {
+        "Light": {
+            "background": "rgba(255, 255, 255, 0.4)",
+            "text": "#004d40",
+            "button": "#00796b",
+            "hover": "#004d40",
+            "input_bg": "rgba(255, 255, 255, 0.6)"
+        },
+        "Dark": {
+            "background":"rgba(22, 27, 34, 0.4)",
+            "text": "#e6edf3",
+            "button": "#238636",
+            "hover": "#2ea043",
+            "input_bg": "rgba(33, 38, 45, 0.6)"
+        },
+        "Blue": {
+            "background": "rgba(210, 230, 255, 0.4)",
+            "text": "#0a2540",
+            "button": "#1e88e5",
+            "hover": "#1565c0",
+            "input_bg": "rgba(255, 255, 255, 0.6)"
+        },
+        "Green": {
+            "background": "rgba(223, 255, 231, 0.4)", 
+            "text": "#1b5e20",
+            "button": "#43a047",
+            "hover": "#2e7d32",
+            "input_bg": "rgba(255, 255, 255, 0.6)"
+        },
+        "Purple": {
+            "background": "rgba(240, 225, 255, 0.4)",
+            "text": "#4a148c",
+            "button": "#8e24aa",
+            "hover": "#6a1b9a",
+            "input_bg": "rgba(255, 255, 255, 0.6)"
+        }
+    }
+
+    font_map = {"Small": "14px", "Medium": "16px", "Large": "18px"}
+    theme = themes[st.session_state.theme]
+    font_size = font_map[st.session_state.font_size]
+
+    def generate_css(theme: dict, font_size: str) -> str:
+        return f"""
+        <style>
+        html, body, .stApp, [class^="css"], button, input, label, textarea, select {{
+            font-size: {font_size} !important;
+            color: {theme["text"]} !important;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }}
+        .stApp {{
+            background-color: {theme["background"]} !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background-attachment: fixed;
+            transition: background 0.5s ease, color 0.5s ease;
+        }}
+        html, body, [class^="css"] {{
+            background-color: transparent !important;
+        }}
+        h1, h2, h3 {{
+            font-weight: bold;
+        }}
+        .stTextInput > div > input,
+        .stSelectbox > div > div,
+        .stRadio > div,
+        textarea {{
+            background-color: {theme["input_bg"]} !important;
+            color: {theme["text"]} !important;
+            border: 1px solid {theme["button"]};
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }}
+        div.stButton > button {{
+            background-color: {theme["button"]};
+            color: white;
+            padding: 0.5em 1.5em;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }}
+        div.stButton > button:hover {{
+            background-color: {theme["hover"]};
+        }}
+        .stButton>button, .stDownloadButton>button {{
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.7em 1.5em;
+            font-weight: bold;
+            font-size: 1rem;
+            box-shadow: 0 0 15px #52b788;
+            transition: 0.3s ease;
+        }}
+        .stButton>button:hover, .stDownloadButton>button:hover {{
+            box-shadow: 0 0 25px #74c69d, 0 0 35px #74c69d;
+            transform: scale(1.05);
+        }}
+        .glass-container {{
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }}
+        .stContainer {{
+            font-size: {font_size};
+            color: {theme.get('text_color', '#000')};
+        }}
+        ::-webkit-scrollbar {{
+            width: 8px;
+        }}
+        ::-webkit-scrollbar-thumb {{
+            background: #74c69d;
+            border-radius: 10px;
+        }}
+        ::-webkit-scrollbar-thumb:hover {{
+            background: #52b788;
+        }}
+        .glow-text {{
+            text-align: center;
+            font-size: 3em;
+            color: #52b788;
+            text-shadow: 0 0 5px #52b788, 0 0 10px #52b788, 0 0 20px #52b788;
+            margin-bottom: 20px;
+        }}
+        .footer {{
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: {theme["background"]};
+            color: {theme["text"]};
+            text-align: center;
+            padding: 12px 0;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0px -2px 10px rgba(0,0,0,0.1);
+            backdrop-filter: blur(8px);
+        }}
+        </style>
+        """
+
+    # Inject Dynamic Theme
+    st.markdown(generate_css(theme, font_size), unsafe_allow_html=True)
+
+
+
+

@@ -130,8 +130,8 @@ def approve_user(user_data, admin_username, spreadsheet):
 
 
 @st.cache_data(ttl=600)
-def load_users_from_sheet(sheet_name):
-    sheet = spreadsheet.worksheet(sheet_name)
+def load_users_from_sheet(sheet):
+    sheet = spreadsheet.worksheet(sheet)
     try:
         users = sheet.get_all_records()
     except APIError as e:

@@ -78,24 +78,6 @@ role_pages = {
 }
 pages = role_pages.get(role, [])
 
-st.markdown("""
-<style>
-.option-menu .nav-link {
-    background-color: yellow !important;
-}
-.option-menu .nav-link svg {
-    width: 40px !important;
-    height: 40px !important;
-    fill: #FF5722 !important;  /* Deep orange */
-    margin-right: 15px !important;
-}
-.option-menu .nav-link {
-    font-size: 20px !important;
-    font-weight: 700 !important;
-    padding: 15px 20px !important;
-}
-</style>
-""", unsafe_allow_html=True)
 
 
 with st.sidebar:

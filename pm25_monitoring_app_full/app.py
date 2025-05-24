@@ -121,7 +121,7 @@ st.markdown("""
     /* Sidebar */
     [data-testid="stSidebar"] {
         background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(12px);
+        backdrop-filter: blur(5px);
         border-right: 2px solid #74c69d;
         transition: all 0.5s ease;
     }
@@ -185,10 +185,10 @@ st.markdown("""
     /* Tables */
     .stDataFrame, .stTable {
         background: rgba(255, 255, 255, 0.6);
-        border-radius: 12px;
+        border-radius: 5px;
         backdrop-filter: blur(10px);
         padding: 1rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         overflow: hidden;
         font-size: 15px;
     }

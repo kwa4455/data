@@ -95,7 +95,28 @@ with st.sidebar:
     st.markdown("---")
     logout_button(authenticator)
 
+# Call theming setup
 apply_custom_theme()
+
+# Icon per theme
+theme_icon_map = {
+    "Light": "🌞",
+    "Dark": "🌙",
+    "Blue": "💧",
+    "Green": "🌿",
+    "Purple": "🔮"
+}
+icon = theme_icon_map[st.session_state.theme]
+
+# Content with animation
+st.markdown('<div class="slide-in">', unsafe_allow_html=True)
+st.title(f"{icon} Custom Themed Streamlit App")
+st.markdown('</div>', unsafe_allow_html=True)
+
+
+
+
+
 # === Page Routing ===
 if choice == "🏛️ Home":
     apartment.show()

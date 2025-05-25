@@ -3,7 +3,7 @@ fileWatcherType = "none"
 
 [theme]
 base = "light"
-primaryColor = "#eaf7ff"  # Frosty blue
+primaryColor = "#fefffe"  # Frosty blue
 backgroundColor = "#f5f7fa"  # Soft frosty background
 secondaryBackgroundColor = "#ffffffcc"  # Semi-transparent white
 textColor = "#0e1117"

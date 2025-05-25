@@ -35,7 +35,7 @@ def show():
         /* Dark Mode */
         body.dark-mode, .stApp.dark-mode {
             background: linear-gradient(135deg, #0e1117, #161b22);
-            color: #e6edf3;
+            color: #0000b3;
         }
         
         /* Sidebar */

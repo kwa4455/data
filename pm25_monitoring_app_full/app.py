@@ -21,7 +21,7 @@ from components import (
 )
 from modules.authentication import login, logout_button
 from modules.user_utils import get_user_role, spreadsheet,ensure_users_sheet
-from modules.ui_forms import apply_custom_theme
+from modules.ui_forms import add_glass_style
 from resource import load_data_from_sheet, sheet, spreadsheet
 from constants import MERGED_SHEET, CALC_SHEET, USERS_SHEET
 
@@ -51,7 +51,8 @@ if not logged_in:
 
 
 
-
+def main():
+    add_glass_style()
 
 
 # === Header ===
@@ -98,7 +99,6 @@ with st.sidebar:
     logout_button(authenticator)
     st.markdown('</div>', unsafe_allow_html=True)
 
-add_glass_style()
 
 
 

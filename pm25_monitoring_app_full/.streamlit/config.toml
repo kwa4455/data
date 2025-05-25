@@ -2,9 +2,9 @@
 fileWatcherType = "none"
 
 [theme]
-base = "light"  # or "dark"
-primaryColor = "#1f77b4"
-backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#f0f2f6"
-textColor = "#262730"
-font = "sans serif"  # Options: "sans serif", "serif", "monospace"
+base = "light"
+primaryColor = "#4db8ff"  # Frosty blue
+backgroundColor = "#f5f7fa"  # Soft frosty background
+secondaryBackgroundColor = "#ffffffcc"  # Semi-transparent white
+textColor = "#0e1117"
+font = "sans serif"

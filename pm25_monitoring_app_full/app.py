@@ -138,7 +138,7 @@ section[data-testid="stSidebar"] > div {
 
 /* App background */
 .stApp {
-    background: linear-gradient(135deg, #fdfaf6 0%, #f0ece3 100%);
+    background: linear-gradient(135deg, #f5f5f5 0%, #fefffe 100%);
     color: #1c1c1c;
     font-family: 'Segoe UI', sans-serif;
 }

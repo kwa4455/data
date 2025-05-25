@@ -80,7 +80,6 @@ pages = role_pages.get(role, [])
 
 
 with st.sidebar:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
     st.title("📁 Navigation")
     if pages:
         choice = option_menu(

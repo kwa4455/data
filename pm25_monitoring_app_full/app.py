@@ -107,7 +107,7 @@ st.markdown("""
 <style>
 /* Sidebar glass effect */
 section[data-testid="stSidebar"] > div {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: 1rem;

@@ -2,9 +2,8 @@
 fileWatcherType = "none"
 
 [theme]
-base = "light"  # Default, but user can switch to dark
+base = "dark"
 primaryColor = "#4db8ff"
 backgroundColor = "#0e1117"
 secondaryBackgroundColor = "#1e1e2f"
 textColor = "#ffffff"
-font = "sans serif"

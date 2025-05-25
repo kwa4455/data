@@ -139,8 +139,9 @@ section[data-testid="stSidebar"] > div {
 }
 
 /* App background */
+
 .stApp {
-    background: linear-gradient(135deg, #1f1f2f 0%, #101010 100%);
+    background: linear-gradient(135deg, #cce0ff 0%, #e6f0ff 100%);
 }
 </style>
 """, unsafe_allow_html=True)

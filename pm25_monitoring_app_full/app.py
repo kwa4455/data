@@ -101,28 +101,27 @@ with st.sidebar:
 
 
 
-# --- Custom CSS for glassmorphism ---
 st.markdown("""
 <style>
 /* Sidebar glass effect */
 section[data-testid="stSidebar"] > div {
-    background: 00FFFFFF;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-radius: 1rem;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     padding: 1.5rem;
-    color: #b30000;
+    color: #1c1c1c;
 }
 
 /* Table styling */
 .stTable, .stDataFrame {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 0.75rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    color: #1c1c1c;
 }
 
 /* Reusable glass box */
@@ -133,14 +132,15 @@ section[data-testid="stSidebar"] > div {
     border-radius: 1rem;
     padding: 1.5rem;
     margin-top: 1rem;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    color: #1c1c1c;
 }
 
 /* App background */
-
 .stApp {
-    background: linear-gradient(135deg, #cce0ff 0%, #e6f0ff 100%);
+    background: linear-gradient(135deg, #fdfaf6 0%, #f0ece3 100%);
+    color: #1c1c1c;
+    font-family: 'Segoe UI', sans-serif;
 }
 </style>
 """, unsafe_allow_html=True)

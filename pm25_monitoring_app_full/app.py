@@ -101,41 +101,60 @@ with st.sidebar:
 
 
 st.markdown("""
-    <style>
-    .card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border-radius: 1rem;
-        padding: 1.5rem;
-        margin: 1rem 0;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-        color: #ffffff;
-    }
+<style>
+/* Define variables for themes */
+body[class*="light"] {
+    --bg-color: rgba(255, 255, 255, 0.6);
+    --text-color: #000000;
+    --sidebar-bg: rgba(240, 240, 240, 0.7);
+}
 
-    .card a, .card h1, .card h2, .card h3 {
-        color: #ffffff !important;
-    }
+body[class*="dark"] {
+    --bg-color: rgba(255, 255, 255, 0.1);
+    --text-color: #ffffff;
+    --sidebar-bg: rgba(0, 0, 0, 0.3);
+}
 
-    section[data-testid="stSidebar"] > div {
-        background: rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(12px);
-        border-radius: 1rem;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-        padding: 1rem;
-        color: #ffffff;
-    }
+/* Card UI */
+.card {
+    background: var(--bg-color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    color: var(--text-color);
+}
 
-    table {
-        background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 0.75rem;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    }
+/* Sidebar */
+section[data-testid="stSidebar"] > div {
+    background: var(--sidebar-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    color: var(--text-color);
+}
 
-    .stApp {
-        background: linear-gradient(135deg, #1f1f2f 0%, #101010 100%);
-    }
-    </style>
+/* Table styles */
+table {
+    background-color: var(--bg-color);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    color: var(--text-color);
+}
+
+/* Background gradient (dark only) */
+body[class*="dark"] .stApp {
+    background: linear-gradient(135deg, #1f1f2f 0%, #101010 100%);
+}
+
+/* Optional: remove dark bg for light mode */
+body[class*="light"] .stApp {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e3e3e3 100%);
+}
+</style>
 """, unsafe_allow_html=True)
 
 

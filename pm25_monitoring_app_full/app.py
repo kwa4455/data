@@ -110,16 +110,16 @@ section[data-testid="stSidebar"] > div {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: 1rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-    padding: 1rem;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    padding: 1.5rem;
     color: #ffffff;
 }
 
 /* Table styling */
 .stTable, .stDataFrame {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: 0.75rem;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     color: #ffffff;

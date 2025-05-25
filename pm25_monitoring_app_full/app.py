@@ -95,21 +95,42 @@ with st.sidebar:
 
     st.markdown("---")
     logout_button(authenticator)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 
 
+import streamlit as st
+
+# Custom CSS for card-style glass UI elements
 st.markdown("""
     <style>
-    .block-container {
-        padding-top: 2rem;
-        background: rgba(255, 255, 255, 0.6);
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .sidebar .block-container {
+        background: rgba(0, 0, 0, 0.2);
         backdrop-filter: blur(10px);
         border-radius: 1rem;
-        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        padding: 1rem;
     }
+
+    table {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+
     .stApp {
-        background: linear-gradient(135deg, #cce0ff 0%, #e6f0ff 100%);
+        background: linear-gradient(135deg, #1f1f2f 0%, #101010 100%);
     }
     </style>
 """, unsafe_allow_html=True)

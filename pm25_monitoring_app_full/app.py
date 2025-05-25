@@ -82,7 +82,6 @@ pages = role_pages.get(role, [])
 
 with st.sidebar:
     st.title("📁 Navigation")
-    st.markdown('<div class="glass-box">', unsafe_allow_html=True)
     if pages:
         choice = option_menu(
             menu_title="Go to",
@@ -107,7 +106,7 @@ st.markdown("""
 <style>
 /* Sidebar glass effect */
 section[data-testid="stSidebar"] > div {
-    background: rgba(255, 255, 255, 0.1);
+    background: 00FFFFFF;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: 1rem;

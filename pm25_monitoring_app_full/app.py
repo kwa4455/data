@@ -112,7 +112,7 @@ section[data-testid="stSidebar"] > div {
     border-radius: 1rem;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     padding: 1.5rem;
-    color: #ffffff;
+    color: #0000b3;
 }
 
 /* Table styling */

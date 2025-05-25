@@ -100,9 +100,6 @@ with st.sidebar:
 
 
 
-import streamlit as st
-
-# Custom CSS for card-style glass UI elements
 st.markdown("""
     <style>
     .card {
@@ -113,14 +110,20 @@ st.markdown("""
         padding: 1.5rem;
         margin: 1rem 0;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        color: #ffffff;
     }
 
-    .sidebar .block-container {
-        background: rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(10px);
+    .card a, .card h1, .card h2, .card h3 {
+        color: #ffffff !important;
+    }
+
+    section[data-testid="stSidebar"] > div {
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(12px);
         border-radius: 1rem;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
         padding: 1rem;
+        color: #ffffff;
     }
 
     table {
@@ -134,6 +137,7 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
 
 
 

@@ -1,2 +1,10 @@
 [server]
 fileWatcherType = "none"
+
+[theme]
+base = "light"
+primaryColor = "#4db8ff"  # Frosty blue
+backgroundColor = "#f5f7fa"  # Soft frosty background
+secondaryBackgroundColor = "#ffffffcc"  # Semi-transparent white
+textColor = "#0e1117"
+font = "sans serif"

@@ -45,6 +45,7 @@ users_sheet = ensure_users_sheet(spreadsheet)
 logged_in, authenticator = login(users_sheet)
 if not logged_in:
     st.stop()
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 
@@ -81,6 +82,7 @@ pages = role_pages.get(role, [])
 
 with st.sidebar:
     st.title("📁 Navigation")
+    st.markdown('<div class="glass-box">', unsafe_allow_html=True)
     if pages:
         choice = option_menu(
             menu_title="Go to",
@@ -100,66 +102,48 @@ with st.sidebar:
 
 
 
+# --- Custom CSS for glassmorphism ---
 st.markdown("""
 <style>
-/* Define variables for themes */
-body[class*="light"] {
-    --bg-color: rgba(255, 255, 255, 0.6);
-    --text-color: #000000;
-    --sidebar-bg: rgba(240, 240, 240, 0.7);
+/* Sidebar glass effect */
+section[data-testid="stSidebar"] > div {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 1rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    padding: 1rem;
+    color: #ffffff;
 }
 
-body[class*="dark"] {
-    --bg-color: rgba(255, 255, 255, 0.1);
-    --text-color: #ffffff;
-    --sidebar-bg: rgba(0, 0, 0, 0.3);
+/* Table styling */
+.stTable, .stDataFrame {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
 }
 
-/* Card UI */
-.card {
-    background: var(--bg-color);
+/* Reusable glass box */
+.glass-box {
+    background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 1rem;
     padding: 1.5rem;
-    margin: 1rem 0;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-    color: var(--text-color);
+    margin-top: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    color: #ffffff;
 }
 
-/* Sidebar */
-section[data-testid="stSidebar"] > div {
-    background: var(--sidebar-bg);
-    backdrop-filter: blur(10px);
-    border-radius: 1rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    padding: 1rem;
-    color: var(--text-color);
-}
-
-/* Table styles */
-table {
-    background-color: var(--bg-color);
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    color: var(--text-color);
-}
-
-/* Background gradient (dark only) */
-body[class*="dark"] .stApp {
+/* App background */
+.stApp {
     background: linear-gradient(135deg, #1f1f2f 0%, #101010 100%);
-}
-
-/* Optional: remove dark bg for light mode */
-body[class*="light"] .stApp {
-    background: linear-gradient(135deg, #f5f7fa 0%, #e3e3e3 100%);
 }
 </style>
 """, unsafe_allow_html=True)
-
-
-
-
 
 
 

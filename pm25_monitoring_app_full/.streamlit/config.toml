@@ -3,9 +3,10 @@ fileWatcherType = "none"
 
 [theme]
 base = "light"
-primaryColor = "#fefffe"  # Frosty blue
-backgroundColor = "#f5f7fa"  # Soft frosty background
-secondaryBackgroundColor = "#ffffffcc"  # Semi-transparent white
-textColor = "#0e1117"
+primaryColor = "#d4a373"  # Warm neutral
+backgroundColor = "#fdfaf6"  # Soft off-white
+secondaryBackgroundColor = "#ffffffee"  # Slightly translucent white
+textColor = "#1c1c1c"  # Rich gray
 font = "sans serif"
+
 

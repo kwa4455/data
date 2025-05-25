@@ -1,5 +1,6 @@
 
 import streamlit as st
+from contextlib import contextmanager
 from .user_utils import register_user_request,spreadsheet
 from .recovery import reset_password, recover_username
 from constants import REG_REQUESTS_SHEET, LOG_SHEET
@@ -57,212 +58,100 @@ def show_account_recovery(sheet):
 
 
 
-
-
-def apply_custom_theme():
-    if "theme" not in st.session_state:
-        st.session_state.theme = "Light"
-    if "font_size" not in st.session_state:
-        st.session_state.font_size = "Medium"
-
-    theme_choice = st.sidebar.selectbox(
-        "🎨 Choose Theme",
-        ["Light", "Dark", "Blue", "Green", "Purple"],
-        index=["Light", "Dark", "Blue", "Green", "Purple"].index(st.session_state.theme)
-    )
-    st.session_state.theme = theme_choice
-
-    font_choice = st.sidebar.radio(
-        "🔠 Font Size",
-        ["Small", "Medium", "Large"],
-        index=["Small", "Medium", "Large"].index(st.session_state.font_size)
-    )
-    st.session_state.font_size = font_choice
-
-    if st.sidebar.button("🔄 Reset to Defaults"):
-        st.session_state.theme = "Light"
-        st.session_state.font_size = "Medium"
-        st.success("Reset to Light theme and Medium font!")
-        st.rerun()
-
-    themes = {
-        "Light": {
-            "background": "rgba(255, 255, 255, 0.4)",
-            "text": "#000000",
-            "button": "#f5f5f5",
-            "hover": "#b1b1b1",
-            "input_bg": "rgba(255, 255, 255, 0.6)",
-            "font": "'Segoe UI', 'Roboto', sans-serif"
-        },
-        "Dark": {
-            "background":"rgba(22, 27, 34, 0.4)",
-            "text": "#e6edf3",
-            "button": "#238636",
-            "hover": "#2ea043",
-            "input_bg": "rgba(33, 38, 45, 0.6)",
-            "font": "'Fira Code', monospace"
-        },
-        "Blue": {
-            "background": "rgba(210, 230, 255, 0.4)",
-            "text": "#0a2540",
-            "button": "#1e88e5",
-            "hover": "#1565c0",
-            "input_bg": "rgba(255, 255, 255, 0.6)",
-            "font": "'Poppins', sans-serif"
-        },
-        "Green": {
-            "background": "rgba(223, 255, 231, 0.4)", 
-            "text": "#1b5e20",
-            "button": "#43a047",
-            "hover": "#2e7d32",
-            "input_bg": "rgba(255, 255, 255, 0.6)",
-            "font": "'Ubuntu', sans-serif"
-        },
-        "Purple": {
-            "background": "rgba(240, 225, 255, 0.4)",
-            "text": "#4a148c",
-            "button": "#8e24aa",
-            "hover": "#6a1b9a",
-            "input_bg": "rgba(255, 255, 255, 0.6)",
-            "font": "'Comic Neue', cursive"
-        }
+def add_glass_style():
+    st.markdown("""
+    <style>
+    /* Glassmorphism Base Styles */
+    section[data-testid="stSidebar"] > div {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-radius: 1rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        padding: 1.5rem;
+        color: #1c1c1c;
     }
 
-    font_map = {"Small": "14px", "Medium": "16px", "Large": "18px"}
-    theme = themes[st.session_state.theme]
-    font_size = font_map[st.session_state.font_size]
-    font_family = theme.get("font", "'Segoe UI', 'Roboto', sans-serif")
+    .stTable, .stDataFrame {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        color: #1c1c1c;
+    }
 
-    def generate_css(theme: dict, font_size: str, font_family: str) -> str:
-        return f"""
-        <style>
-        html, body, .stApp, [class^="css"], button, input, label, textarea, select {{
-            font-size: {font_size} !important;
-            color: {theme["text"]} !important;
-            font-family: {font_family};
-        }}
-        .stApp {{
-            background-color: {theme["background"]} !important;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            background-attachment: fixed;
-            transition: background 0.5s ease, color 0.5s ease;
-        }}
-        html, body, [class^="css"] {{
-            background-color: transparent !important;
-        }}
-        h1, h2, h3 {{
-            font-weight: bold;
-        }}
-        .stTextInput > div > input,
-        .stSelectbox > div > div,
-        .stRadio > div,
-        textarea {{
-            background-color: {theme["input_bg"]} !important;
-            color: {theme["text"]} !important;
-            border: 1px solid {theme["button"]};
-            backdrop-filter: blur(6px);
-        }}
-        div.stButton > button {{
-            background-color: {theme["button"]};
-            color: white;
-            padding: 0.5em 1.5em;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }}
-        div.stButton > button:hover {{
-            background-color: {theme["hover"]};
-        }}
-        .stButton>button, .stDownloadButton>button {{
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0.7em 1.5em;
-            font-weight: bold;
-            font-size: 1rem;
-            box-shadow: 0 0 15px #f7f7f7;
-            transition: 0.3s ease;
-        }}
-        .stButton>button:hover, .stDownloadButton>button:hover {{
-            box-shadow: 0 0 25px #74c69d, 0 0 35px #74c69d;
-            transform: scale(1.05);
-        }}
-        .glass-container {{
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }}
-        .stContainer {{
-            font-size: {font_size};
-            color: {theme["text"]};
-        }}
-        .dataframe, .stDataFrame, .stTable {{
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            color: {theme["text"]} !important;
-            border-radius: 10px;
-        }}
-        .stTable tbody tr:hover {{
-            background-color: rgba(255, 255, 255, 0.2) !important;
-        }}
-        .css-1d391kg, .css-1lcbmhc, .stSidebar, section[data-testid="stSidebar"] {{
-            background-color: {theme["background"]} !important;
-            color: {theme["text"]} !important;
-            backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(255,255,255,0.2);
-        }}
-        ::-webkit-scrollbar {{
-            width: 8px;
-        }}
-        ::-webkit-scrollbar-thumb {{
-            background: #74c69d;
-            border-radius: 10px;
-        }}
-        ::-webkit-scrollbar-thumb:hover {{
-            background: #52b788;
-        }}
-        .glow-text {{
-            text-align: center;
-            font-size: 3em;
-            color: #ff0000;
-            text-shadow: 0 0 5px #52b788, 0 0 10px #52b788, 0 0 20px #52b788;
-            margin-bottom: 20px;
-        }}
-        .footer {{
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            background-color: {theme["background"]};
-            color: {theme["text"]};
-            text-align: center;
-            padding: 12px 0;
-            font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0px -2px 10px rgba(0,0,0,0.1);
-            backdrop-filter: blur(8px);
-        }}
-        /* Animations */
-        .fade-in {{
-            animation: fadeIn 1s ease-in;
-        }}
-        .slide-in {{
-            animation: slideIn 0.8s ease-out;
-        }}
-        @keyframes fadeIn {{
-            0% {{ opacity: 0; }}
-            100% {{ opacity: 1; }}
-        }}
-        @keyframes slideIn {{
-            0% {{ transform: translateY(20px); opacity: 0; }}
-            100% {{ transform: translateY(0); opacity: 1; }}
-        }}
-        </style>
-        """
+    .glass-box {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        color: #1c1c1c;
+        transition: transform 0.2s ease-in-out;
+    }
+    .glass-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
 
-    st.markdown(generate_css(theme, font_size, font_family), unsafe_allow_html=True)
+    .stApp {
+        background: linear-gradient(135deg, #f5f5f5 0%, #fefffe 100%);
+        font-family: 'Segoe UI', sans-serif;
+    }
 
+    /* Extended styles for buttons, inputs, sliders, and charts */
+    button[kind="primary"] {
+        background: rgba(255, 255, 255, 0.12) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #1c1c1c !important;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        transition: all 0.2s ease-in-out;
+    }
+    button[kind="primary"]:hover {
+        background: rgba(255, 255, 255, 0.2) !important;
+        transform: scale(1.02);
+    }
 
+    input, textarea, .stSelectbox, .stTextInput, .stNumberInput {
+        background: rgba(255, 255, 255, 0.12) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        color: #1c1c1c !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .css-1r6slb0, .css-14xtw13 {
+        background: rgba(255, 255, 255, 0.12) !important;
+        border-radius: 0.5rem;
+        padding: 0.25rem;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .element-container:has(canvas) {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 1rem;
+        padding: 1rem;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+@contextmanager
+def glass_box():
+    st.markdown('<div class="glass-box">', unsafe_allow_html=True)
+    yield
+    st.markdown('</div>', unsafe_allow_html=True)
 

@@ -15,7 +15,8 @@ from modules.authentication import require_role
 
 def show():
     require_role(["admin", "collector", "editor"])
-
+    
+    
     ids = ["", '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
     site_id_map = {
         '1': 'Kaneshie First Light',
@@ -32,13 +33,13 @@ def show():
     officers = ['Obed', 'Clement', 'Peter', 'Ben', 'Mawuli']
     wind_directions = ["", "N", "NE", "E", "SE", "S", "SW", "W", "NW"]
     weather_conditions = ["", "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Windy", "Hazy", "Stormy", "Foggy"]
-
+    
     def get_custom_time(label_prefix, key_prefix, hour_key, minute_key):
         hour = st.selectbox(f"{label_prefix} Hour", list(range(0, 24)), key=f"{key_prefix}_{hour_key}")
         valid_minutes = [m for m in range(60) if m not in [0, 15, 30, 45]]
         minute = st.selectbox(f"{label_prefix} Minute (not 00, 15, 30, 45)", valid_minutes, key=f"{key_prefix}_{minute_key}")
         return time(hour=hour, minute=minute)
-
+        
     entry_type = st.selectbox("📝 Select Entry Type", ["", "START", "STOP"], key="entry_type_selectbox")
 
     if entry_type:
@@ -48,11 +49,12 @@ def show():
             st.text_input("📍 Site", value=site_selected, disabled=True, key="site_name_textbox")
         officer_selected = st.multiselect("🧑‍🔬 Monitoring Officer(s)", officers, key="officer_selectbox")
         driver_name = st.text_input("🧑‍🌾 Driver's Name", key="driver_name_input")
+        
 
     if entry_type == "START":
         with st.expander("🟢 Start Day Monitoring", expanded=True):
             start_date = st.date_input("📆 Start Date", value=datetime.today(), key="start_date_input")
-            start_time = get_custom_time("⏱️ Start Time", "start", "hour", "minute")
+            start_time = get_custom_time("⏱️ Start Time", "start_hour", "start_minute")
             start_obs = st.text_area("🧿 First Day Observation", key="start_observation_input")
 
             st.markdown("#### 🌧️ Initial Atmospheric Conditions")
@@ -84,7 +86,7 @@ def show():
     elif entry_type == "STOP":
         with st.expander("🔴 Stop Day Monitoring", expanded=True):
             stop_date = st.date_input("📆 Stop Date", value=datetime.today(), key="stop_date_input")
-            stop_time = get_custom_time("⏱️ Stop Time", "stop", "hour", "minute")
+            stop_time = get_custom_time("⏱️ Stop Time", "stop_hour", "stop_minute")
             stop_obs = st.text_area("🧿 Final Day Observation", key="stop_observation_input")
 
             st.markdown("#### 🌧️ Final Atmospheric Conditions")
@@ -123,7 +125,7 @@ def show():
         except Exception as e:
             st.warning(f"⚠ Could not load Submitted Monitoring Records: {e}")
 
-    # --- Footer ---
+     # --- Footer ---
     st.markdown("""
         <hr style="margin-top: 40px; margin-bottom:10px">
         <div style='text-align: center; color: grey; font-size: 0.9em;'>

@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 from resource import (
-    load_data_from_sheet_cached,
+    load_data_from_sheet,
     add_data,
     merge_start_stop,
     save_merged_data_to_sheet,
@@ -92,7 +92,7 @@ def show():
         ]
 
     def handle_merge_logic():
-        df = load_data_from_sheet_cached(sheet)
+        df = load_data_from_sheet(sheet)
         merged_df = merge_start_stop(df)
 
         if not merged_df.empty:
@@ -104,7 +104,7 @@ def show():
 
     # --- Sidebar Filter Controls ---
     st.sidebar.header("🔍 Filter Records")
-    df_all = load_data_from_sheet_cached(sheet)
+    df_all = load_data_from_sheet(sheet)
 
     # Locate 'Date' column
     date_column = None

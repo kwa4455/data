@@ -1,12 +1,17 @@
+
 import streamlit as st
 import pandas as pd
 import gspread
 from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
-from gspread.exceptions import APIError, WorksheetNotFound
-import json
-from constants import SPREADSHEET_ID, MAIN_SHEET, MERGED_SHEET, CALC_SHEET
+from gspread.exceptions import APIError,WorksheetNotFound 
 
+
+
+
+import json
+import time
+from constants import SPREADSHEET_ID, MAIN_SHEET, MERGED_SHEET, CALC_SHEET
 
 # === Google Sheets Setup ===
 creds_json = st.secrets["GOOGLE_CREDENTIALS"]
@@ -24,10 +29,11 @@ client = gspread.authorize(creds)
 spreadsheet = client.open_by_key(SPREADSHEET_ID)
 
 
+# === Ensure Observations worksheet exists and is initialized ===
 def ensure_main_sheet_initialized(spreadsheet, sheet_name):
     try:
         sheet = spreadsheet.worksheet(sheet_name)
-    except WorksheetNotFound:
+    except gspread.WorksheetNotFound:
         sheet = spreadsheet.add_worksheet(title=sheet_name, rows="100", cols="20")
 
     if not sheet.get_all_values():
@@ -49,11 +55,9 @@ def convert_timestamps_to_string(df):
         df[col] = df[col].dt.strftime('%Y-%m-%d %H:%M:%S')
     return df
 
-
-@st.cache_data(ttl=600)
-def load_data_from_sheet_cached(sheet):
+def load_data_from_sheet(sheet):
     try:
-        all_values = _sheet.get_all_values()
+        all_values = sheet.get_all_values()
         if not all_values:
             return pd.DataFrame()
         headers = all_values[0]
@@ -70,23 +74,10 @@ def load_data_from_sheet_cached(sheet):
         st.error(f"❌ Unexpected error: {e}")
         return pd.DataFrame()
 
-
-def make_unique_headers(headers):
-    """
-    Ensure headers are unique by appending '.1', '.2', etc. to duplicates.
-    """
-    seen = {}
-    unique_headers = []
-    for h in headers:
-        if h == '':
-            h = 'Unnamed'
-        if h in seen:
-            seen[h] += 1
-            unique_headers.append(f"{h}.{seen[h]}")
-        else:
-            seen[h] = 0
-            unique_headers.append(h)
-    return unique_headers
+def add_data(row, username):
+    row.append(username)
+    row.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    sheet.append_row(row)
 
 def filter_by_site_and_date(df, site_col="Site", date_col="Submitted At", context_label=""):
     df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
@@ -111,7 +102,37 @@ def filter_by_site_and_date(df, site_col="Site", date_col="Submitted At", contex
     return filtered_df
 
 
+def validate_inputs(temp, rh, pressure, wind_speed):
+    if not (-40 <= temp <= 60):
+        st.error("❗ Temperature must be between -40°C and 60°C")
+        return False
+    if not (0 <= rh <= 100):
+        st.error("❗ Relative Humidity must be between 0% and 100%")
+        return False
+    if not (800 <= pressure <= 1100):
+        st.error("❗ Pressure must be between 800 mbar and 1100 mbar")
+        return False
+    if not wind_speed.isnumeric() or float(wind_speed) <= 0:
+        st.error("❗ Wind Speed must be a positive number")
+        return False
+    return True
 
+def make_unique_headers(headers):
+    """
+    Ensure headers are unique by appending '.1', '.2', etc. to duplicates.
+    """
+    seen = {}
+    unique_headers = []
+    for h in headers:
+        if h == '':
+            h = 'Unnamed'
+        if h in seen:
+            seen[h] += 1
+            unique_headers.append(f"{h}.{seen[h]}")
+        else:
+            seen[h] = 0
+            unique_headers.append(h)
+    return unique_headers
 
 def backup_deleted_row(row_data, original_sheet_name, row_number, deleted_by):
    
@@ -189,35 +210,18 @@ def restore_specific_deleted_record(selected_index: int):
     except Exception as e:
         return f"❌ Restore failed: {e}"
 
-def add_data(row, username):
-    row.append(username)
-    row.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    sheet.append_row(row)
-
-
-def filter_dataframe(df, site_filter=None, date_range=None):
-    if df.empty:
-        return df
-    if "Submitted At" in df.columns:
-        df["Submitted At"] = pd.to_datetime(df["Submitted At"], errors="coerce")
-    if site_filter and site_filter != "All":
-        df = df[df["Site"] == site_filter]
-    if date_range and len(date_range) == 2:
-        start, end = date_range
-        df = df[(df["Submitted At"].dt.date >= start) & (df["Submitted At"].dt.date <= end)]
-    return df
-
-
 def merge_start_stop(df):
     start_df = df[df["Entry Type"] == "START"].copy()
     stop_df = df[df["Entry Type"] == "STOP"].copy()
     merge_keys = ["ID", "Site"]
-
+    
+    # Rename columns for merging
     start_df = start_df.rename(columns=lambda x: f"{x}_Start" if x not in merge_keys else x)
     stop_df = stop_df.rename(columns=lambda x: f"{x}_Stop" if x not in merge_keys else x)
-
+    
     merged = pd.merge(start_df, stop_df, on=merge_keys, how="inner")
 
+    # Compute Elapsed Time difference in seconds
     if "Elapsed Time (min)_Start" in merged and "Elapsed Time (min)_Stop" in merged:
         merged["Elapsed Time (min)_Start"] = pd.to_numeric(merged["Elapsed Time (min)_Start"], errors="coerce")
         merged["Elapsed Time (min)_Stop"] = pd.to_numeric(merged["Elapsed Time (min)_Stop"], errors="coerce")
@@ -225,6 +229,7 @@ def merge_start_stop(df):
             merged["Elapsed Time (min)_Stop"] - merged["Elapsed Time (min)_Start"]
         ) * 60
 
+    # Compute Average Flow Rate
     if " Flow Rate (L/min)_Start" in merged and " Flow Rate (L/min)_Stop" in merged:
         merged[" Flow Rate (L/min)_Start"] = pd.to_numeric(merged[" Flow Rate (L/min)_Start"], errors="coerce")
         merged[" Flow Rate (L/min)_Stop"] = pd.to_numeric(merged[" Flow Rate (L/min)_Stop"], errors="coerce")
@@ -232,6 +237,7 @@ def merge_start_stop(df):
             merged[" Flow Rate (L/min)_Start"] + merged[" Flow Rate (L/min)_Stop"]
         ) / 2
 
+    # Define desired column order
     desired_order = [
         "ID", "Site",
         "Entry Type_Start", "Monitoring Officer_Start", "Driver_Start", "Date _Start", "Time_Start",
@@ -245,8 +251,10 @@ def merge_start_stop(df):
         "Elapsed Time Diff (min)", "Average Flow Rate (L/min)"
     ]
 
+    # Return only the columns that exist in the merged DataFrame in the specified order
     existing_cols = [col for col in desired_order if col in merged.columns]
     return merged[existing_cols]
+
 
 
 def save_merged_data_to_sheet(df, spreadsheet, sheet_name):
@@ -256,6 +264,19 @@ def save_merged_data_to_sheet(df, spreadsheet, sheet_name):
     new_sheet = spreadsheet.add_worksheet(title=sheet_name, rows="1000", cols="50")
     new_sheet.update([df.columns.tolist()] + df.values.tolist())
 
+def filter_dataframe(df, site_filter=None, date_range=None):
+    if df.empty:
+        return df
+    if "Submitted At" in df.columns:
+        df["Submitted At"] = pd.to_datetime(df["Submitted At"], errors="coerce")
+    if site_filter and site_filter != "All":
+        df = df[df["Site"] == site_filter]
+    if date_range and len(date_range) == 2:
+        start, end = date_range
+        df = df[(df["Submitted At"].dt.date >= start) & (df["Submitted At"].dt.date <= end)]
+    return df
+
+# === Display and Merge ===
 
 def display_and_merge_data(df, spreadsheet, merged_sheet_name):
     if df.empty:
@@ -269,13 +290,13 @@ def display_and_merge_data(df, spreadsheet, merged_sheet_name):
     filtered_df = filter_dataframe(df, site_filter, date_range)
     st.dataframe(filtered_df, use_container_width=True)
 
-    if st.button("Merge and Save Records"):
-        merged_df = merge_start_stop(filtered_df)
-        if not merged_df.empty:
-            save_merged_data_to_sheet(merged_df, spreadsheet, merged_sheet_name)
-            st.success("✅ Merged records saved to Google Sheets.")
-            st.dataframe(merged_df, use_container_width=True)
-        else:
-            st.warning("⚠️ No matching START and STOP records found to merge.")
+    merged_df = merge_start_stop(filtered_df)
+    if not merged_df.empty:
+        save_merged_data_to_sheet(merged_df, spreadsheet, merged_sheet_name)
+        st.success("✅ Merged records saved to Google Sheets.")
+        st.dataframe(merged_df, use_container_width=True)
+    else:
+        st.warning("⚠️ No matching START and STOP records found to merge.")
+
 
 

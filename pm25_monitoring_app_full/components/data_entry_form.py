@@ -188,12 +188,12 @@ def show():
             st.text_input("📍 Site", value=site_selected, disabled=True, key="site_name_textbox")
         officer_selected = st.multiselect("🧑‍🔬 Monitoring Officer(s)", officers, key="officer_selectbox")
         driver_name = st.text_input("🧑‍🌾 Driver's Name", key="driver_name_input")
-    
-    def get_custom_time(label_prefix, hour_key, minute_key):
-        hour = st.selectbox(f"{label_prefix} Hour", list(range(0, 24)), key=f"{key_prefix}_{hour_key}")
-        valid_minutes = [m for m in range(60) if m not in [0, 15, 30, 45]]
-        minute = st.selectbox(f"{label_prefix} Minute (not 00, 15, 30, 45)", valid_minutes, key=f"{key_prefix}_{minute_key}")
-        return time(hour=hour, minute=minute)
+        
+        def get_custom_time(label_prefix, hour_key, minute_key):
+            hour = st.selectbox(f"{label_prefix} Hour", list(range(0, 24)), key=f"{key_prefix}_{hour_key}")
+            valid_minutes = [m for m in range(60) if m not in [0, 15, 30, 45]]
+            minute = st.selectbox(f"{label_prefix} Minute (not 00, 15, 30, 45)", valid_minutes, key=f"{key_prefix}_{minute_key}")
+            return time(hour=hour, minute=minute)
 
     if entry_type == "START":
         with st.expander("🟢 Start Day Monitoring", expanded=True):

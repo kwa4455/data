@@ -23,12 +23,23 @@ creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 spreadsheet = client.open_by_key(SPREADSHEET_ID)
 
+
+@st.cache_data(ttl=60)
+def get_users_sheet_data(sheet):
+    return sheet.get_all_records()
+
+@st.cache_data(ttl=60)
+def get_reg_requests_data(sheet):
+    return sheet.get_all_records()
+
+@st.cache_data(ttl=60)
+def get_reg_requests_values(sheet):
+    return sheet.get_all_values()
+
+
+
 def hash_password(password):
     return stauth.Hasher([password]).generate()[0]
-
-
-
-
 
 def ensure_users_sheet(spreadsheet):
     try:

@@ -181,8 +181,6 @@ def show():
 
     entry_type = st.selectbox("📝 Select Entry Type", ["", "START", "STOP"], key="entry_type_selectbox")
     
-    # Assume these are already defined or passed into the environment
-    entry_type = st.selectbox("📋 Select Entry Type", ["START", "STOP"], key="entry_type_selectbox")
     id_selected = st.selectbox("📌 Select Site ID", ids, key="site_id_selectbox")
     site_selected = site_id_map.get(id_selected, "")
     if site_selected:

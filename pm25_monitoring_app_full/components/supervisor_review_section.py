@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from resource import (
-    load_data_from_sheet,
+    load_data_from_sheet_cached,
     add_data,
     merge_start_stop,
     save_merged_data_to_sheet,
@@ -71,7 +71,7 @@ def show():
 
     # === Display Existing Data & Merge START/STOP ===
     st.header("📡 Submitted Monitoring Records")
-    df = load_data_from_sheet(sheet)
+    df = load_data_from_sheet_cached(sheet)
     display_and_merge_data(df, spreadsheet, MERGED_SHEET)
 
     # --- View Saved Entries ---

@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, time
 from resource import (
-    load_data_from_sheet,
+    load_data_from_sheet_cached,
     add_data,
     merge_start_stop,
     save_merged_data_to_sheet,
@@ -115,7 +115,7 @@ def show():
 
     if st.checkbox("📖 Show Submitted Monitoring Records", key="submitted_records_checkbox"):
         try:
-            df = load_data_from_sheet(sheet)
+            df = load_data_from_sheet_cached(sheet)
             df_saved = display_and_merge_data(df, spreadsheet, MERGED_SHEET)
             st.markdown("<div class='custom-table-wrapper'>", unsafe_allow_html=True)
             st.dataframe(df_saved, use_container_width=True)

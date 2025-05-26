@@ -179,15 +179,16 @@ def show():
     wind_directions = ["", "N", "NE", "E", "SE", "S", "SW", "W", "NW"]
     weather_conditions = ["", "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Windy", "Hazy", "Stormy", "Foggy"]
 
-    entry_type = st.selectbox("📝 Select Entry Type", ["", "START", "STOP"], key=f"{key_prefix}_entry_type")
+    entry_type = st.selectbox("📝 Select Entry Type", ["", "START", "STOP"], key="entry_type_selectbox")
 
-    id_selected = st.selectbox("📌 Select Site ID", ids, key=f"{key_prefix}_site_id")
-    site_selected = site_id_map.get(id_selected, "")
-    if site_selected:
-        st.text_input("📍 Site", value=site_selected, disabled=True, key=f"{key_prefix}_site_name")
-    officer_selected = st.multiselect("🧑‍🔬 Monitoring Officer(s)", officers, key=f"{key_prefix}_officers")
-    driver_name = st.text_input("🧑‍🌾 Driver's Name", key=f"{key_prefix}_driver")
-
+    if entry_type:
+        id_selected = st.selectbox("📌 Select Site ID", ids, key="site_id_selectbox")
+        site_selected = site_id_map.get(id_selected, "")
+        if site_selected:
+            st.text_input("📍 Site", value=site_selected, disabled=True, key="site_name_textbox")
+        officer_selected = st.multiselect("🧑‍🔬 Monitoring Officer(s)", officers, key="officer_selectbox")
+        driver_name = st.text_input("🧑‍🌾 Driver's Name", key="driver_name_input")
+    
     def get_custom_time(label_prefix, hour_key, minute_key):
         hour = st.selectbox(f"{label_prefix} Hour", list(range(0, 24)), key=f"{key_prefix}_{hour_key}")
         valid_minutes = [m for m in range(60) if m not in [0, 15, 30, 45]]
@@ -196,23 +197,23 @@ def show():
 
     if entry_type == "START":
         with st.expander("🟢 Start Day Monitoring", expanded=True):
-            start_date = st.date_input("📆 Start Date", value=datetime.today(), key=f"{key_prefix}_start_date")
+            start_date = st.date_input("📆 Start Date", value=datetime.today(), key="start_date_input")
             start_time = get_custom_time("⏱️ Start Time", "start_hour", "start_minute")
-            start_obs = st.text_area("🧿 First Day Observation", key=f"{key_prefix}_start_obs")
+            start_obs = st.text_area("🧿 First Day Observation", key="start_observation_input")
 
             st.markdown("#### 🌧️ Initial Atmospheric Conditions")
-            start_temp = st.number_input("🌡️ Temperature (°C)", step=0.1, key=f"{key_prefix}_start_temp")
-            start_rh = st.number_input("🌬️ Relative Humidity (%)", step=0.1, key=f"{key_prefix}_start_rh")
-            start_pressure = st.number_input("🧭 Pressure (mbar)", step=0.1, key=f"{key_prefix}_start_pressure")
-            start_weather = st.selectbox("🌦️ Weather", weather_conditions, key=f"{key_prefix}_start_weather")
-            start_wind_speed = st.text_input("💨 Wind Speed (e.g. 10 km/h)", key=f"{key_prefix}_start_wind_speed")
-            start_wind_direction = st.selectbox("🌪️ Wind Direction", wind_directions, key=f"{key_prefix}_start_wind_dir")
+            start_temp = st.number_input("🌡️ Temperature (°C)", step=0.1, key="start_temp_input")
+            start_rh = st.number_input("🌬️ Relative Humidity (%)", step=0.1, key="start_rh_input")
+            start_pressure = st.number_input("🧭 Pressure (mbar)", step=0.1, key="start_pressure_input")
+            start_weather = st.selectbox("🌦️ Weather", weather_conditions, key="start_weather_selectbox")
+            start_wind_speed = st.text_input("💨 Wind Speed (e.g. 10 km/h)", key="start_wind_speed_input")
+            start_wind_direction = st.selectbox("🌪️ Wind Direction", wind_directions, key="start_wind_direction_selectbox")
 
             st.markdown("#### ⚙ Initial Sampler Information")
-            start_elapsed = st.number_input("⏰ Initial Elapsed Time (min)", step=1, key=f"{key_prefix}_start_elapsed")
-            start_flow = st.number_input("🧯 Initial Flow Rate (L/min)", step=0.1, key=f"{key_prefix}_start_flow")
+            start_elapsed = st.number_input("⏰ Initial Elapsed Time (min)", step=1, key="start_elapsed_input")
+            start_flow = st.number_input("🧯 Initial Flow Rate (L/min)", step=0.1, key="start_flow_input")
 
-            if st.button("✅ Submit Start Day Data", key=f"{key_prefix}_start_submit"):
+            if st.button("✅ Submit Start Day Data", key="start_submit_button"):
                 if all([id_selected, site_selected, officer_selected, driver_name]):
                     start_row = [
                         "START", id_selected, site_selected, ", ".join(officer_selected), driver_name,
@@ -228,23 +229,23 @@ def show():
 
     elif entry_type == "STOP":
         with st.expander("🔴 Stop Day Monitoring", expanded=True):
-            stop_date = st.date_input("📆 Stop Date", value=datetime.today(), key=f"{key_prefix}_stop_date")
+            stop_date = st.date_input("📆 Stop Date", value=datetime.today(), key="stop_date_input")
             stop_time = get_custom_time("⏱️ Stop Time", "stop_hour", "stop_minute")
-            stop_obs = st.text_area("🧿 Final Day Observation", key=f"{key_prefix}_stop_obs")
+            stop_obs = st.text_area("🧿 Final Day Observation", key="stop_observation_input")
 
             st.markdown("#### 🌧️ Final Atmospheric Conditions")
-            stop_temp = st.number_input("🌡️ Final Temperature (°C)", step=0.1, key=f"{key_prefix}_stop_temp")
-            stop_rh = st.number_input("🌬️ Final Relative Humidity (%)", step=0.1, key=f"{key_prefix}_stop_rh")
-            stop_pressure = st.number_input("🧭 Final Pressure (mbar)", step=0.1, key=f"{key_prefix}_stop_pressure")
-            stop_weather = st.selectbox("🌦️ Final Weather", weather_conditions, key=f"{key_prefix}_stop_weather")
-            stop_wind_speed = st.text_input("💨 Final Wind Speed (e.g. 12 km/h)", key=f"{key_prefix}_stop_wind_speed")
-            stop_wind_direction = st.selectbox("🌪️ Final Wind Direction", wind_directions, key=f"{key_prefix}_stop_wind_dir")
+            stop_temp = st.number_input("🌡️ Final Temperature (°C)", step=0.1, key="stop_temp_input")
+            stop_rh = st.number_input("🌬️ Final Relative Humidity (%)", step=0.1, key="stop_rh_input")
+            stop_pressure = st.number_input("🧭 Final Pressure (mbar)", step=0.1, key="stop_pressure_input")
+            stop_weather = st.selectbox("🌦️ Final Weather", weather_conditions, key="stop_weather_selectbox")
+            stop_wind_speed = st.text_input("💨 Final Wind Speed (e.g. 12 km/h)", key="stop_wind_speed_input")
+            stop_wind_direction = st.selectbox("🌪️ Final Wind Direction", wind_directions, key="stop_wind_direction_selectbox")
 
             st.markdown("#### ⚙ Final Sampler Information")
-            stop_elapsed = st.number_input("⏰ Final Elapsed Time (min)", step=1, key=f"{key_prefix}_stop_elapsed")
-            stop_flow = st.number_input("🧯 Final Flow Rate (L/min)", step=0.1, key=f"{key_prefix}_stop_flow")
+            stop_elapsed = st.number_input("⏰ Final Elapsed Time (min)", step=1, key="stop_elapsed_input")
+            stop_flow = st.number_input("🧯 Final Flow Rate (L/min)", step=0.1, key="stop_flow_input")
 
-            if st.button("✅ Submit Stop Day Data", key=f"{key_prefix}_stop_submit"):
+            if st.button("✅ Submit Stop Day Data", key="stop_submit_button"):
                 if all([id_selected, site_selected, officer_selected, driver_name]):
                     stop_row = [
                         "STOP", id_selected, site_selected, ", ".join(officer_selected), driver_name,
@@ -258,7 +259,7 @@ def show():
                 else:
                     st.error("⚠ Please complete all required fields before submitting.")
 
-    if st.checkbox("📖 Show Submitted Monitoring Records", key=f"{key_prefix}_show_data"):
+    if st.checkbox("📖 Show Submitted Monitoring Records", key="submitted_records_checkbox"):
         try:
             df = load_data_from_sheet(sheet)
             df_saved = display_and_merge_data(df, spreadsheet, MERGED_SHEET)
@@ -268,6 +269,7 @@ def show():
         except Exception as e:
             st.warning(f"⚠ Could not load Submitted Monitoring Records: {e}")
 
+     # --- Footer ---
     st.markdown("""
         <hr style="margin-top: 40px; margin-bottom:10px">
         <div style='text-align: center; color: grey; font-size: 0.9em;'>

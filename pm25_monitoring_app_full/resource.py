@@ -51,7 +51,7 @@ def convert_timestamps_to_string(df):
 
 
 @st.cache_data(ttl=600)
-def load_data_from_sheet_cached(_sheet):
+def load_data_from_sheet_cached(sheet):
     try:
         all_values = _sheet.get_all_values()
         if not all_values:

@@ -88,6 +88,31 @@ def make_unique_headers(headers):
             unique_headers.append(h)
     return unique_headers
 
+def filter_by_site_and_date(df, site_col="Site", date_col="Submitted At", context_label=""):
+    df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+
+    st.markdown(f"### 🔍 Filter Records {context_label}")
+    sites = ["All"] + sorted(df[site_col].dropna().unique())
+    selected_site = st.selectbox(f"Filter by Site {context_label}:", sites, key=f"{context_label}_site")
+
+    min_date = df[date_col].min().date()
+    max_date = df[date_col].max().date()
+    selected_date = st.date_input(
+        f"Filter by Date {context_label}:", 
+        value=min_date, min_value=min_date, max_value=max_date,
+        key=f"{context_label}_date"
+    )
+
+    filtered_df = df.copy()
+    if selected_site != "All":
+        filtered_df = filtered_df[filtered_df[site_col] == selected_site]
+    filtered_df = filtered_df[filtered_df[date_col].dt.date == selected_date]
+
+    return filtered_df
+
+
+
+
 def backup_deleted_row(row_data, original_sheet_name, row_number, deleted_by):
    
 

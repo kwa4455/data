@@ -29,7 +29,7 @@ def show():
         '9': 'Tantra Hill',
         '10': 'Amasaman'
     }
-    officers = ['Obed', 'Clement', 'Peter', 'Ben', 'Mawuli']
+    officers = ['Obed Korankye', 'Clement Ackaah', 'Peter Ohene-Twum', 'Benjamin Essien', 'Mawuli Amegah']
     wind_directions = ["", "N", "NE", "E", "SE", "S", "SW", "W", "NW"]
     weather_conditions = ["", "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Windy", "Hazy", "Stormy", "Foggy"]
 

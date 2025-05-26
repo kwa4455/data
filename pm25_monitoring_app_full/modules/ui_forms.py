@@ -72,14 +72,7 @@ def add_glass_style():
         color: #1c1c1c;
     }
 
-    .stTable, .stDataFrame {
-        background: rgba(255, 255, 255, 0.12);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border-radius: 0.75rem;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        color: #1c1c1c;
-    }
+    
 
     .glass-box {
         background: rgba(255, 255, 255, 0.08);

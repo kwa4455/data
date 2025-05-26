@@ -193,6 +193,8 @@ def show():
         with st.expander("🟢 Start Day Monitoring", expanded=True):
             start_date = st.date_input("📆 Start Date", value=datetime.today(), key="start_date_input")
             start_time = st.time_input("⏱️ Start Time", value=datetime.now().time(), key="start_time_input")
+            if start_time.minute in [0, 15, 30, 45]:
+                st.error("❌ Start Time minutes cannot be exactly 00, 15, 30, or 45.")
             start_obs = st.text_area("🧿 First Day Observation", key="start_observation_input")
 
             st.markdown("#### 🌧️ Initial Atmospheric Conditions")
@@ -225,6 +227,8 @@ def show():
         with st.expander("🔴 Stop Day Monitoring", expanded=True):
             stop_date = st.date_input("📆 Stop Date", value=datetime.today(), key="stop_date_input")
             stop_time = st.time_input("⏱️ Stop Time", value=datetime.now().time(), key="stop_time_input")
+            if start_time.minute in [0, 15, 30, 45]:
+                st.error("❌ Start Time minutes cannot be exactly 00, 15, 30, or 45.")
             stop_obs = st.text_area("🧿 Final Day Observation", key="stop_observation_input")
 
             st.markdown("#### 🌧️ Final Atmospheric Conditions")

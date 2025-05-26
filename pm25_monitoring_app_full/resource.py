@@ -51,9 +51,9 @@ def convert_timestamps_to_string(df):
 
 
 @st.cache_data(ttl=600)
-def load_data_from_sheet_cached(sheet):
+def load_data_from_sheet_cached(_sheet):
     try:
-        all_values = sheet.get_all_values()
+        all_values = _sheet.get_all_values()
         if not all_values:
             return pd.DataFrame()
         headers = all_values[0]
@@ -61,7 +61,6 @@ def load_data_from_sheet_cached(sheet):
         if not rows:
             return pd.DataFrame(columns=headers)
         df = pd.DataFrame(rows, columns=headers)
-        # Convert datetime columns here if needed
         return convert_timestamps_to_string(df)
     except APIError as e:
         st.error(f"❌ APIError: {e.response.status_code} - {e.response.reason}")
@@ -70,6 +69,7 @@ def load_data_from_sheet_cached(sheet):
     except Exception as e:
         st.error(f"❌ Unexpected error: {e}")
         return pd.DataFrame()
+
 
 def make_unique_headers(headers):
     """

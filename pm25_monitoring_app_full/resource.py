@@ -65,8 +65,12 @@ def load_data_from_sheet(sheet):
             return pd.DataFrame(columns=headers)
         df = pd.DataFrame(rows, columns=headers)
         return convert_timestamps_to_string(df)
+    except APIError as e:
+        st.error(f"❌ APIError: {e.response.status_code} - {e.response.reason}")
+        st.text(f"Details: {e.response.text}")
+        return pd.DataFrame()
     except Exception as e:
-        st.error(f"❌ Failed to load data from sheet: {e}")
+        st.error(f"❌ Unexpected error: {e}")
         return pd.DataFrame()
 
 def add_data(row, username):

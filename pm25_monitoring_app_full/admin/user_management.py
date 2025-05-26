@@ -12,7 +12,7 @@ from modules.email_utils import send_email
 from constants import REG_REQUESTS_SHEET
 
 def admin_panel():
-    require_role(["admin", "supervisor"])
+    require_role(["admin"])
     st.header("🛠 Admin Panel: Approve Users")
 
     admin_username = st.session_state.get("username", "unknown_admin")

@@ -18,26 +18,26 @@ from modules.authentication import require_role
 
 def show():
     require_role(["admin", "collector", "editor"])
+     # Inject custom CSS
     st.markdown("""
         <style>
-        /* --- your CSS --- */
         body, .stApp {
             font-family: 'Poppins', sans-serif;
             transition: all 0.5s ease;
         }
-        
+
         /* Light Mode */
         body.light-mode, .stApp.light-mode {
             background: linear-gradient(135deg, #f8fdfc, #d8f3dc);
             color: #1b4332;
         }
-        
+
         /* Dark Mode */
         body.dark-mode, .stApp.dark-mode {
             background: linear-gradient(135deg, #0e1117, #161b22);
             color: #0000b3;
         }
-        
+
         /* Sidebar */
         [data-testid="stSidebar"] {
             background: rgba(255, 255, 255, 0.2);
@@ -58,14 +58,18 @@ def show():
             box-shadow: 0 0 15px #52b788;
             transition: 0.3s ease;
         }
-        
+
         .stButton>button:hover, .stDownloadButton>button:hover {
             background: linear-gradient(135deg, #2d6a4f, #40916c);
             box-shadow: 0 0 25px #74c69d, 0 0 35px #74c69d;
             transform: scale(1.05);
         }
 
-        /* Custom Scrollbars */
+        .stButton>button:active, .stDownloadButton>button:active {
+            transform: scale(0.97);
+        }
+
+        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -86,6 +90,15 @@ def show():
             margin-bottom: 20px;
         }
 
+        /* Graph iframe Glass Effect */
+        .element-container iframe {
+            background: rgba(255, 255, 255, 0.5) !important;
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
         /* Smooth theme transition */
         html, body, .stApp {
             transition: background 0.5s ease, color 0.5s ease;
@@ -97,30 +110,49 @@ def show():
             box-shadow: 0 0 10px #1b4332;
         }
 
-        /* Button Press Animation */
-        .stButton>button:active, .stDownloadButton>button:active {
-            transform: scale(0.97);
-        }
-
-        /* Graph iframe Glass Effect */
-        .element-container iframe {
-            background: rgba(255, 255, 255, 0.5) !important;
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Glow Animations */
+        /* Glow Animation Keyframes */
         @keyframes pulse-glow {
-          0% { box-shadow: 0 0 15px #74c69d, 0 0 30px #52b788; }
-          50% { box-shadow: 0 0 25px #40916c, 0 0 45px #2d6a4f; }
-          100% { box-shadow: 0 0 15px #74c69d, 0 0 30px #52b788; }
+            0% { box-shadow: 0 0 15px #74c69d, 0 0 30px #52b788; }
+            50% { box-shadow: 0 0 25px #40916c, 0 0 45px #2d6a4f; }
+            100% { box-shadow: 0 0 15px #74c69d, 0 0 30px #52b788; }
         }
+
         @keyframes pulse-glow-dark {
-          0% { box-shadow: 0 0 15px #58a6ff, 0 0 30px #79c0ff; }
-          50% { box-shadow: 0 0 25px #3b82f6, 0 0 45px #2563eb; }
-          100% { box-shadow: 0 0 15px #58a6ff, 0 0 30px #79c0ff; }
+            0% { box-shadow: 0 0 15px #58a6ff, 0 0 30px #79c0ff; }
+            50% { box-shadow: 0 0 25px #3b82f6, 0 0 45px #2563eb; }
+            100% { box-shadow: 0 0 15px #58a6ff, 0 0 30px #79c0ff; }
+        }
+
+        /* Glass effect for tables and dataframes */
+        [data-testid="stDataFrame"], 
+        [data-testid="stTable"] {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            animation: fade-glass 0.5s ease-in-out;
+            transition: all 0.3s ease-in-out;
+        }
+
+        body.dark-mode [data-testid="stDataFrame"],
+        body.dark-mode [data-testid="stTable"],
+        .stApp.dark-mode [data-testid="stDataFrame"],
+        .stApp.dark-mode [data-testid="stTable"] {
+            background: rgba(30, 30, 30, 0.6);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.05);
+        }
+
+        @keyframes fade-glass {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         </style>
     """, unsafe_allow_html=True)

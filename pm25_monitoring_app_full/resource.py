@@ -71,6 +71,98 @@ def load_data_from_sheet_cached(sheet):
         st.error(f"❌ Unexpected error: {e}")
         return pd.DataFrame()
 
+def make_unique_headers(headers):
+    """
+    Ensure headers are unique by appending '.1', '.2', etc. to duplicates.
+    """
+    seen = {}
+    unique_headers = []
+    for h in headers:
+        if h == '':
+            h = 'Unnamed'
+        if h in seen:
+            seen[h] += 1
+            unique_headers.append(f"{h}.{seen[h]}")
+        else:
+            seen[h] = 0
+            unique_headers.append(h)
+    return unique_headers
+
+def backup_deleted_row(row_data, original_sheet_name, row_number, deleted_by):
+   
+
+    try:
+        backup_sheet = spreadsheet.worksheet("Deleted Records")
+    except Exception:
+        num_columns = len(row_data) + 3  # for Deleted At, Source, Deleted By
+        backup_sheet = spreadsheet.add_worksheet(
+            title="Deleted Records", rows="1000", cols=str(num_columns)
+        )
+        header = [
+            "Entry Type", "ID", "Site", "Monitoring Officer", "Driver", "Date", "Time",
+            "Temperature (°C)", "RH (%)", "Pressure (mbar)", "Weather", "Wind Speed",
+            "Wind Direction", "Elapsed Time (min)", "Flow Rate (L/min)", "Observation",
+            "Submitted by", "Submitted At", "Deleted At", "Source", "Deleted By"
+        ]
+        backup_sheet.append_row(header)
+
+    deleted_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    source = f"{original_sheet_name} - Row {row_number}"
+
+    backup_sheet.append_row(row_data + [deleted_at, source, deleted_by])
+
+    
+def delete_row(sheet, row_number, deleted_by):
+    """
+    Deletes a row from the Google Sheet, backs it up with full metadata.
+    """
+    row_data = sheet.row_values(row_number)
+
+    # ✅ FIXED: Now passing all required arguments
+    backup_deleted_row(row_data, "Main Sheet", row_number, deleted_by)
+
+    sheet.delete_rows(row_number)
+
+
+
+
+def delete_merged_record_by_index(index_to_delete):
+    worksheet = sheet.spreadsheet.worksheet(MERGED_SHEET)
+    row_data = worksheet.row_values(index_to_delete + 2)  # Skip header
+    backup_deleted_row(row_data, "Merged Sheet", index_to_delete + 2)
+    worksheet.delete_rows(index_to_delete + 2)
+
+def restore_specific_deleted_record(selected_index: int):
+    """
+    Restores a specific deleted row from 'Deleted Records' to the main sheet.
+    Removes the selected row from the Deleted Records sheet.
+    """
+    try:
+        backup_sheet = spreadsheet.worksheet("Deleted Records")
+        deleted_rows = backup_sheet.get_all_values()
+
+        if len(deleted_rows) <= 1:
+            return "❌ No deleted records to restore."
+
+        headers = deleted_rows[0]
+        record_rows = deleted_rows[1:]
+
+        if not (0 <= selected_index < len(record_rows)):
+            return "❌ Invalid selection."
+
+        selected_row = record_rows[selected_index]
+        restored_data = selected_row[:-2]  # Remove metadata columns
+
+        # Append to main sheet
+        sheet.append_row(restored_data)
+
+        # Delete the corresponding row (add 2 to skip header and index offset)
+        backup_sheet.delete_rows(selected_index + 2)
+
+        return "✅ Selected deleted record has been restored."
+
+    except Exception as e:
+        return f"❌ Restore failed: {e}"
 
 def add_data(row, username):
     row.append(username)

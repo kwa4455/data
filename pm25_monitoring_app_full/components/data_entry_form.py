@@ -123,9 +123,7 @@ def show():
             100% { box-shadow: 0 0 15px #58a6ff, 0 0 30px #79c0ff; }
         }
 
-        /* Glass effect for tables and dataframes */
-        [data-testid="stDataFrame"], 
-        [data-testid="stTable"] {
+        .custom-table-wrapper {
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(12px);
             border-radius: 12px;
@@ -136,10 +134,8 @@ def show():
             transition: all 0.3s ease-in-out;
         }
 
-        body.dark-mode [data-testid="stDataFrame"],
-        body.dark-mode [data-testid="stTable"],
-        .stApp.dark-mode [data-testid="stDataFrame"],
-        .stApp.dark-mode [data-testid="stTable"] {
+        body.dark-mode .custom-table-wrapper,
+        .stApp.dark-mode .custom-table-wrapper {
             background: rgba(30, 30, 30, 0.6);
             box-shadow: 0 8px 25px rgba(255, 255, 255, 0.05);
         }
@@ -261,7 +257,9 @@ def show():
         try:
             df = load_data_from_sheet(sheet)
             df_saved = display_and_merge_data(df, spreadsheet, MERGED_SHEET)
+            st.markdown("<div class='custom-table-wrapper'>", unsafe_allow_html=True)
             st.dataframe(df_saved, use_container_width=True)
+            st.markdown("</div>", unsafe_allow_html=True)
         except Exception as e:
             st.warning(f"⚠ Could not load Submitted Monitoring Records: {e}")
 

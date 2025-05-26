@@ -66,7 +66,7 @@ st.info(f"👤 Logged in as: **{username}** (Role: {role})")
 # === Load Data Once ===
 if "df" not in st.session_state:
     with st.spinner("🔄 Loading data..."):
-        st.session_state.df = load_data_from_sheet(sheet)
+        st.session_state.df = load_data_from_sheet_cached(sheet)
         st.session_state.sheet = sheet
         st.session_state.spreadsheet = spreadsheet
 

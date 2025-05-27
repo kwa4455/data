@@ -216,78 +216,42 @@ def restore_specific_deleted_record(selected_index: int):
 
 
 
+
+
 def merge_start_stop(df):
-    # Separate 'START' and 'STOP' data
-    start_df = df[df["Entry Type"] == "START"].copy()
-    stop_df = df[df["Entry Type"] == "STOP"].copy()
-    
     merge_keys = ["ID", "Site"]
 
-    # Sort the data by 'ID' and 'Site' to make sure we pair them correctly
-    start_df = start_df.sort_values(by=merge_keys).reset_index(drop=True)
-    stop_df = stop_df.sort_values(by=merge_keys).reset_index(drop=True)
-    
-    # Ensure the number of 'START' and 'STOP' entries are equal for each (ID, Site) combination
-    grouped_start = start_df.groupby(merge_keys).size()
-    grouped_stop = stop_df.groupby(merge_keys).size()
+    # Filter START and STOP rows
+    start_df = df[df["Entry Type"] == "START"].copy()
+    stop_df = df[df["Entry Type"] == "STOP"].copy()
 
-    # Handle cases where the counts of START and STOP do not match
-    unique_merge_results = []
-    for (id_site, start_count) in grouped_start.items():
-        stop_count = grouped_stop.get(id_site, 0)
-        
-        # Only merge if the counts match (this is just one approach, adjust as needed)
-        if start_count == stop_count:
-            start_rows = start_df[start_df[merge_keys] == id_site]
-            stop_rows = stop_df[stop_df[merge_keys] == id_site]
-            
-            # Merge the data on 'ID' and 'Site', matching entries one by one
-            for i in range(len(start_rows)):
-                merged_row = pd.concat([start_rows.iloc[i], stop_rows.iloc[i]]).to_frame().T
-                unique_merge_results.append(merged_row)
-    
-    # Concatenate all unique merged rows
-    merged_df = pd.concat(unique_merge_results, ignore_index=True)
+    # Assign sequence number per group to pair them correctly
+    start_df["seq"] = start_df.groupby(merge_keys).cumcount() + 1
+    stop_df["seq"] = stop_df.groupby(merge_keys).cumcount() + 1
 
-    # Rename columns to avoid duplicates after merge (by adding '_Start' and '_Stop' suffixes)
-    merged_df.columns = [
-        f"{col}_Start" if col not in merge_keys else col for col in merged_df.columns
-    ]
+    # Rename columns (except merge keys and seq)
+    start_df = start_df.rename(columns=lambda x: f"{x}_Start" if x not in merge_keys + ["seq"] else x)
+    stop_df = stop_df.rename(columns=lambda x: f"{x}_Stop" if x not in merge_keys + ["seq"] else x)
 
-    # Compute Elapsed Time difference and Average Flow Rate if the columns exist
-    if "Elapsed Time (min)_Start" in merged_df and "Elapsed Time (min)_Stop" in merged_df:
-        merged_df["Elapsed Time (min)_Start"] = pd.to_numeric(merged_df["Elapsed Time (min)_Start"], errors="coerce")
-        merged_df["Elapsed Time (min)_Stop"] = pd.to_numeric(merged_df["Elapsed Time (min)_Stop"], errors="coerce")
-        merged_df["Elapsed Time Diff (min)"] = (
-            merged_df["Elapsed Time (min)_Stop"] - merged_df["Elapsed Time (min)_Start"]
-        ) * 60
+    # Merge on ID, Site, and seq
+    merged = pd.merge(start_df, stop_df, on=merge_keys + ["seq"], how="inner")
 
-    # Compute Average Flow Rate if the columns exist
-    if " Flow Rate (L/min)_Start" in merged_df and " Flow Rate (L/min)_Stop" in merged_df:
-        merged_df[" Flow Rate (L/min)_Start"] = pd.to_numeric(merged_df[" Flow Rate (L/min)_Start"], errors="coerce")
-        merged_df[" Flow Rate (L/min)_Stop"] = pd.to_numeric(merged_df[" Flow Rate (L/min)_Stop"], errors="coerce")
-        merged_df["Average Flow Rate (L/min)"] = (
-            merged_df[" Flow Rate (L/min)_Start"] + merged_df[" Flow Rate (L/min)_Stop"]
-        ) / 2
+    # Calculate Elapsed Time Diff (seconds)
+    if "Elapsed Time (min)_Start" in merged.columns and "Elapsed Time (min)_Stop" in merged.columns:
+        merged["Elapsed Time (min)_Start"] = pd.to_numeric(merged["Elapsed Time (min)_Start"], errors="coerce")
+        merged["Elapsed Time (min)_Stop"] = pd.to_numeric(merged["Elapsed Time (min)_Stop"], errors="coerce")
+        merged["Elapsed Time Diff (min)"] = (merged["Elapsed Time (min)_Stop"] - merged["Elapsed Time (min)_Start"]) * 60
 
-    # Handle NaN values by replacing them with a default value
-    merged_df = merged_df.fillna(value={
-        "Elapsed Time Diff (min)": 0, 
-        "Average Flow Rate (L/min)": 0, 
-        "Temperature (°C)_Start": "N/A", 
-        "Temperature (°C)_Stop": "N/A",
-        "RH (%)_Start": "N/A", 
-        "RH (%)_Stop": "N/A", 
-        "Wind Speed_Start": "N/A", 
-        "Wind Speed_Stop": "N/A",
-        "Pressure (mbar)_Start": "N/A", 
-        "Pressure (mbar)_Stop": "N/A"
-    })
+    # Calculate Average Flow Rate
+    if " Flow Rate (L/min)_Start" in merged.columns and " Flow Rate (L/min)_Stop" in merged.columns:
+        merged[" Flow Rate (L/min)_Start"] = pd.to_numeric(merged[" Flow Rate (L/min)_Start"], errors="coerce")
+        merged[" Flow Rate (L/min)_Stop"] = pd.to_numeric(merged[" Flow Rate (L/min)_Stop"], errors="coerce")
+        merged["Average Flow Rate (L/min)"] = (merged[" Flow Rate (L/min)_Start"] + merged[" Flow Rate (L/min)_Stop"]) / 2
 
-    # Rename columns to avoid conflicts
-    merged_df.columns = [col.replace(" Entry Type", "") for col in merged_df.columns]
-    
-    # Define desired column order
+    # Drop the sequence column after merge if not needed
+    merged = merged.drop(columns=["seq"])
+
+    # Define desired column order (same as your original)
     desired_order = [
         "ID", "Site",
         "Entry Type_Start", "Monitoring Officer_Start", "Driver_Start", "Date _Start", "Time_Start",
@@ -301,15 +265,9 @@ def merge_start_stop(df):
         "Elapsed Time Diff (min)", "Average Flow Rate (L/min)"
     ]
 
-    # Return only the columns that exist in the merged DataFrame in the specified order
-    existing_cols = [col for col in desired_order if col in merged_df.columns]
-    merged_df = merged_df[existing_cols]
-    
-    # Convert to JSON and handle NaN values
-    json_data = merged_df.to_json(orient="records", date_format="iso")
+    existing_cols = [col for col in desired_order if col in merged.columns]
+    return merged[existing_cols]
 
-    # Return both DataFrame and JSON data
-    return merged_df, json_data
 
 
 

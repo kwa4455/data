@@ -214,6 +214,8 @@ def restore_specific_deleted_record(selected_index: int):
 
 
 
+
+
 def merge_start_stop(df):
     # Separate 'START' and 'STOP' data
     start_df = df[df["Entry Type"] == "START"].copy()
@@ -246,7 +248,12 @@ def merge_start_stop(df):
     
     # Concatenate all unique merged rows
     merged_df = pd.concat(unique_merge_results, ignore_index=True)
-    
+
+    # Rename columns to avoid duplicates after merge (by adding '_Start' and '_Stop' suffixes)
+    merged_df.columns = [
+        f"{col}_Start" if col not in merge_keys else col for col in merged_df.columns
+    ]
+
     # Compute Elapsed Time difference and Average Flow Rate if the columns exist
     if "Elapsed Time (min)_Start" in merged_df and "Elapsed Time (min)_Stop" in merged_df:
         merged_df["Elapsed Time (min)_Start"] = pd.to_numeric(merged_df["Elapsed Time (min)_Start"], errors="coerce")
@@ -303,6 +310,7 @@ def merge_start_stop(df):
 
     # Return both DataFrame and JSON data
     return merged_df, json_data
+
 
 
 

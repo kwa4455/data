@@ -212,8 +212,6 @@ def restore_specific_deleted_record(selected_index: int):
 
 
 
-
-
 def merge_start_stop(df):
     # Separate 'START' and 'STOP' data
     start_df = df[df["Entry Type"] == "START"].copy()
@@ -263,6 +261,13 @@ def merge_start_stop(df):
             merged_df[" Flow Rate (L/min)_Start"] + merged_df[" Flow Rate (L/min)_Stop"]
         ) / 2
 
+    # Handle NaN values before exporting to JSON
+    merged_df = merged_df.fillna(value={"Elapsed Time Diff (min)": 0, "Average Flow Rate (L/min)": 0, 
+                                        "Temperature (°C)_Start": "N/A", "Temperature (°C)_Stop": "N/A",
+                                        "RH (%)_Start": "N/A", "RH (%)_Stop": "N/A", 
+                                        "Wind Speed_Start": "N/A", "Wind Speed_Stop": "N/A",
+                                        "Pressure (mbar)_Start": "N/A", "Pressure (mbar)_Stop": "N/A"})
+    
     # Define desired column order
     desired_order = [
         "ID", "Site",
@@ -279,7 +284,15 @@ def merge_start_stop(df):
 
     # Return only the columns that exist in the merged DataFrame in the specified order
     existing_cols = [col for col in desired_order if col in merged_df.columns]
-    return merged_df[existing_cols]
+    merged_df = merged_df[existing_cols]
+    
+    # Now, you can safely convert to JSON without NaN issues:
+    json_data = merged_df.to_json(orient="records")
+    
+    return merged_df, json_data
+
+
+
 
 
 

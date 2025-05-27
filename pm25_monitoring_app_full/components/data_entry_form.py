@@ -56,8 +56,8 @@ def show():
             start_obs = st.text_area("🧿 First Day Observation", key="start_observation_input")
 
             st.markdown("#### 🌧️ Initial Atmospheric Conditions")
-            start_temp = st.number_input("🌡️ Temperature (°C)", step=0.1, key="start_temp_input")
-            start_rh = st.number_input("🌬️ Relative Humidity (%)", step=0.1, key="start_rh_input")
+            start_temp = st.number_input("🌡️ Temperature (°C)",  key="start_temp_input")
+            start_rh = st.number_input("🌬️ Relative Humidity (%)",  key="start_rh_input")
             start_pressure = st.number_input("🧭 Pressure (mbar)", step=0.1, key="start_pressure_input")
             start_weather = st.selectbox("🌦️ Weather", weather_conditions, key="start_weather_selectbox")
             start_wind_speed = st.text_input("💨 Wind Speed (e.g. 10 km/h)", key="start_wind_speed_input")
@@ -88,8 +88,8 @@ def show():
             stop_obs = st.text_area("🧿 Final Day Observation", key="stop_observation_input")
 
             st.markdown("#### 🌧️ Final Atmospheric Conditions")
-            stop_temp = st.number_input("🌡️ Final Temperature (°C)", step=0.1, key="stop_temp_input")
-            stop_rh = st.number_input("🌬️ Final Relative Humidity (%)", step=0.1, key="stop_rh_input")
+            stop_temp = st.number_input("🌡️ Final Temperature (°C)",  key="stop_temp_input")
+            stop_rh = st.number_input("🌬️ Final Relative Humidity (%)",  key="stop_rh_input")
             stop_pressure = st.number_input("🧭 Final Pressure (mbar)", step=0.1, key="stop_pressure_input")
             stop_weather = st.selectbox("🌦️ Final Weather", weather_conditions, key="stop_weather_selectbox")
             stop_wind_speed = st.text_input("💨 Final Wind Speed (e.g. 12 km/h)", key="stop_wind_speed_input")

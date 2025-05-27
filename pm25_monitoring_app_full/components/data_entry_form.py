@@ -19,8 +19,8 @@ def show():
     ids = ["", '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
     site_id_map = {
         '1': 'Kaneshie First Light',
-        '2': 'Tetteh Quarshie',
-        '3': 'Achimota',
+        '2': 'Tetteh Quarshie Roundabout',
+        '3': 'Achimota Interchange',
         '4': 'La',
         '5': 'Mallam Market',
         '6': 'Graphic Road',

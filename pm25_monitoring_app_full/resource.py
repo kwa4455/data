@@ -263,13 +263,20 @@ def merge_start_stop(df):
             merged_df[" Flow Rate (L/min)_Start"] + merged_df[" Flow Rate (L/min)_Stop"]
         ) / 2
 
-    # Handle NaN values before exporting to JSON
-    merged_df = merged_df.fillna(value={"Elapsed Time Diff (min)": 0, "Average Flow Rate (L/min)": 0, 
-                                        "Temperature (°C)_Start": "N/A", "Temperature (°C)_Stop": "N/A",
-                                        "RH (%)_Start": "N/A", "RH (%)_Stop": "N/A", 
-                                        "Wind Speed_Start": "N/A", "Wind Speed_Stop": "N/A",
-                                        "Pressure (mbar)_Start": "N/A", "Pressure (mbar)_Stop": "N/A"})
-    
+    # Handle NaN values by replacing them with a default value
+    merged_df = merged_df.fillna(value={
+        "Elapsed Time Diff (min)": 0, 
+        "Average Flow Rate (L/min)": 0, 
+        "Temperature (°C)_Start": "N/A", 
+        "Temperature (°C)_Stop": "N/A",
+        "RH (%)_Start": "N/A", 
+        "RH (%)_Stop": "N/A", 
+        "Wind Speed_Start": "N/A", 
+        "Wind Speed_Stop": "N/A",
+        "Pressure (mbar)_Start": "N/A", 
+        "Pressure (mbar)_Stop": "N/A"
+    })
+
     # Rename columns to avoid conflicts
     merged_df.columns = [col.replace(" Entry Type", "") for col in merged_df.columns]
     
@@ -291,8 +298,11 @@ def merge_start_stop(df):
     existing_cols = [col for col in desired_order if col in merged_df.columns]
     merged_df = merged_df[existing_cols]
     
-    # Return only the DataFrame (or only JSON data, depending on your needs)
-    return merged_df  # <-- Return just the DataFrame here
+    # Convert to JSON and handle NaN values
+    json_data = merged_df.to_json(orient="records", date_format="iso")
+
+    # Return both DataFrame and JSON data
+    return merged_df, json_data
 
 
 

@@ -268,6 +268,9 @@ def merge_start_stop(df):
                                         "Wind Speed_Start": "N/A", "Wind Speed_Stop": "N/A",
                                         "Pressure (mbar)_Start": "N/A", "Pressure (mbar)_Stop": "N/A"})
     
+    # Rename columns to avoid conflicts
+    merged_df.columns = [col.replace(" Entry Type", "") for col in merged_df.columns]
+    
     # Define desired column order
     desired_order = [
         "ID", "Site",
@@ -286,13 +289,14 @@ def merge_start_stop(df):
     existing_cols = [col for col in desired_order if col in merged_df.columns]
     merged_df = merged_df[existing_cols]
     
-    # Now, you can safely convert to JSON without NaN issues:
-    json_data = merged_df.to_json(orient="records")
+    # Now, you can safely convert to JSON without column name conflicts:
+    try:
+        json_data = merged_df.to_json(orient="records")
+    except ValueError as e:
+        print("Error converting to JSON:", e)
+        return merged_df, None
     
     return merged_df, json_data
-
-
-
 
 
 

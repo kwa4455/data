@@ -212,6 +212,8 @@ def restore_specific_deleted_record(selected_index: int):
 
 
 
+
+
 def merge_start_stop(df):
     # Separate 'START' and 'STOP' data
     start_df = df[df["Entry Type"] == "START"].copy()
@@ -289,14 +291,9 @@ def merge_start_stop(df):
     existing_cols = [col for col in desired_order if col in merged_df.columns]
     merged_df = merged_df[existing_cols]
     
-    # Now, you can safely convert to JSON without column name conflicts:
-    try:
-        json_data = merged_df.to_json(orient="records")
-    except ValueError as e:
-        print("Error converting to JSON:", e)
-        return merged_df, None
-    
-    return merged_df, json_data
+    # Return only the DataFrame (or only JSON data, depending on your needs)
+    return merged_df  # <-- Return just the DataFrame here
+
 
 
 

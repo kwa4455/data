@@ -20,43 +20,7 @@ def show():
     require_role(["admin", "supervisor"])
     
 
-    # Inject Google Fonts and custom CSS for glassmorphism and font clarity
-    st.markdown("""
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
-        <style>
-        html, body, [class*="css"]  {
-            font-family: 'Poppins', sans-serif;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.08);
-            color: #1f1f1f;
-            background-color: #f4f7fa;
-        }
-        .main > div:first-child h1 {
-            color: #0a3d62;
-            font-size: 2.8rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
-            margin-bottom: 0.5rem;
-        }
-        section[data-testid="stSidebar"] {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(14px) saturate(160%);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-        }
-        .stAlert {
-            background-color: rgba(232, 244, 253, 0.9);
-            border-left: 6px solid #1f77b4;
-            border-radius: 8px;
-            padding: 1rem;
-        }
-        .stSuccess {
-            background-color: rgba(230, 255, 230, 0.9);
-            border-left: 6px solid #33cc33;
-            border-radius: 8px;
-            padding: 1rem;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+    
 
     # Centered title and subtitle
     st.markdown("""
@@ -120,11 +84,4 @@ def show():
         except Exception as e:
             st.error(f"❌ Could not load Deleted Records: {e}")
 
-    # --- Footer ---
-    st.markdown("""
-        <hr style="margin-top: 40px; margin-bottom:10px">
-        <div style='text-align: center; color: grey; font-size: 0.9em;'>
-            © 2025 EPA Ghana · Developed by Clement Mensah Ackaah 🦺 · Built with 😍 using Streamlit | 
-            <a href="mailto:clement.ackaah@epa.gov.gh">Contact Support</a>
-        </div>
-    """, unsafe_allow_html=True)
+    

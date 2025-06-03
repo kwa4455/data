@@ -174,5 +174,5 @@ def get_user_role(username, sheet):
     for user in users:
         if user["Username"] == username:
             return user["Role"]
-    return "collector"
+    return "officer"
 

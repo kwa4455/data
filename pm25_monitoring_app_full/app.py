@@ -34,6 +34,14 @@ st.markdown("""
     transition: all 0.2s ease-in-out;
     font-family: 'Segoe UI', sans-serif;
 }
+/* GLOBAL - FULL WIDTH & RESET */
+html, body, .stApp {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
 
 /* App background */
 html, .stApp {
@@ -49,7 +57,7 @@ html, .stApp {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 16px;
     padding: 20px;
-    margin: 20px auto;
+    margin: 20px 0;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);

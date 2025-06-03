@@ -37,7 +37,7 @@ st.markdown("""
 
 /* App background */
 html, .stApp {
-    background: url('https://images.unsplash.com/photo-1526045478516-99145907023c?auto=format&fit=crop&w=1920&q=80');
+    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80');
     background-size: cover;
     background-position: center;
     min-height: 100vh;

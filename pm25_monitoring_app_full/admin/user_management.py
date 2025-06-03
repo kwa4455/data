@@ -33,8 +33,8 @@ def admin_panel():
 
                 assigned_role = st.selectbox(
                     f"Assign Role to {user['Username']}",
-                    ["supervisor", "collector", "editor", "admin"],
-                    index=["supervisor", "collector", "editor", "admin"].index(user["Role"]),
+                    ["supervisor", "officer", "admin"],
+                    index=["supervisor", "officer", "admin"].index(user["Role"]),
                     key=f"role_{user['Username']}"
                 )
 

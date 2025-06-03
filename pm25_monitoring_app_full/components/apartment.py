@@ -2,7 +2,7 @@ import streamlit as st
 from modules.authentication import require_role
 
 def show():
-    require_role(["admin", "collector", "editor", "supervisor"])
+    require_role(["admin", "collector", "officer", "supervisor"])
 
     # Language selection
     lang = st.selectbox("🌐 Select Language / Pɛ kasa", ["English", "Twi"])

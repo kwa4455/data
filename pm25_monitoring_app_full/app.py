@@ -54,7 +54,7 @@ html, .stApp {
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    width: 80%;
+    width: 100%;
 }
 
 /* Text Input Fields */

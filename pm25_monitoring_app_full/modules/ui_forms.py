@@ -15,7 +15,7 @@ def show_registration_form(sheet):
         email = st.text_input("Email")
         password = st.text_input("Password", type="password")
         confirm = st.text_input("Confirm Password", type="password")
-        role = st.selectbox("Role", ["collector", "editor"])  # Can be adjusted later in admin panel
+        role = st.selectbox("Role", ["officer", "editor"])  # Can be adjusted later in admin panel
         submitted = st.form_submit_button("Register")
 
         if submitted:

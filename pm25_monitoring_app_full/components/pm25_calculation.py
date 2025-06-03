@@ -7,7 +7,7 @@ from modules.authentication import require_role
 
 
 def show():
-    require_role(["admin", "collector", "officer"])
+    require_role(["admin", "officer"])
     
     
     # --- Page Title ---

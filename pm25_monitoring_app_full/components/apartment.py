@@ -100,12 +100,3 @@ def show():
 
     # Info box
     st.success(text["footer"][lang])
-
-    # Footer
-    st.markdown(f"""
-        <hr style="margin-top: 40px; margin-bottom:10px">
-        <div class='footer' style='text-align: center; color: grey; font-size: 0.9em;'>
-            {text['copyright'][lang]}
-            <a href="mailto:clement.ackaah@epa.gov.gh">{text['contact'][lang]}</a>
-        </div>
-    """, unsafe_allow_html=True)

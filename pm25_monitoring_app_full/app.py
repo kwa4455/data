@@ -25,7 +25,7 @@ from modules.ui_forms import add_glass_style
 from resource import load_data_from_sheet, sheet, spreadsheet
 from constants import MERGED_SHEET, CALC_SHEET, USERS_SHEET
 
-
+st.set_page_config(layout="wide")
 
 st.markdown("""
 <style>
@@ -45,7 +45,7 @@ html, body, .stApp {
 
 /* App background */
 html, .stApp {
-    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80');
+    background: url('');
     background-size: cover;
     background-position: center;
     min-height: 100vh;

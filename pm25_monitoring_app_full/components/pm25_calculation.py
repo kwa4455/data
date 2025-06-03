@@ -7,7 +7,7 @@ from modules.authentication import require_role
 
 
 def show():
-    require_role(["admin", "collector", "editor"])
+    require_role(["admin", "collector", "officer"])
     
     
     # --- Page Title ---
@@ -164,11 +164,3 @@ def show():
         except Exception as e:
             st.warning(f"⚠ Could not load saved entries: {e}")
 
-     # --- Footer ---
-    st.markdown("""
-        <hr style="margin-top: 40px; margin-bottom:10px">
-        <div style='text-align: center; color: grey; font-size: 0.9em;'>
-            © 2025 EPA Ghana · Developed by Clement Mensah Ackaah 🦺 · Built with 😍 using Streamlit | 
-            <a href="mailto:clement.ackaah@epa.gov.gh">Contact Support</a>
-        </div>
-    """, unsafe_allow_html=True)

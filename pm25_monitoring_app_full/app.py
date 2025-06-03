@@ -25,7 +25,7 @@ from modules.ui_forms import add_glass_style
 from resource import load_data_from_sheet, sheet, spreadsheet
 from constants import MERGED_SHEET, CALC_SHEET, USERS_SHEET
 
-st.set_page_config(layout="wide")
+
 
 st.markdown("""
 <style>

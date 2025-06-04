@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+from datetime import time as dtime
+
 from resource import (
     load_data_from_sheet,
     add_data,

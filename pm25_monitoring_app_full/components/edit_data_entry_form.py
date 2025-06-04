@@ -18,6 +18,25 @@ from resource import (
 from constants import MERGED_SHEET
 from modules.authentication import require_role
 
+
+
+# Make sure this function is available globally
+def get_custom_time(label, prefix, hour_key, minute_key, default_time=None):
+    if default_time is None:
+        default_time = datetime.now().time()
+
+    col1, col2 = st.columns(2)
+    hour = col1.number_input(
+        f"{label} Hour", min_value=0, max_value=23,
+        value=default_time.hour, key=f"{prefix}_{hour_key}"
+    )
+    minute = col2.number_input(
+        f"{label} Minute", min_value=0, max_value=59,
+        value=default_time.minute, key=f"{prefix}_{minute_key}"
+    )
+    return dtime(hour, minute)
+
+# Your main show function
 def show():
     require_role(["admin", "officer"])
 
@@ -28,13 +47,6 @@ def show():
         </div>
         <hr>
     """, unsafe_allow_html=True)
-
-    # --- Utility Functions ---
-    def safe_float(val, default=0.0):
-        try:
-            return float(val)
-        except (ValueError, TypeError):
-            return default
 
     def render_record_edit_form(record_data):
         weather_options = ["Clear", "Cloudy", "Rainy", "Foggy", "Windy", "Hazy", "Dusty", "Other"]
@@ -67,7 +79,10 @@ def show():
         monitoring_officer = st.text_input("Monitoring Officer", value=get_str("Monitoring Officer"))
         driver = st.text_input("Driver", value=get_str("Driver"))
         date = st.date_input("Date", value=get_date("Date"))
-        time = st.time_input("Time", value=get_time("Time"))
+
+        # 👇 Use get_custom_time here
+        time = get_custom_time("⏱️ Time", "edit", "hour", "minute", default_time=get_time("Time"))
+
         temperature = st.number_input("Temperature (°C)", value=get_float("Temperature (°C)"), step=0.1)
         rh = st.number_input("Relative Humidity (%)", value=get_float("RH (%)"), step=0.1)
         pressure = st.number_input("Pressure (mbar)", value=get_float("Pressure (mbar)"), step=0.1)
@@ -102,11 +117,9 @@ def show():
         else:
             st.warning("⚠ No matching records to merge.")
 
-    # --- Sidebar Filter Controls ---
     st.sidebar.header("🔍 Filter Records")
     df_all = load_data_from_sheet(sheet)
 
-    # Locate 'Date' column
     date_column = None
     for col in df_all.columns:
         if col.strip().lower() in ["date", "sampling date", "start date"]:
@@ -128,7 +141,6 @@ def show():
     if selected_date:
         filtered_df = filtered_df[filtered_df["Date"] == selected_date]
 
-    # --- Edit Submitted Record ---
     def edit_submitted_record():
         df = filtered_df.copy()
         if df.empty:
@@ -178,7 +190,6 @@ def show():
 
     edit_submitted_record()
 
-    # --- Delete from Submitted Records ---
     st.subheader("🗑️ Delete from Submitted Records")
     df_submitted = filtered_df.copy()
 
@@ -198,7 +209,6 @@ def show():
                     st.success(f"✅ Submitted record deleted by {deleted_by} and backed up successfully.")
                     st.rerun()
 
-    # --- Restore Deleted Records ---
     st.markdown("---")
     st.header("🗃️ Restore Deleted Record")
 
@@ -239,4 +249,3 @@ def show():
 
     except Exception as e:
         st.error(f"Failed to load deleted records: {e}")
-

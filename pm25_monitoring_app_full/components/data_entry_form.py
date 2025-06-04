@@ -55,7 +55,7 @@ def show():
     )
 
     if entry_type:
-        id_selected = sac.select(
+        id_selected = sac.selectbox(
             label="📌 Select Site ID",
             options=[{"label": f"{k} - {v}", "value": k} for k, v in site_id_map.items()],
             key="site_id_selectbox"

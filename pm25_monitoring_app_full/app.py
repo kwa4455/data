@@ -262,22 +262,22 @@ role_pages = {
     "admin": [
         ("🏠 Home", "Home"),
         ("✍️ Data Entry Form", "Data Entry Form"),
-        ("✍️ Edit Data Entry Form", "Edit Data Entry Form"),
-        ("✍️ PM Calculator", "PM Calculator"),
-        ("📝 Supervisor Review Section", "Supervisor Review Section"),
+        ("🔖 Edit Data Entry Form", "Edit Data Entry Form"),
+        ("📟 PM Calculator", "PM Calculator"),
+        ("📖 Supervisor Review Section", "Supervisor Review Section"),
         ("⚙️ Admin Panel", "Admin Panel")
     ],
     "officer": [
         ("🏠 Home", "Home"),
         ("✍️ Data Entry Form", "Data Entry Form"),
-        ("✍️ Edit Data Entry Form", "Edit Data Entry Form"),
-        ("✍️ PM Calculator", "PM Calculator"),
+        ("🔖 Edit Data Entry Form", "Edit Data Entry Form"),
+        ("📟 PM Calculator", "PM Calculator"),
     ],
     
     "supervisor": [
         ("🏠 Home", "Home"),
         ("⚙️ Admin Panel", "Admin Panel"),
-        ("📝 Supervisor Review Section", "Supervisor Review Section")
+        ("📖 Supervisor Review Section", "Supervisor Review Section")
     ]
 }
 pages_with_icons = role_pages.get(role, [])

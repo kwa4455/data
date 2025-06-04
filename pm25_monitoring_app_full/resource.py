@@ -55,6 +55,7 @@ def convert_timestamps_to_string(df):
         df[col] = df[col].dt.strftime('%Y-%m-%d %H:%M:%S')
     return df
 
+@st.cache_data(ttl=300, show_spinner=False)
 def load_data_from_sheet(sheet):
     try:
         all_values = sheet.get_all_values()

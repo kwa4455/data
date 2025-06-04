@@ -34,13 +34,13 @@ def show():
     weather_conditions = ["", "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Windy", "Hazy", "Stormy", "Foggy"]
 
     def get_custom_time(label_prefix, key_prefix, hour_key, minute_key):
-        hour = sac.select_single(
+        hour = sac.select(
             label=f"{label_prefix} Hour",
             options=[str(h) for h in range(0, 24)],
             key=f"{key_prefix}_{hour_key}"
         )
         valid_minutes = [m for m in range(60) if m not in [0, 15, 30, 45]]
-        minute = sac.select_single(
+        minute = sac.select(
             label=f"{label_prefix} Minute (not 00, 15, 30, 45)",
             options=[str(m) for m in valid_minutes],
             key=f"{key_prefix}_{minute_key}"
@@ -64,8 +64,9 @@ def show():
         if site_selected:
             st.text_input("📍 Site", value=site_selected, disabled=True, key="site_name_textbox")
 
-        officer_selected = sac.multi_select(
-            label="🧑‍🔬 Monitoring Officer(s)",
+        # Use Streamlit's built-in multiselect here:
+        officer_selected = st.multiselect(
+            "🧑‍🔬 Monitoring Officer(s)",
             options=officers,
             key="officer_selectbox"
         )
@@ -81,9 +82,9 @@ def show():
                 start_temp = sac.input_number("🌡️ Temperature (°C)", key="start_temp_input", step=1)
                 start_rh = sac.input_number("🌬️ Relative Humidity (%)", key="start_rh_input", step=1)
                 start_pressure = sac.input_number("🧭 Pressure (mbar)", key="start_pressure_input", step=0.1)
-                start_weather = sac.select_single("🌦️ Weather", options=weather_conditions, key="start_weather_selectbox")
+                start_weather = st.selectbox("🌦️ Weather", weather_conditions, key="start_weather_selectbox")
                 start_wind_speed = sac.input_text("💨 Wind Speed (e.g. 10 km/h)", key="start_wind_speed_input")
-                start_wind_direction = sac.select_single("🌪️ Wind Direction", options=wind_directions, key="start_wind_direction_selectbox")
+                start_wind_direction = st.selectbox("🌪️ Wind Direction", wind_directions, key="start_wind_direction_selectbox")
 
                 st.markdown("#### ⚙ Initial Sampler Information")
                 start_elapsed = sac.input_number("⏰ Initial Elapsed Time (min)", key="start_elapsed_input", step=0.1)
@@ -113,9 +114,9 @@ def show():
                 stop_temp = sac.input_number("🌡️ Final Temperature (°C)", key="stop_temp_input", step=1)
                 stop_rh = sac.input_number("🌬️ Final Relative Humidity (%)", key="stop_rh_input", step=1)
                 stop_pressure = sac.input_number("🧭 Final Pressure (mbar)", key="stop_pressure_input", step=0.1)
-                stop_weather = sac.select_single("🌦️ Final Weather", options=weather_conditions, key="stop_weather_selectbox")
+                stop_weather = st.selectbox("🌦️ Final Weather", weather_conditions, key="stop_weather_selectbox")
                 stop_wind_speed = sac.input_text("💨 Final Wind Speed (e.g. 12 km/h)", key="stop_wind_speed_input")
-                stop_wind_direction = sac.select_single("🌪️ Final Wind Direction", options=wind_directions, key="stop_wind_direction_selectbox")
+                stop_wind_direction = st.selectbox("🌪️ Final Wind Direction", wind_directions, key="stop_wind_direction_selectbox")
 
                 st.markdown("#### ⚙ Final Sampler Information")
                 stop_elapsed = sac.input_number("⏰ Final Elapsed Time (min)", key="stop_elapsed_input", step=0.1)

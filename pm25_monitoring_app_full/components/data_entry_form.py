@@ -34,17 +34,19 @@ def show():
     weather_conditions = ["", "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Windy", "Hazy", "Stormy", "Foggy"]
 
     def get_custom_time(label_prefix, key_prefix, hour_key, minute_key):
-        hour = sac.select(
+        hour = sac.select_single(
             label=f"{label_prefix} Hour",
             options=[str(h) for h in range(0, 24)],
             key=f"{key_prefix}_{hour_key}"
         )
         valid_minutes = [m for m in range(60) if m not in [0, 15, 30, 45]]
-        minute = sac.select(
+        minute = sac.select_single(
             label=f"{label_prefix} Minute (not 00, 15, 30, 45)",
             options=[str(m) for m in valid_minutes],
             key=f"{key_prefix}_{minute_key}"
         )
+        if hour is None or minute is None:
+            return None
         return time(hour=int(hour), minute=int(minute))
 
     entry_type = sac.segmented(
@@ -75,22 +77,34 @@ def show():
             with st.expander("🟢 Start Day Monitoring", expanded=True):
                 start_date = sac.date_picker("📆 Start Date", value=datetime.today(), key="start_date_input")
                 start_time = get_custom_time("⏱️ Start Time", "start", "hour", "minute")
+
                 start_obs = sac.text_area("🧿 First Day Observation", key="start_observation_input")
 
                 st.markdown("#### 🌧️ Initial Atmospheric Conditions")
                 start_temp = sac.input_number("🌡️ Temperature (°C)", key="start_temp_input", step=1)
                 start_rh = sac.input_number("🌬️ Relative Humidity (%)", key="start_rh_input", step=1)
                 start_pressure = sac.input_number("🧭 Pressure (mbar)", key="start_pressure_input", step=0.1)
-                start_weather = st.selectbox("🌦️ Weather", weather_conditions, key="start_weather_selectbox")
+
+                start_weather = sac.select_single(
+                    label="🌦️ Weather",
+                    options=weather_conditions,
+                    key="start_weather_selectbox"
+                )
+
                 start_wind_speed = sac.input_text("💨 Wind Speed (e.g. 10 km/h)", key="start_wind_speed_input")
-                start_wind_direction = st.selectbox("🌪️ Wind Direction", wind_directions, key="start_wind_direction_selectbox")
+
+                start_wind_direction = sac.select_single(
+                    label="🌪️ Wind Direction",
+                    options=wind_directions,
+                    key="start_wind_direction_selectbox"
+                )
 
                 st.markdown("#### ⚙ Initial Sampler Information")
                 start_elapsed = sac.input_number("⏰ Initial Elapsed Time (min)", key="start_elapsed_input", step=0.1)
                 start_flow = sac.input_number("🧯 Initial Flow Rate (L/min)", key="start_flow_input", step=1)
 
                 if sac.button("✅ Submit Start Day Data", key="start_submit_button"):
-                    if all([id_selected, site_selected, officer_selected, driver_name]):
+                    if all([id_selected, site_selected, officer_selected, driver_name, start_time]):
                         start_row = [
                             "START", id_selected, site_selected, ", ".join(officer_selected), driver_name,
                             start_date.strftime("%Y-%m-%d"), start_time.strftime("%H:%M:%S"),
@@ -107,22 +121,34 @@ def show():
             with st.expander("🔴 Stop Day Monitoring", expanded=True):
                 stop_date = sac.date_picker("📆 Stop Date", value=datetime.today(), key="stop_date_input")
                 stop_time = get_custom_time("⏱️ Stop Time", "stop", "hour", "minute")
+
                 stop_obs = sac.text_area("🧿 Final Day Observation", key="stop_observation_input")
 
                 st.markdown("#### 🌧️ Final Atmospheric Conditions")
                 stop_temp = sac.input_number("🌡️ Final Temperature (°C)", key="stop_temp_input", step=1)
                 stop_rh = sac.input_number("🌬️ Final Relative Humidity (%)", key="stop_rh_input", step=1)
                 stop_pressure = sac.input_number("🧭 Final Pressure (mbar)", key="stop_pressure_input", step=0.1)
-                stop_weather = st.selectbox("🌦️ Final Weather", weather_conditions, key="stop_weather_selectbox")
+
+                stop_weather = sac.select_single(
+                    label="🌦️ Final Weather",
+                    options=weather_conditions,
+                    key="stop_weather_selectbox"
+                )
+
                 stop_wind_speed = sac.input_text("💨 Final Wind Speed (e.g. 12 km/h)", key="stop_wind_speed_input")
-                stop_wind_direction = st.selectbox("🌪️ Final Wind Direction", wind_directions, key="stop_wind_direction_selectbox")
+
+                stop_wind_direction = sac.select_single(
+                    label="🌪️ Final Wind Direction",
+                    options=wind_directions,
+                    key="stop_wind_direction_selectbox"
+                )
 
                 st.markdown("#### ⚙ Final Sampler Information")
                 stop_elapsed = sac.input_number("⏰ Final Elapsed Time (min)", key="stop_elapsed_input", step=0.1)
                 stop_flow = sac.input_number("🧯 Final Flow Rate (L/min)", key="stop_flow_input", step=1)
 
                 if sac.button("✅ Submit Stop Day Data", key="stop_submit_button"):
-                    if all([id_selected, site_selected, officer_selected, driver_name]):
+                    if all([id_selected, site_selected, officer_selected, driver_name, stop_time]):
                         stop_row = [
                             "STOP", id_selected, site_selected, ", ".join(officer_selected), driver_name,
                             stop_date.strftime("%Y-%m-%d"), stop_time.strftime("%H:%M:%S"),

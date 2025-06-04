@@ -45,16 +45,20 @@ def show():
     )
 
     if entry_type:
+        # Use Streamlit selectbox for site ID because sac.selectbox does not exist
         id_selected = st.selectbox("📌 Select Site ID", [""] + list(site_id_map.keys()), key="site_id_selectbox")
         site_selected = site_id_map.get(id_selected, "")
         if site_selected:
             st.text_input("📍 Site", value=site_selected, disabled=True, key="site_name_textbox")
 
+        # Multi-select for officers
         officer_selected = sac.multi_select(
             label="🧑‍🔬 Monitoring Officer(s)",
             options=officers,
             key="officer_selectbox"
         )
+
+        # Text input for driver name
         driver_name = sac.input_text("🧑‍🌾 Driver's Name", key="driver_name_input")
 
     if entry_type == "START":
@@ -68,8 +72,10 @@ def show():
             start_temp = sac.input_number("🌡️ Temperature (°C)", step=1, key="start_temp_input")
             start_rh = sac.input_number("🌬️ Relative Humidity (%)", step=1, key="start_rh_input")
             start_pressure = sac.input_number("🧭 Pressure (mbar)", step=0.1, key="start_pressure_input")
+            # Use Streamlit selectbox for weather (no sac.selectbox)
             start_weather = st.selectbox("🌦️ Weather", weather_conditions, key="start_weather_selectbox")
             start_wind_speed = sac.input_text("💨 Wind Speed (e.g. 10 km/h)", key="start_wind_speed_input")
+            # Use Streamlit selectbox for wind direction
             start_wind_direction = st.selectbox("🌪️ Wind Direction", wind_directions, key="start_wind_direction_selectbox")
 
             st.markdown("#### ⚙ Initial Sampler Information")
@@ -101,7 +107,7 @@ def show():
             stop_rh = sac.input_number("🌬️ Final Relative Humidity (%)", step=1, key="stop_rh_input")
             stop_pressure = sac.input_number("🧭 Final Pressure (mbar)", step=0.1, key="stop_pressure_input")
             stop_weather = st.selectbox("🌦️ Final Weather", weather_conditions, key="stop_weather_selectbox")
-            stop_wind_speed = sac.input_text("💨 Final Wind Speed", key="stop_wind_speed_input")
+            stop_wind_speed = sac.input_text("💨 Final Wind Speed (e.g. 12 km/h)", key="stop_wind_speed_input")
             stop_wind_direction = st.selectbox("🌪️ Final Wind Direction", wind_directions, key="stop_wind_direction_selectbox")
 
             st.markdown("#### ⚙ Final Sampler Information")

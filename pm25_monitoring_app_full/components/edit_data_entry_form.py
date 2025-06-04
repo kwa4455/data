@@ -211,6 +211,7 @@ def show():
                     st.success(f"✅ Submitted record deleted by {deleted_by} and backed up successfully.")
                     st.rerun()
 
+    # --- Restore Deleted Records ---
     st.markdown("---")
     st.header("🗃️ Restore Deleted Record")
 
@@ -236,18 +237,42 @@ def show():
             if df_deleted.empty:
                 st.info("No deleted records match the filter.")
             else:
-                options = [f"{i + 1}. " + " | ".join(row[:-2]) + f" (Deleted by: {row[-1]})" for i, row in df_deleted.iterrows()]
+                options = [
+                    f"{i + 1}. " + " | ".join(row.iloc[:-2]) + f" (Deleted by: {row.iloc[-1]})"
+                    for i, (_, row) in enumerate(df_deleted.iterrows())
+                ]
                 selection_list = [""] + options
+
                 selected = st.selectbox("Select a deleted record to restore:", selection_list)
 
-                if st.button("↩️ Restore Selected Record", disabled=(selected == "")):
+                if selected:
                     selected_index = options.index(selected)
-                    result = restore_specific_deleted_record(selected_index)
-                    if "🧠" in result:
-                        st.success(result)
-                        st.rerun()
-                    else:
-                        st.error(result)
+                    selected_row = df_deleted.iloc[selected_index]
+
+                    st.markdown("#### 👁️ Preview of Selected Record")
+                    st.dataframe(selected_row.to_frame().T, use_container_width=True)
+
+                    if st.button("↩️ Restore Selected Record"):
+                        try:
+                            # Delete row from deleted records sheet
+                            backup_sheet.delete_rows(selected_index + 2)  # +2 for header & 1-based index
+
+                            # Prepare restored row for main sheet (remove Deleted By column)
+                            restored_row = selected_row.iloc[:-1].tolist()
+
+                            # Append 'Restored By' username at the end
+                            restored_row.append(st.session_state.username)
+
+                            # Append restored row to main sheet
+                            sheet.append_row(restored_row)
+
+                            # Update merged data
+                            handle_merge_logic()
+
+                            st.success(f"🧠 Record restored by {st.session_state.username} and re-added successfully!")
+                            st.experimental_rerun()
+                        except Exception as e:
+                            st.error(f"Failed to restore record: {e}")
 
     except Exception as e:
         st.error(f"Failed to load deleted records: {e}")

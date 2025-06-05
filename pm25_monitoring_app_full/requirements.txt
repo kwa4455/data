@@ -8,6 +8,6 @@ streamlit-extras
 requests
 streamlit-option-menu
 email-validator 
-st_aggrid
+streamlit-aggrid
 
 

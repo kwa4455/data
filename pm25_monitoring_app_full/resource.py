@@ -219,59 +219,53 @@ def restore_specific_deleted_record(selected_index: int):
 
 
 
-import pandas as pd
+
 
 def merge_start_stop(df):
-    # Step 1: Clean column names (remove whitespace)
+    # Clean column names (remove leading/trailing spaces)
     df.columns = df.columns.str.strip()
 
-    # Step 2: Rename incorrect unit label
-    df = df.rename(columns={
-        "Elapsed Time (min)": "Elapsed Time (hr)"
-    })
+    # Rename elapsed time column to reflect it's actually in hours
+    df = df.rename(columns={"Elapsed Time (min)": "Elapsed Time (hr)"})
 
     merge_keys = ["ID", "Site"]
 
-    # Step 3: Filter and add sequence
+    # Filter START and STOP entries
     start_df = df[df["Entry Type"] == "START"].copy()
     stop_df = df[df["Entry Type"] == "STOP"].copy()
 
+    # Assign sequence numbers to pair start-stop correctly per group
     start_df["seq"] = start_df.groupby(merge_keys).cumcount() + 1
     stop_df["seq"] = stop_df.groupby(merge_keys).cumcount() + 1
 
-    # Step 4: Rename columns to preserve both START and STOP versions
+    # Rename columns to distinguish start and stop
     start_df = start_df.rename(columns=lambda x: f"{x}_Start" if x not in merge_keys + ["seq"] else x)
     stop_df = stop_df.rename(columns=lambda x: f"{x}_Stop" if x not in merge_keys + ["seq"] else x)
 
-    # Step 5: Merge START and STOP rows
+    # Merge on keys + seq
     merged = pd.merge(start_df, stop_df, on=merge_keys + ["seq"], how="inner")
 
-    # Step 6: Calculate Elapsed Time Diff in minutes
-    hr_start_col = "Elapsed Time (hr)_Start"
-    hr_stop_col = "Elapsed Time (hr)_Stop"
+    # Convert elapsed time columns to numeric (hours)
+    merged["Elapsed Time (hr)_Start"] = pd.to_numeric(merged["Elapsed Time (hr)_Start"], errors="coerce")
+    merged["Elapsed Time (hr)_Stop"] = pd.to_numeric(merged["Elapsed Time (hr)_Stop"], errors="coerce")
 
-    if hr_start_col in merged.columns and hr_stop_col in merged.columns:
-        merged[hr_start_col] = pd.to_numeric(merged[hr_start_col], errors="coerce")
-        merged[hr_stop_col] = pd.to_numeric(merged[hr_stop_col], errors="coerce")
-        merged["Elapsed Time Diff (min)"] = (merged[hr_stop_col] - merged[hr_start_col]) * 60
-    else:
-        print("⚠️ Missing Elapsed Time (hr) columns — skipping time diff calculation.")
+    # Calculate elapsed time difference in minutes
+    merged["Elapsed Time Diff (min)"] = (
+        merged["Elapsed Time (hr)_Stop"] - merged["Elapsed Time (hr)_Start"]
+    ) * 60
 
-    # Step 7: Calculate Average Flow Rate (if available)
-    flow_start = "Flow Rate (L/min)_Start"
-    flow_stop = "Flow Rate (L/min)_Stop"
+    # Convert flow rate columns to numeric and compute average if available
+    flow_start_col = "Flow Rate (L/min)_Start"
+    flow_stop_col = "Flow Rate (L/min)_Stop"
+    if flow_start_col in merged.columns and flow_stop_col in merged.columns:
+        merged[flow_start_col] = pd.to_numeric(merged[flow_start_col], errors="coerce")
+        merged[flow_stop_col] = pd.to_numeric(merged[flow_stop_col], errors="coerce")
+        merged["Average Flow Rate (L/min)"] = (merged[flow_start_col] + merged[flow_stop_col]) / 2
 
-    if flow_start in merged.columns and flow_stop in merged.columns:
-        merged[flow_start] = pd.to_numeric(merged[flow_start], errors="coerce")
-        merged[flow_stop] = pd.to_numeric(merged[flow_stop], errors="coerce")
-        merged["Average Flow Rate (L/min)"] = (merged[flow_start] + merged[flow_stop]) / 2
-    else:
-        print("⚠️ Missing Flow Rate columns — skipping average flow rate calculation.")
-
-    # Step 8: Drop sequence column
+    # Drop sequence column as it's no longer needed
     merged = merged.drop(columns=["seq"])
 
-    # Step 9: Desired column order
+    # Define desired column order
     desired_order = [
         "ID", "Site",
         "Entry Type_Start", "Monitoring Officer_Start", "Driver_Start", "Date_Start", "Time_Start",
@@ -285,9 +279,10 @@ def merge_start_stop(df):
         "Elapsed Time Diff (min)", "Average Flow Rate (L/min)"
     ]
 
-    # Only include columns that exist
-    final_cols = [col for col in desired_order if col in merged.columns]
-    return merged[final_cols]
+    # Filter to columns that exist
+    existing_cols = [col for col in desired_order if col in merged.columns]
+
+    return merged[existing_cols]
 
 
 

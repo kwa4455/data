@@ -15,6 +15,7 @@ from resource import (
 )
 from modules.authentication import require_role
 from constants import MERGED_SHEET, CALC_SHEET
+from streamlit_antd.table import st_antd_table
 
 def show():
     require_role(["admin", "supervisor"])
@@ -43,6 +44,7 @@ def show():
     try:
         calc_data = spreadsheet.worksheet(CALC_SHEET).get_all_records()
         df_calc = pd.DataFrame(calc_data)
+        st_antd_table(calc_data, color_backgroud="#f9f6f1", hidden_columns=["Index"])
 
         if not df_calc.empty:
             df_calc["Date"] = pd.to_datetime(df_calc["Date _Start"], errors="coerce").dt.date

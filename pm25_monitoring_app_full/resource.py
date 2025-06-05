@@ -220,46 +220,51 @@ def restore_specific_deleted_record(selected_index: int):
 
 
 def merge_start_stop(df):
-    
+    import pandas as pd
 
-    # Remove leading/trailing spaces from all column names
+    # Clean column names: remove leading/trailing spaces
     df.columns = df.columns.str.strip()
 
     merge_keys = ["ID", "Site"]
 
-    # Filter START and STOP rows
+    # Separate START and STOP
     start_df = df[df["Entry Type"] == "START"].copy()
     stop_df = df[df["Entry Type"] == "STOP"].copy()
 
-    # Assign sequence number per group to pair them correctly
+    # Add sequence number to align pairs
     start_df["seq"] = start_df.groupby(merge_keys).cumcount() + 1
     stop_df["seq"] = stop_df.groupby(merge_keys).cumcount() + 1
 
-    # Rename columns (except merge keys and seq)
+    # Rename all columns except ID, Site, seq
     start_df = start_df.rename(columns=lambda x: f"{x}_Start" if x not in merge_keys + ["seq"] else x)
     stop_df = stop_df.rename(columns=lambda x: f"{x}_Stop" if x not in merge_keys + ["seq"] else x)
 
-    # Merge on ID, Site, and seq
+    # Merge START and STOP
     merged = pd.merge(start_df, stop_df, on=merge_keys + ["seq"], how="inner")
 
-    # Calculate Elapsed Time Diff (min)
+    # Elapsed Time Diff (min)
     if "Elapsed Time (min)_Start" in merged.columns and "Elapsed Time (min)_Stop" in merged.columns:
         merged["Elapsed Time (min)_Start"] = pd.to_numeric(merged["Elapsed Time (min)_Start"], errors="coerce")
         merged["Elapsed Time (min)_Stop"] = pd.to_numeric(merged["Elapsed Time (min)_Stop"], errors="coerce")
         merged["Elapsed Time Diff (min)"] = merged["Elapsed Time (min)_Stop"] - merged["Elapsed Time (min)_Start"]
+    else:
+        print("⚠️ 'Elapsed Time (min)' columns missing — skipping time difference calculation.")
 
-    # Calculate Average Flow Rate
-    if "Flow Rate (L/min)_Start" in merged.columns and "Flow Rate (L/min)_Stop" in merged.columns:
-        merged["Flow Rate (L/min)_Start"] = pd.to_numeric(merged["Flow Rate (L/min)_Start"], errors="coerce")
-        merged["Flow Rate (L/min)_Stop"] = pd.to_numeric(merged["Flow Rate (L/min)_Stop"], errors="coerce")
-        merged["Average Flow Rate (L/min)"] = (
-            merged["Flow Rate (L/min)_Start"] + merged["Flow Rate (L/min)_Stop"]
-        ) / 2
+    # Average Flow Rate (if available)
+    flow_start = "Flow Rate (L/min)_Start"
+    flow_stop = "Flow Rate (L/min)_Stop"
 
-    # Drop sequence column
+    if flow_start in merged.columns and flow_stop in merged.columns:
+        merged[flow_start] = pd.to_numeric(merged[flow_start], errors="coerce")
+        merged[flow_stop] = pd.to_numeric(merged[flow_stop], errors="coerce")
+        merged["Average Flow Rate (L/min)"] = (merged[flow_start] + merged[flow_stop]) / 2
+    else:
+        print("⚠️ 'Flow Rate (L/min)' columns missing — skipping average flow rate calculation.")
+
+    # Drop sequence
     merged = merged.drop(columns=["seq"])
 
-    # Define desired column order
+    # Desired column order (add only if available)
     desired_order = [
         "ID", "Site",
         "Entry Type_Start", "Monitoring Officer_Start", "Driver_Start", "Date_Start", "Time_Start",
@@ -273,8 +278,10 @@ def merge_start_stop(df):
         "Elapsed Time Diff (min)", "Average Flow Rate (L/min)"
     ]
 
+    # Only keep existing columns
     existing_cols = [col for col in desired_order if col in merged.columns]
     return merged[existing_cols]
+
 
 
 

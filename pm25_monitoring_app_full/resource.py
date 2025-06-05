@@ -219,40 +219,45 @@ def restore_specific_deleted_record(selected_index: int):
 
 
 
-def merge_start_stop(df):
-    import pandas as pd
+import pandas as pd
 
-    # Clean column names: remove leading/trailing spaces
+def merge_start_stop(df):
+    # Step 1: Clean column names (remove whitespace)
     df.columns = df.columns.str.strip()
+
+    # Step 2: Rename incorrect unit label
+    df = df.rename(columns={
+        "Elapsed Time (min)": "Elapsed Time (hr)"
+    })
 
     merge_keys = ["ID", "Site"]
 
-    # Separate START and STOP
+    # Step 3: Filter and add sequence
     start_df = df[df["Entry Type"] == "START"].copy()
     stop_df = df[df["Entry Type"] == "STOP"].copy()
 
-    # Add sequence number to align pairs
     start_df["seq"] = start_df.groupby(merge_keys).cumcount() + 1
     stop_df["seq"] = stop_df.groupby(merge_keys).cumcount() + 1
 
-    # Rename all columns except ID, Site, seq
+    # Step 4: Rename columns to preserve both START and STOP versions
     start_df = start_df.rename(columns=lambda x: f"{x}_Start" if x not in merge_keys + ["seq"] else x)
     stop_df = stop_df.rename(columns=lambda x: f"{x}_Stop" if x not in merge_keys + ["seq"] else x)
 
-    # Merge START and STOP
+    # Step 5: Merge START and STOP rows
     merged = pd.merge(start_df, stop_df, on=merge_keys + ["seq"], how="inner")
 
-    # Elapsed Time Diff (min)
-    if "Elapsed Time (min)_Start" in merged.columns and "Elapsed Time (min)_Stop" in merged.columns:
-        merged["Elapsed Time (min)_Start"] = pd.to_numeric(merged["Elapsed Time (min)_Start"], errors="coerce")
-        merged["Elapsed Time (min)_Stop"] = pd.to_numeric(merged["Elapsed Time (min)_Stop"], errors="coerce")
-        merged["Elapsed Time Diff (sec)"] = (
-            merged["Elapsed Time (min)_Stop"] - merged["Elapsed Time (min)_Start"]
-        ) * 60
-    else:
-        print("⚠️ 'Elapsed Time (min)' columns missing — skipping time difference calculation.")
+    # Step 6: Calculate Elapsed Time Diff in minutes
+    hr_start_col = "Elapsed Time (hr)_Start"
+    hr_stop_col = "Elapsed Time (hr)_Stop"
 
-    # Average Flow Rate (if available)
+    if hr_start_col in merged.columns and hr_stop_col in merged.columns:
+        merged[hr_start_col] = pd.to_numeric(merged[hr_start_col], errors="coerce")
+        merged[hr_stop_col] = pd.to_numeric(merged[hr_stop_col], errors="coerce")
+        merged["Elapsed Time Diff (min)"] = (merged[hr_stop_col] - merged[hr_start_col]) * 60
+    else:
+        print("⚠️ Missing Elapsed Time (hr) columns — skipping time diff calculation.")
+
+    # Step 7: Calculate Average Flow Rate (if available)
     flow_start = "Flow Rate (L/min)_Start"
     flow_stop = "Flow Rate (L/min)_Stop"
 
@@ -261,28 +266,28 @@ def merge_start_stop(df):
         merged[flow_stop] = pd.to_numeric(merged[flow_stop], errors="coerce")
         merged["Average Flow Rate (L/min)"] = (merged[flow_start] + merged[flow_stop]) / 2
     else:
-        print("⚠️ 'Flow Rate (L/min)' columns missing — skipping average flow rate calculation.")
+        print("⚠️ Missing Flow Rate columns — skipping average flow rate calculation.")
 
-    # Drop sequence
+    # Step 8: Drop sequence column
     merged = merged.drop(columns=["seq"])
 
-    # Desired column order (add only if available)
+    # Step 9: Desired column order
     desired_order = [
         "ID", "Site",
         "Entry Type_Start", "Monitoring Officer_Start", "Driver_Start", "Date_Start", "Time_Start",
         "Temperature (°C)_Start", "RH (%)_Start", "Pressure (mbar)_Start", "Weather_Start",
-        "Wind Speed_Start", "Wind Direction_Start", "Elapsed Time (min)_Start", "Flow Rate (L/min)_Start",
+        "Wind Speed_Start", "Wind Direction_Start", "Elapsed Time (hr)_Start", "Flow Rate (L/min)_Start",
         "Observation_Start", "Submitted At_Start",
         "Entry Type_Stop", "Monitoring Officer_Stop", "Driver_Stop", "Date_Stop", "Time_Stop",
         "Temperature (°C)_Stop", "RH (%)_Stop", "Pressure (mbar)_Stop", "Weather_Stop",
-        "Wind Speed_Stop", "Wind Direction_Stop", "Elapsed Time (min)_Stop", "Flow Rate (L/min)_Stop",
+        "Wind Speed_Stop", "Wind Direction_Stop", "Elapsed Time (hr)_Stop", "Flow Rate (L/min)_Stop",
         "Observation_Stop", "Submitted At_Stop",
         "Elapsed Time Diff (min)", "Average Flow Rate (L/min)"
     ]
 
-    # Only keep existing columns
-    existing_cols = [col for col in desired_order if col in merged.columns]
-    return merged[existing_cols]
+    # Only include columns that exist
+    final_cols = [col for col in desired_order if col in merged.columns]
+    return merged[final_cols]
 
 
 

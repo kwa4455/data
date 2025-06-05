@@ -153,6 +153,9 @@ def backup_deleted_row(row_data, original_sheet_name, row_number, deleted_by):
         ]
         backup_sheet.append_row(header)
 
+    # Convert all row data to string (handles datetime.date, int, float, etc.)
+    row_data_str = [str(item) if item is not None else "" for item in row_data]
+
     deleted_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     source = f"{original_sheet_name} - Row {row_number}"
 

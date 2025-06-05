@@ -38,6 +38,8 @@ def show():
     st.header("📡 Submitted Monitoring Records")
     df = load_data_from_sheet(sheet)
     display_and_merge_data(df, spreadsheet, MERGED_SHEET)
+    st_antd_table(display_and_merge_data, color_backgroud="#f9f6f1", hidden_columns=["Index"])
+
 
     # --- View Saved Entries ---
     st.subheader("📂 View Saved PM₂.₅ Entries")

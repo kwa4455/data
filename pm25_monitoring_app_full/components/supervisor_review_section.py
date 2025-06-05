@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode
 from resource import (
     load_data_from_sheet,
     add_data,
@@ -15,16 +16,12 @@ from resource import (
 )
 from modules.authentication import require_role
 from constants import MERGED_SHEET, CALC_SHEET
-from st_aggrid import AgGrid
 
 
 def show():
     require_role(["admin", "supervisor"])
-    
 
-    
-
-    # Centered title and subtitle
+    # Page Header
     st.markdown("""
         <div style='text-align: center;'>
             <h2>👷🏽‍♀️ Supervisor Review Section </h2>
@@ -35,14 +32,38 @@ def show():
 
     st.write("This page will display records and allow Supervisors to inspect and audit records.")
 
-    # === Display Existing Data & Merge START/STOP ===
+    # === Load & Display Existing Monitoring Data ===
     st.header("📡 Submitted Monitoring Records")
     df = load_data_from_sheet(sheet)
     display_and_merge_data(df, spreadsheet, MERGED_SHEET)
-    AgGrid(df)
 
+    # Editable AgGrid for submitted monitoring records
+    gb = GridOptionsBuilder.from_dataframe(df)
+    gb.configure_default_column(editable=True)
+    grid_options = gb.build()
 
-    # --- View Saved Entries ---
+    grid_response = AgGrid(
+        df,
+        gridOptions=grid_options,
+        update_mode=GridUpdateMode.VALUE_CHANGED,
+        fit_columns_on_grid_load=True,
+        use_container_width=True
+    )
+
+    edited_df = grid_response["data"]
+
+    if st.button("💾 Save Edited Monitoring Records"):
+        try:
+            safe_df = edited_df.copy()
+            safe_df.fillna("", inplace=True)
+            worksheet = spreadsheet.worksheet(MERGED_SHEET)
+            worksheet.clear()
+            worksheet.append_rows([safe_df.columns.tolist()] + safe_df.values.tolist())
+            st.success("✅ Edited records saved successfully!")
+        except Exception as e:
+            st.error(f"❌ Failed to save edited data: {e}")
+
+    # === View Saved PM2.5 Entries ===
     st.subheader("📂 View Saved PM₂.₅ Entries")
     try:
         calc_data = spreadsheet.worksheet(CALC_SHEET).get_all_records()
@@ -56,23 +77,24 @@ def show():
             with st.expander("🔍 Filter Saved Entries"):
                 selected_date = st.date_input("📅 Filter by Date", value=None)
                 selected_site = st.selectbox(
-                    "📌 Filter by Site", 
+                    "📌 Filter by Site",
                     options=["All"] + sorted(df_calc["Site"].unique()),
                     key="site_filter"
                 )
 
-            filtered_df = df_calc.copy()
-            if selected_date:
-                filtered_df = filtered_df[filtered_df["Date _Start"] == selected_date]
-            if selected_site != "All":
-                filtered_df = filtered_df[filtered_df["Site"] == selected_site]
+                filtered_df = df_calc.copy()
+                if selected_date:
+                    filtered_df = filtered_df[filtered_df["Date _Start"] == selected_date]
+                if selected_site != "All":
+                    filtered_df = filtered_df[filtered_df["Site"] == selected_site]
 
-            st.dataframe(filtered_df, use_container_width=True)
+                st.dataframe(filtered_df, use_container_width=True)
         else:
             st.info("ℹ No saved entries yet.")
     except Exception as e:
         st.error(f"❌ Failed to load saved entries: {e}")
 
+    # === View Deleted Records ===
     with st.expander("👷🏾‍♂️ View Deleted Records"):
         try:
             deleted_sheet = spreadsheet.worksheet("Deleted Records")
@@ -88,5 +110,3 @@ def show():
                 st.info("No deleted records found.")
         except Exception as e:
             st.error(f"❌ Could not load Deleted Records: {e}")
-
-    

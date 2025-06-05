@@ -201,12 +201,17 @@ def restore_specific_deleted_record(selected_index: int):
             return "❌ Invalid selection."
 
         selected_row = record_rows[selected_index]
-        restored_data = selected_row[:-2]  # Remove metadata columns
 
-        # Append to main sheet
-        sheet.append_row(restored_data)
+        # Remove metadata (e.g. 'Deleted At', 'Source', 'Deleted By')
+        restored_data = selected_row[:-3]  # Adjust if there are exactly 3 metadata columns
 
-        # Delete the corresponding row (add 2 to skip header and index offset)
+        # Convert all fields to string to avoid append_row() errors
+        restored_data_str = [str(item) if item is not None else "" for item in restored_data]
+
+        # Append restored row to the main sheet
+        sheet.append_row(restored_data_str)
+
+        # Delete from backup sheet (add 2 for header and 1-based index)
         backup_sheet.delete_rows(selected_index + 2)
 
         return "✅ Selected deleted record has been restored."

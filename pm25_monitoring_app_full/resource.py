@@ -135,13 +135,16 @@ def make_unique_headers(headers):
             unique_headers.append(h)
     return unique_headers
 
-from datetime import datetime
+
+
+
 
 def backup_deleted_row(row_data, original_sheet_name, row_number, deleted_by):
     try:
         backup_sheet = spreadsheet.worksheet("Deleted Records")
     except Exception:
-        num_columns = len(row_data) + 3  # Deleted At, Source, Deleted By
+        # Create the Deleted Records sheet if it doesn't exist
+        num_columns = len(row_data) + 3  # +3 for metadata
         backup_sheet = spreadsheet.add_worksheet(
             title="Deleted Records", rows="1000", cols=str(num_columns)
         )
@@ -153,13 +156,14 @@ def backup_deleted_row(row_data, original_sheet_name, row_number, deleted_by):
         ]
         backup_sheet.append_row(header)
 
-    # Convert all row data to string (handles datetime.date, int, float, etc.)
+    # 🔁 Ensure all values are strings (avoid datetime.date error)
     row_data_str = [str(item) if item is not None else "" for item in row_data]
 
+    # 🕒 Add deletion metadata
     deleted_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     source = f"{original_sheet_name} - Row {row_number}"
 
-    # Append to sheet
+    # ✅ Append the row to the Deleted Records sheet
     backup_sheet.append_row(row_data_str + [deleted_at, source, deleted_by])
 
     

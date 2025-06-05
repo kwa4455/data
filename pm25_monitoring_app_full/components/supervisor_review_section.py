@@ -15,7 +15,7 @@ from resource import (
 )
 from modules.authentication import require_role
 from constants import MERGED_SHEET, CALC_SHEET
-from streamlit_antd_components import st_antd_table
+from st_aggrid import AgGrid
 
 
 def show():
@@ -39,7 +39,7 @@ def show():
     st.header("📡 Submitted Monitoring Records")
     df = load_data_from_sheet(sheet)
     display_and_merge_data(df, spreadsheet, MERGED_SHEET)
-    st_antd_table(display_and_merge_data, color_backgroud="#f9f6f1", hidden_columns=["Index"])
+    AgGrid(display_and_merge_data)
 
 
     # --- View Saved Entries ---
@@ -47,7 +47,7 @@ def show():
     try:
         calc_data = spreadsheet.worksheet(CALC_SHEET).get_all_records()
         df_calc = pd.DataFrame(calc_data)
-        st_antd_table(calc_data, color_backgroud="#f9f6f1", hidden_columns=["Index"])
+        AgGrid(calc_data)
 
         if not df_calc.empty:
             df_calc["Date"] = pd.to_datetime(df_calc["Date _Start"], errors="coerce").dt.date

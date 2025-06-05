@@ -15,7 +15,8 @@ from resource import (
 )
 from modules.authentication import require_role
 from constants import MERGED_SHEET, CALC_SHEET
-from streamlit_antd.table import st_antd_table
+from streamlit_antd_components import st_antd_table
+
 
 def show():
     require_role(["admin", "supervisor"])

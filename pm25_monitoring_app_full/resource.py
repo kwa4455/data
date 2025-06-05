@@ -203,17 +203,17 @@ def restore_specific_deleted_record(selected_index: int):
 
         selected_row = record_rows[selected_index]
 
-        # Remove last 3 columns: Deleted At, Source, Deleted By
-        core_data = selected_row[:-3]
+        # Remove metadata: last 3 columns (Deleted At, Source, Deleted By)
+        restored_data = selected_row[:-3]
 
-        # Make sure all items are strings
-        core_data_str = [str(item) if item is not None else "" for item in core_data]
+        # Convert everything to string to avoid type issues
+        restored_data_str = [str(cell) for cell in restored_data]
 
-        # Append to main sheet
-        sheet.append_row(core_data_str)
+        # Append to the main sheet
+        sheet.append_row(restored_data_str)
 
-        # Delete the row from backup (accounting for 1-based indexing and header)
-        backup_sheet.delete_rows(selected_index + 2)
+        # Remove the restored row from Deleted Records sheet
+        backup_sheet.delete_rows(selected_index + 2)  # +2 to skip header and zero-index
 
         return "✅ Selected deleted record has been restored."
 

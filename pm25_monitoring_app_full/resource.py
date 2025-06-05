@@ -246,7 +246,9 @@ def merge_start_stop(df):
     if "Elapsed Time (min)_Start" in merged.columns and "Elapsed Time (min)_Stop" in merged.columns:
         merged["Elapsed Time (min)_Start"] = pd.to_numeric(merged["Elapsed Time (min)_Start"], errors="coerce")
         merged["Elapsed Time (min)_Stop"] = pd.to_numeric(merged["Elapsed Time (min)_Stop"], errors="coerce")
-        merged["Elapsed Time Diff (min)"] = (merged["Elapsed Time (min)_Stop"] - merged["Elapsed Time (min)_Start"])* 60
+        merged["Elapsed Time Diff (sec)"] = (
+            merged["Elapsed Time (min)_Stop"] - merged["Elapsed Time (min)_Start"]
+        ) * 60
     else:
         print("⚠️ 'Elapsed Time (min)' columns missing — skipping time difference calculation.")
 

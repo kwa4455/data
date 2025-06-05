@@ -39,7 +39,7 @@ def show():
     st.header("📡 Submitted Monitoring Records")
     df = load_data_from_sheet(sheet)
     display_and_merge_data(df, spreadsheet, MERGED_SHEET)
-    AgGrid(display_and_merge_data)
+    AgGrid(df)
 
 
     # --- View Saved Entries ---
@@ -47,7 +47,7 @@ def show():
     try:
         calc_data = spreadsheet.worksheet(CALC_SHEET).get_all_records()
         df_calc = pd.DataFrame(calc_data)
-        AgGrid(calc_data)
+        AgGrid(df_calc)
 
         if not df_calc.empty:
             df_calc["Date"] = pd.to_datetime(df_calc["Date _Start"], errors="coerce").dt.date

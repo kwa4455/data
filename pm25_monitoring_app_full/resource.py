@@ -135,13 +135,13 @@ def make_unique_headers(headers):
             unique_headers.append(h)
     return unique_headers
 
-def backup_deleted_row(row_data, original_sheet_name, row_number, deleted_by):
-   
+from datetime import datetime
 
+def backup_deleted_row(row_data, original_sheet_name, row_number, deleted_by):
     try:
         backup_sheet = spreadsheet.worksheet("Deleted Records")
     except Exception:
-        num_columns = len(row_data) + 3  # for Deleted At, Source, Deleted By
+        num_columns = len(row_data) + 3  # Deleted At, Source, Deleted By
         backup_sheet = spreadsheet.add_worksheet(
             title="Deleted Records", rows="1000", cols=str(num_columns)
         )
@@ -159,7 +159,8 @@ def backup_deleted_row(row_data, original_sheet_name, row_number, deleted_by):
     deleted_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     source = f"{original_sheet_name} - Row {row_number}"
 
-    backup_sheet.append_row(row_data + [deleted_at, source, deleted_by])
+    # Append to sheet
+    backup_sheet.append_row(row_data_str + [deleted_at, source, deleted_by])
 
     
 def delete_row(sheet, row_number, deleted_by):

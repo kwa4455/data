@@ -140,11 +140,12 @@ def make_unique_headers(headers):
 
 
 def backup_deleted_row(row_data, original_sheet_name, row_number, deleted_by):
+   
+
     try:
         backup_sheet = spreadsheet.worksheet("Deleted Records")
     except Exception:
-        # Create the Deleted Records sheet if it doesn't exist
-        num_columns = len(row_data) + 3  # +3 for metadata
+        num_columns = len(row_data) + 3  # for Deleted At, Source, Deleted By
         backup_sheet = spreadsheet.add_worksheet(
             title="Deleted Records", rows="1000", cols=str(num_columns)
         )
@@ -156,16 +157,10 @@ def backup_deleted_row(row_data, original_sheet_name, row_number, deleted_by):
         ]
         backup_sheet.append_row(header)
 
-    # 🔁 Ensure all values are strings (avoid datetime.date error)
-    row_data_str = [str(item) if item is not None else "" for item in row_data]
-
-    # 🕒 Add deletion metadata
     deleted_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     source = f"{original_sheet_name} - Row {row_number}"
 
-    # ✅ Append the row to the Deleted Records sheet
-    backup_sheet.append_row(row_data_str + [deleted_at, source, deleted_by])
-
+    backup_sheet.append_row(row_data + [deleted_at, source, deleted_by])
     
 def delete_row(sheet, row_number, deleted_by):
     """
@@ -187,6 +182,7 @@ def delete_merged_record_by_index(index_to_delete):
     backup_deleted_row(row_data, "Merged Sheet", index_to_delete + 2)
     worksheet.delete_rows(index_to_delete + 2)
 
+
 def restore_specific_deleted_record(selected_index: int):
     """
     Restores a specific deleted row from 'Deleted Records' to the main sheet.
@@ -206,26 +202,18 @@ def restore_specific_deleted_record(selected_index: int):
             return "❌ Invalid selection."
 
         selected_row = record_rows[selected_index]
+        restored_data = selected_row[:-2]  # Remove metadata columns
 
-        # Remove metadata columns (assumed to be last 3)
-        restored_data = selected_row[:-3]
+        # Append to main sheet
+        sheet.append_row(restored_data)
 
-        # 💥 Force conversion to string for every element
-        restored_data_str = [str(item) if not isinstance(item, str) else item for item in restored_data]
-
-        # ✅ Append to main sheet
-        sheet.append_row(restored_data_str)
-
-        # ✅ Delete the row from Deleted Records (index + 2 because of header row and 0-indexing)
+        # Delete the corresponding row (add 2 to skip header and index offset)
         backup_sheet.delete_rows(selected_index + 2)
 
         return "✅ Selected deleted record has been restored."
 
     except Exception as e:
         return f"❌ Restore failed: {e}"
-
-
-
 
 
 

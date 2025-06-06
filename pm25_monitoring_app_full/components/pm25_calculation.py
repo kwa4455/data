@@ -57,18 +57,18 @@ def show():
     if "Date _Start" in filtered_df.columns:
         try:
             filtered_df = filtered_df.copy()
-            filtered_df["Date _Start"] = pd.to_datetime(filtered_df["Date _Start"], errors="coerce")
-            filtered_df = filtered_df.dropna(subset=["Date _Start"])
+            filtered_df["Date_Start"] = pd.to_datetime(filtered_df["Date_Start"], errors="coerce")
+            filtered_df = filtered_df.dropna(subset=["Date_Start"])
 
-            min_date = filtered_df["Date _Start"].min().date()
-            max_date = filtered_df["Date _Start"].max().date()
+            min_date = filtered_df["Date_Start"].min().date()
+            max_date = filtered_df["Date_Start"].max().date()
 
             st.subheader("📅 Filter by Start Date")
             date_range = st.date_input("Select Date Range", value=(min_date, max_date), min_value=min_date, max_value=max_date)
 
             if isinstance(date_range, tuple) and len(date_range) == 2:
                 start_date, end_date = date_range
-                mask = (filtered_df["Date _Start"].dt.date >= start_date) & (filtered_df["Date _Start"].dt.date <= end_date)
+                mask = (filtered_df["Date_Start"].dt.date >= start_date) & (filtered_df["Date_Start"].dt.date <= end_date)
                 filtered_df = filtered_df.loc[mask].copy()
         except Exception as e:
             st.warning(f"⚠ Could not filter by date: {e}")

@@ -215,68 +215,83 @@ def show():
     st.markdown("---")
     st.header("🗃️ Restore Deleted Record")
 
+    # Assume required session state or external dependencies are available
     try:
         backup_sheet = spreadsheet.worksheet("Deleted Records")
         deleted_rows = backup_sheet.get_all_values()
 
         if len(deleted_rows) <= 1:
             st.info("No deleted records available.")
-        else:
-            headers = deleted_rows[0]
-            records = deleted_rows[1:]
-            df_deleted = pd.DataFrame(records, columns=headers)
+            return
 
-            if date_column and date_column in df_deleted.columns:
-                df_deleted["Date"] = pd.to_datetime(df_deleted[date_column], errors='coerce').dt.date
+        headers = deleted_rows[0]
+        records = deleted_rows[1:]
+        df_deleted = pd.DataFrame(records, columns=headers)
 
-                if selected_site != "All":
-                    df_deleted = df_deleted[df_deleted["Site"] == selected_site]
-                if selected_date:
-                    df_deleted = df_deleted[df_deleted["Date"] == selected_date]
+        # Filter by date and site (assumes date_column, selected_site, selected_date are accessible)
+        if date_column and date_column in df_deleted.columns:
+            df_deleted["Date"] = pd.to_datetime(df_deleted[date_column], errors='coerce').dt.date
 
-            if df_deleted.empty:
-                st.info("No deleted records match the filter.")
-            else:
-                options = [
-                    f"{i + 1}. " + " | ".join(row.iloc[:-2]) + f" (Deleted by: {row.iloc[-1]})"
-                    for i, (_, row) in enumerate(df_deleted.iterrows())
-                ]
-                selection_list = [""] + options
+            if selected_site != "All":
+                df_deleted = df_deleted[df_deleted["Site"] == selected_site]
+            if selected_date:
+                df_deleted = df_deleted[df_deleted["Date"] == selected_date]
 
-                selected = st.selectbox("Select a deleted record to restore:", selection_list)
+        if df_deleted.empty:
+            st.info("No deleted records match the filter.")
+            return
 
-                if selected:
-                    selected_index = options.index(selected)
-                    selected_row = df_deleted.iloc[selected_index]
+        # Display dropdown with string-safe formatting
+        options = [
+            f"{i + 1}. " + " | ".join(str(val) for val in row.iloc[:-2]) + f" (Deleted by: {row.iloc[-1]})"
+            for i, (_, row) in enumerate(df_deleted.iterrows())
+        ]
+        selection_list = [""] + options
 
-                    st.markdown("#### 👁️ Preview of Selected Record")
-                    st.dataframe(selected_row.to_frame().T, use_container_width=True)
+        selected = st.selectbox("Select a deleted record to restore:", selection_list)
 
-                    if st.button("↩️ Restore Selected Record"):
-                        try:
-                            # Delete row from deleted records sheet
-                            backup_sheet.delete_rows(selected_index + 2)  # +2 for header & 1-based index
+        if selected:
+            selected_index = options.index(selected)
+            selected_row = df_deleted.iloc[selected_index]
 
-                            # Prepare restored row for main sheet (remove Deleted By column)
-                            restored_row = selected_row.iloc[:-1].tolist()
+            st.markdown("#### 👁️ Preview of Selected Record")
+            st.dataframe(selected_row.to_frame().T, use_container_width=True)
 
-                            # Append 'Restored By' username at the end
-                            restored_row.append(st.session_state.username)
-                            
-                            restored_row = ["" if pd.isna(item) else str(item) for item in restored_row]
+            confirm_restore = st.checkbox("✅ I confirm I want to restore this record")
 
+            if confirm_restore and st.button("↩️ Restore Selected Record"):
+                try:
+                    # Remove from deleted records
+                    backup_sheet.delete_rows(selected_index + 2)
 
+                    # Rebuild row: strip 'Deleted By', add 'Restored By'
+                    restored_row = selected_row.iloc[:-1].tolist()
+                    restored_row.append(st.session_state.username)
 
-                            # Append restored row to main sheet
-                            sheet.append_row(restored_row)
+                    # Append to active records
+                    sheet.append_row(restored_row)
 
-                            # Update merged data
-                            handle_merge_logic()
+                    # Optional: log restoration
+                    try:
+                        log_sheet = spreadsheet.worksheet("Restoration Logs")
+                    except:
+                        log_sheet = spreadsheet.add_worksheet(title="Restoration Logs", rows="1000", cols="20")
+                        log_sheet.append_row(headers + ["Restored By", "Restored At"])
 
-                            st.success(f"🧠 Record restored by {st.session_state.username} and re-added successfully!")
-                            st.experimental_rerun()
-                        except Exception as e:
-                            st.error(f"Failed to restore record: {e}")
+                    restored_log_row = selected_row.tolist() + [
+                        st.session_state.username,
+                        str(datetime.datetime.now())
+                    ]
+                    log_sheet.append_row(restored_log_row)
+
+                    # Recompute if needed
+                    handle_merge_logic()
+
+                    st.success(f"🧠 Record restored by {st.session_state.username} and re-added successfully!")
+                    st.experimental_rerun()
+
+                except Exception as e:
+                    st.error(f"Failed to restore record: {e}")
 
     except Exception as e:
         st.error(f"Failed to load deleted records: {e}")

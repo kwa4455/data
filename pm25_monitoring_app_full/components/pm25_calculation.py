@@ -53,7 +53,7 @@ def show():
         filtered_df = df_merged.copy()
 
     # --- Date Filter ---
-    if "Date _Start" in filtered_df.columns:
+    if "Date_Start" in filtered_df.columns:
         try:
             filtered_df = filtered_df.copy()
             filtered_df["Date_Start"] = pd.to_datetime(filtered_df["Date_Start"], errors="coerce")

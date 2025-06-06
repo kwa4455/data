@@ -15,7 +15,7 @@ from resource import (
 )
 from modules.authentication import require_role
 from constants import MERGED_SHEET, CALC_SHEET
-
+from gspread.exceptions import APIError,WorksheetNotFound 
 
 
 def show():

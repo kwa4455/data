@@ -282,7 +282,7 @@ def merge_start_stop(df):
         "Temperature (°C)_Stop", "RH (%)_Stop", "Pressure (mbar)_Stop", "Weather_Stop",
         "Wind Speed_Stop", "Wind Direction_Stop", "Elapsed Time (min)_Stop", "Flow Rate (L/min)_Stop",
         "Observation_Stop", "Submitted At_Stop",
-        "Elapsed Time Diff (sec)", "Average Flow Rate (L/min)"
+        "Elapsed Time Diff (min)", "Average Flow Rate (L/min)"
     ]
 
     # Keep only existing columns

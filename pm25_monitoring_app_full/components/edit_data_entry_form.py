@@ -263,7 +263,8 @@ def show():
                             # Append 'Restored By' username at the end
                             restored_row.append(st.session_state.username)
                             
-                            restored_row = [str(item) for item in restored_row]
+                            restored_row = ["" if pd.isna(item) else str(item) for item in restored_row]
+
 
 
                             # Append restored row to main sheet

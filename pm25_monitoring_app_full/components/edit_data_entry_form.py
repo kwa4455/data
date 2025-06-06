@@ -262,6 +262,9 @@ def show():
 
                             # Append 'Restored By' username at the end
                             restored_row.append(st.session_state.username)
+                            
+                            restored_row = [str(item) for item in restored_row]
+
 
                             # Append restored row to main sheet
                             sheet.append_row(restored_row)

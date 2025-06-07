@@ -11,13 +11,25 @@ def show():
     
     # --- Page Title ---
     st.markdown("""
+        <style>
+            @media (prefers-color-scheme: dark) {
+                .pm25-subtitle {
+                    color: white;
+                }
+            }
+            @media (prefers-color-scheme: light) {
+                .pm25-subtitle {
+                    color: black;
+                }
+            }
+        </style>
+
         <div style='text-align: center;'>
             <h2> 🧶 PM₂.₅ Concentration Calculator </h2>
-            <p style='color: grey;'>Enter Pre and Post Weights to calculate PM₂.₅ concentrations in µg/m³ .</p>
+            <p class='pm25-subtitle'>Enter Pre and Post Weights to calculate PM₂.₅ concentrations in µg/m³.</p>
         </div>
         <hr>
     """, unsafe_allow_html=True)
-
 
     # --- Load Merged Data ---
     try:

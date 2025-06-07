@@ -26,9 +26,22 @@ def show():
 
     # Centered title and subtitle
     st.markdown("""
+        <style>
+            @media (prefers-color-scheme: dark) {
+                .supervisor-subtitle {
+                    color: white;
+                }
+            }
+            @media (prefers-color-scheme: light) {
+                .supervisor-subtitle {
+                    color: black;
+                }
+            }
+        </style>
+
         <div style='text-align: center;'>
-            <h2>👷🏽‍♀️ Supervisor Review Section </h2>
-            <p style='color: grey;'>For Supervisors to review, inspect, and audit monitoring records</p>
+            <h2>👷🏽‍♀️ Supervisor Review Section</h2>
+            <p class='supervisor-subtitle'>For Supervisors to review, inspect, and audit monitoring records</p>
         </div>
         <hr>
     """, unsafe_allow_html=True)

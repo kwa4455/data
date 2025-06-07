@@ -15,6 +15,27 @@ from modules.authentication import require_role
 
 def show():
     require_role(["admin", "officer"])
+    
+    st.markdown("""
+        <style>
+            @media (prefers-color-scheme: dark) {
+                .editor-subtitle {
+                    color: white;
+                }
+            }
+            @media (prefers-color-scheme: light) {
+                .editor-subtitle {
+                    color: black;
+                }
+            }
+        </style>
+
+        <div style='text-align: center;'>
+            <h2>✍🏼 Data Entry Form </h2>
+            <p class='editor-subtitle'>This page allows authorized users to enter  air quality monitoring field data.</p>
+        </div>
+        <hr>
+    """, unsafe_allow_html=True)
 
     ids = ["", '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
     site_id_map = {

@@ -38,7 +38,7 @@ st.markdown("""
 
 /* App background */
 html, .stApp {
-    background: url('https://i.postimg.cc/pVkDJ2nG/images-2.jpg');
+    background: url('https://i.postimg.cc/5yjTNsC8/images-5.jpg');
     background-size: cover;
     background-position: center;
     min-height: 100vh;

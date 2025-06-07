@@ -63,12 +63,31 @@ def show():
 
     # Header
     st.markdown(f"""
+        <style>
+            @media (prefers-color-scheme: dark) {{
+                .welcome-text {{
+                    color: white;
+                }}
+            }}
+            @media (prefers-color-scheme: light) {{
+                .welcome-text {{
+                    color: black;
+                }}
+            }}
+            .home-title {{
+                font-size: 32px;
+                font-weight: bold;
+                margin-bottom: 0.5rem;
+            }}
+        </style>
+
         <div style='text-align: center;'>
             <div class='home-title'>{text['title'][lang]}</div>
-            <p style='color: grey;'>{text['welcome'][lang]}</p>
+            <p class='welcome-text'>{text['welcome'][lang]}</p>
         </div>
         <hr>
     """, unsafe_allow_html=True)
+
 
     # Navigation
     st.markdown(f"### {text['nav_instruction'][lang]}")

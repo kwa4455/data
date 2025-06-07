@@ -43,9 +43,22 @@ def show():
     require_role(["admin", "officer"])
 
     st.markdown("""
+        <style>
+            @media (prefers-color-scheme: dark) {
+                .editor-subtitle {
+                    color: white;
+                }
+            }
+            @media (prefers-color-scheme: light) {
+                .editor-subtitle {
+                    color: black;
+                }
+            }
+        </style>
+
         <div style='text-align: center;'>
             <h2>✍🏼 Editor Tools</h2>
-            <p style='color: grey;'>This page allows authorized users to update or delete submitted records.</p>
+            <p class='editor-subtitle'>This page allows authorized users to update or delete submitted records.</p>
         </div>
         <hr>
     """, unsafe_allow_html=True)

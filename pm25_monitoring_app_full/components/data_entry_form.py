@@ -99,7 +99,7 @@ def show():
 
             st.markdown("#### ⚙ Initial Sampler Information")
             start_elapsed = st.number_input("⏰ Initial Elapsed Time (min)", step=0.1)
-            start_flow = st.number_input("🧯 Initial Flow Rate (L/min)", value="5.0",disabled=True)
+            start_flow = st.selectbox("🧯 Initial Flow Rate (L/min)", options=[5, 16.7], index=0)
             
 
             if st.button("✅ Submit Start Day Data"):
@@ -144,7 +144,7 @@ def show():
 
             st.markdown("#### ⚙ Final Sampler Information")
             stop_elapsed = st.number_input("⏰ Final Elapsed Time (min)", step=0.1)
-            stop_flow = st.number_input("🧯 Final Flow Rate (L/min)", value="5.0", disabled=True)
+            stop_flow = st.selectbox("🧯 Final Flow Rate (L/min)", options=[5, 16.7], index=0)
             
 
             if st.button("✅ Submit Stop Day Data"):

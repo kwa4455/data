@@ -44,7 +44,7 @@ def show():
         '10': 'Amasaman'
     }
     officers = ['Obed Korankye', 'Clement Ackaah', 'Peter Ohene-Twum', 'Benjamin Essien', 'Mawuli Amegah']
-    wind_directions = ["-- Select --", "N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+    wind_directions = ["-- Select --", "N", "NE", "E", "SE", "S","NNE", "NEN","", "SSW","SW", "W", "NW"]
     weather_conditions = ["-- Select --", "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Windy", "Hazy", "Stormy", "Foggy"]
 
     weather_defaults = {

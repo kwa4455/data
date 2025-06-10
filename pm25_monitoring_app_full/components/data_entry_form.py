@@ -48,13 +48,13 @@ def show():
     weather_conditions = ["-- Select --", "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Windy", "Hazy", "Stormy", "Foggy"]
 
     weather_defaults = {
-        "Sunny": {"temp": list(range(25, 41)), "rh": list(range(40, 71, 1))},
-        "Cloudy": {"temp": list(range(25, 31)), "rh": list(range(40, 71, 1))},
-        "Partly Cloudy": {"temp": list(range(21, 35)), "rh": list(range(35, 66, 1))},
+        "Sunny": {"temp": list(range(25, 41)), "rh": list(range(40, 91, 1))},
+        "Cloudy": {"temp": list(range(25, 35)), "rh": list(range(40, 91, 1))},
+        "Partly Cloudy": {"temp": list(range(21, 35)), "rh": list(range(35, 91, 1))},
         "Rainy": {"temp": list(range(20, 27)), "rh": list(range(70, 101, 1))},
-        "Windy": {"temp": list(range(20, 30)), "rh": list(range(40, 71, 1))},
-        "Hazy": {"temp": list(range(20, 31)), "rh": list(range(40, 71, 1))},
-        "Overcast": {"temp": list(range(18, 28)), "rh": list(range(50, 81, 1))},
+        "Windy": {"temp": list(range(20, 30)), "rh": list(range(40, 91, 1))},
+        "Hazy": {"temp": list(range(20, 31)), "rh": list(range(40, 91, 1))},
+        "Overcast": {"temp": list(range(18, 28)), "rh": list(range(50, 91, 1))},
         "Stormy": {"temp": list(range(17, 25)), "rh": list(range(80, 101, 1))},
         "Foggy": {"temp": list(range(15, 22)), "rh": list(range(85, 101, 1))}
     }

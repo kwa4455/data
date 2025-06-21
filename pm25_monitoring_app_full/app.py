@@ -317,7 +317,7 @@ st.markdown("""
     }
     div[role="radiogroup"] > label[data-baseweb="option"]:has(input[type="radio"]:checked) {
         background-color: #20B2AA;
-        color: white;
+        color: red;
         box-shadow: 0 0 8px #20B2AA;
     }
     </style>

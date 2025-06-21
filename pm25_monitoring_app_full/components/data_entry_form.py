@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime, time
+from datetime import datetime
 from resource import (
     load_data_from_sheet,
     add_data,
@@ -13,9 +13,19 @@ from resource import (
 from constants import MERGED_SHEET
 from modules.authentication import require_role
 
+
+def get_custom_time(label, key_prefix, hour_key="hour", minute_key="minute"):
+    col1, col2 = st.columns(2)
+    with col1:
+        hour = st.selectbox(f"{label} - Hour", list(range(0, 24)), key=f"{key_prefix}_{hour_key}")
+    with col2:
+        minute = st.selectbox(f"{label} - Minute", list(range(0, 60, 1)), key=f"{key_prefix}_{minute_key}")
+    return datetime.strptime(f"{hour}:{minute}", "%H:%M").time()
+
+
 def show():
     require_role(["admin", "officer"])
-    
+
     st.markdown("""
         <style>
             .editor-subtitle {
@@ -29,7 +39,6 @@ def show():
         <hr>
     """, unsafe_allow_html=True)
 
-    # --- Options ---
     ids = ["", '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
     site_id_map = {
         '1': 'Kaneshie First Light',
@@ -46,24 +55,19 @@ def show():
     officers = ['Obed Korankye', 'Clement Ackaah', 'Peter Ohene-Twum', 'Benjamin Essien', 'Mawuli Amegah']
     wind_directions = ["-- Select --", "N", "NE", "E", "SE", "S","NNE", "NEN","SWS", "SES", "SSW","SW", "W", "NW"]
     weather_conditions = ["-- Select --", "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Windy", "Hazy", "Stormy", "Foggy"]
+    drivers = ["Kanazoe Sia", "Kofi Adjei", "Fatau"]
+    wind_speed_options = list(range(0, 51))  # in km/h
 
     weather_defaults = {
-        "Sunny": {"temp": list(range(25, 41)), "rh": list(range(40, 91, 1))},
-        "Cloudy": {"temp": list(range(25, 35)), "rh": list(range(40, 91, 1))},
-        "Partly Cloudy": {"temp": list(range(21, 35)), "rh": list(range(35, 91, 1))},
-        "Rainy": {"temp": list(range(20, 27)), "rh": list(range(70, 101, 1))},
-        "Windy": {"temp": list(range(20, 30)), "rh": list(range(40, 91, 1))},
-        "Hazy": {"temp": list(range(20, 31)), "rh": list(range(40, 91, 1))},
-        "Overcast": {"temp": list(range(18, 28)), "rh": list(range(50, 91, 1))},
-        "Stormy": {"temp": list(range(17, 25)), "rh": list(range(80, 101, 1))},
-        "Foggy": {"temp": list(range(15, 22)), "rh": list(range(85, 101, 1))}
+        "Sunny": {"temp": list(range(25, 41)), "rh": list(range(40, 91))},
+        "Rainy": {"temp": list(range(20, 27)), "rh": list(range(70, 101))},
+        "Cloudy": {"temp": list(range(25, 35)), "rh": list(range(40, 91))},
+        "Partly Cloudy": {"temp": list(range(21, 35)), "rh": list(range(35, 91))},
+        "Windy": {"temp": list(range(20, 30)), "rh": list(range(40, 91))},
+        "Hazy": {"temp": list(range(20, 31)), "rh": list(range(40, 91))},
+        "Stormy": {"temp": list(range(17, 25)), "rh": list(range(80, 101))},
+        "Foggy": {"temp": list(range(15, 22)), "rh": list(range(85, 101))}
     }
-
-    def get_custom_time(label_prefix, key_prefix, hour_key, minute_key):
-        hour = st.selectbox(f"{label_prefix} Hour", list(range(0, 24)), key=f"{key_prefix}_{hour_key}")
-        valid_minutes = [m for m in range(60) if m not in [0, 15, 30, 45]]
-        minute = st.selectbox(f"{label_prefix} Minute (not 00, 15, 30, 45)", valid_minutes, key=f"{key_prefix}_{minute_key}")
-        return time(hour=hour, minute=minute)
 
     entry_type = st.selectbox("📝 Select Entry Type", ["", "START", "STOP"])
 
@@ -72,46 +76,49 @@ def show():
         site_selected = site_id_map.get(id_selected, "")
         if site_selected:
             st.text_input("📍 Site", value=site_selected, disabled=True)
+
+        st.subheader("5. Officer(s) Involved")
         officer_selected = st.multiselect("🧑‍🔬 Monitoring Officer(s)", officers)
-        driver_name = st.text_input("🧑‍🌾 Driver's Name")
+        driver = st.selectbox("🚗 Select Driver", ["-- Select --"] + drivers)
 
     # ----------- START ENTRY -----------
     if entry_type == "START":
         with st.expander("🟢 Start Day Monitoring", expanded=True):
-            start_date = st.date_input("📆 Start Date", value=datetime.today())
-            start_time = get_custom_time("⏱️ Start Time", "start", "hour", "minute")
-            start_obs = st.text_area("🧿 First Day Observation")
+            st.subheader("3. Date and Time")
+            start_date = st.date_input("📅 Start Date", value=datetime.today())
+            start_time = get_custom_time("⏱️ Start Time", "start")
 
+            start_obs = st.text_area("🧿 First Day Observation")
             st.markdown("#### 🌧️ Initial Atmospheric Conditions")
             start_weather = st.selectbox("🌦️ Weather", weather_conditions)
 
             if start_weather != "-- Select --":
-                temp_options = ["-- Select --"] + weather_defaults.get(start_weather, {}).get("temp", [])
-                rh_options = ["-- Select --"] + weather_defaults.get(start_weather, {}).get("rh", [])
+                temp_options = ["-- Select --"] + weather_defaults[start_weather]["temp"]
+                rh_options = ["-- Select --"] + weather_defaults[start_weather]["rh"]
                 start_temp = st.selectbox("🌡️ Temperature (°C)", temp_options)
-                start_rh = st.selectbox("💧 Relative Humidity (%)", rh_options)
+                start_rh = st.selectbox("💧 Humidity (%)", rh_options)
             else:
                 start_temp = start_rh = "-- Select --"
 
             start_pressure = st.number_input("🧭 Pressure (mbar)", step=0.1)
-            start_wind_speed = st.text_input("💨 Wind Speed (e.g. 10 km/h)")
+            start_wind_speed = st.selectbox("💨 Wind Speed (km/h)", ["-- Select --"] + wind_speed_options)
+            start_wind_speed = float(start_wind_speed) if start_wind_speed != "-- Select --" else None
             start_wind_direction = st.selectbox("🌪️ Wind Direction", wind_directions)
 
             st.markdown("#### ⚙ Initial Sampler Information")
             start_elapsed = st.number_input("⏰ Initial Elapsed Time (min)", step=0.1)
             start_flow = st.selectbox("🧯 Initial Flow Rate (L/min)", options=[5, 16.7], index=0)
-            
 
             if st.button("✅ Submit Start Day Data"):
-                if not all([id_selected, site_selected, officer_selected, driver_name]):
+                if not all([id_selected, site_selected, officer_selected, driver]) or driver == "-- Select --":
                     st.error("⚠ Please complete all required fields before submitting.")
                     return
                 if start_weather == "-- Select --" or start_temp == "-- Select --" or start_rh == "-- Select --" or start_wind_direction == "-- Select --":
-                    st.error("⚠ Please select valid weather, temp, RH, and wind direction.")
+                    st.error("⚠ Please select valid weather, temperature, humidity, and wind direction.")
                     return
 
                 start_row = [
-                    "START", id_selected, site_selected, ", ".join(officer_selected), driver_name,
+                    "START", id_selected, site_selected, ", ".join(officer_selected), driver,
                     start_date.strftime("%Y-%m-%d"), start_time.strftime("%H:%M:%S"),
                     start_temp, start_rh, start_pressure, start_weather,
                     start_wind_speed, start_wind_direction,
@@ -124,39 +131,38 @@ def show():
     elif entry_type == "STOP":
         with st.expander("🔴 Stop Day Monitoring", expanded=True):
             stop_date = st.date_input("📆 Stop Date", value=datetime.today())
-            stop_time = get_custom_time("⏱️ Stop Time", "stop", "hour", "minute")
+            stop_time = get_custom_time("⏱️ Stop Time", "stop")
             stop_obs = st.text_area("🧿 Final Day Observation")
 
-            st.markdown("#### 🌧️ Final Atmospheric Conditions")
             stop_weather = st.selectbox("🌦️ Final Weather", weather_conditions)
 
             if stop_weather != "-- Select --":
-                temp_options = ["-- Select --"] + weather_defaults.get(stop_weather, {}).get("temp", [])
-                rh_options = ["-- Select --"] + weather_defaults.get(stop_weather, {}).get("rh", [])
+                temp_options = ["-- Select --"] + weather_defaults[stop_weather]["temp"]
+                rh_options = ["-- Select --"] + weather_defaults[stop_weather]["rh"]
                 stop_temp = st.selectbox("🌡️ Final Temperature (°C)", temp_options)
-                stop_rh = st.selectbox("💧 Final Relative Humidity (%)", rh_options)
+                stop_rh = st.selectbox("💧 Final Humidity (%)", rh_options)
             else:
                 stop_temp = stop_rh = "-- Select --"
 
             stop_pressure = st.number_input("🧭 Final Pressure (mbar)", step=0.1)
-            stop_wind_speed = st.text_input("💨 Final Wind Speed (e.g. 12 km/h)")
+            stop_wind_speed = st.selectbox("💨 Final Wind Speed (km/h)", ["-- Select --"] + wind_speed_options)
+            stop_wind_speed = float(stop_wind_speed) if stop_wind_speed != "-- Select --" else None
             stop_wind_direction = st.selectbox("🌪️ Final Wind Direction", wind_directions)
 
             st.markdown("#### ⚙ Final Sampler Information")
             stop_elapsed = st.number_input("⏰ Final Elapsed Time (min)", step=0.1)
             stop_flow = st.selectbox("🧯 Final Flow Rate (L/min)", options=[5, 16.7], index=0)
-            
 
             if st.button("✅ Submit Stop Day Data"):
-                if not all([id_selected, site_selected, officer_selected, driver_name]):
+                if not all([id_selected, site_selected, officer_selected, driver]) or driver == "-- Select --":
                     st.error("⚠ Please complete all required fields before submitting.")
                     return
                 if stop_weather == "-- Select --" or stop_temp == "-- Select --" or stop_rh == "-- Select --" or stop_wind_direction == "-- Select --":
-                    st.error("⚠ Please select valid weather, temp, RH, and wind direction.")
+                    st.error("⚠ Please select valid weather, temperature, humidity, and wind direction.")
                     return
 
                 stop_row = [
-                    "STOP", id_selected, site_selected, ", ".join(officer_selected), driver_name,
+                    "STOP", id_selected, site_selected, ", ".join(officer_selected), driver,
                     stop_date.strftime("%Y-%m-%d"), stop_time.strftime("%H:%M:%S"),
                     stop_temp, stop_rh, stop_pressure, stop_weather,
                     stop_wind_speed, stop_wind_direction,

@@ -120,7 +120,7 @@ def show():
 
             st.markdown("#### ⚙ Initial Sampler Information")
             st.markdown(required_label("⏰ Initial Elapsed Time (min)"), unsafe_allow_html=True)
-            start_elapsed = st.number_input("", step=0.1, key="start_elapsed")
+            start_elapsed = st.number_input("Elapsed Time (min)", step=0.1, key="start_elapsed")
             st.markdown(required_label("🧯 Initial Flow Rate (L/min)"), unsafe_allow_html=True)
             start_flow = st.selectbox("", options=[5, 16.7], index=0)
 
@@ -188,7 +188,7 @@ def show():
 
             st.markdown("#### ⚙ Final Sampler Information")
             st.markdown(required_label("⏰ Final Elapsed Time (min)"), unsafe_allow_html=True)
-            stop_elapsed = st.number_input("", step=0.1, key="stop_elapsed")
+            stop_elapsed = st.number_input("Elapsed Time (min)", step=0.1, key="stop_elapsed")
             st.markdown(required_label("🧯 Final Flow Rate (L/min)"), unsafe_allow_html=True)
             stop_flow = st.selectbox("", options=[5, 16.7], index=0)
 

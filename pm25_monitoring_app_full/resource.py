@@ -41,7 +41,7 @@ def ensure_main_sheet_initialized(spreadsheet, sheet_name):
             "Entry Type", "ID", "Site", "Monitoring Officer", "Driver",
             "Date", "Time", "Temperature (°C)", "RH (%)", "Pressure (mbar)",
             "Weather", "Wind Speed", "Wind Direction", "Elapsed Time (min)", "Flow Rate (L/min)", "Observation",
-            "Submitted At"
+            "Submitted At","Latitude","Longitude"
         ])
     return sheet
 
@@ -282,7 +282,7 @@ def merge_start_stop(df):
         "Temperature (°C)_Stop", "RH (%)_Stop", "Pressure (mbar)_Stop", "Weather_Stop",
         "Wind Speed_Stop", "Wind Direction_Stop", "Elapsed Time (min)_Stop", "Flow Rate (L/min)_Stop",
         "Observation_Stop", "Submitted At_Stop",
-        "Elapsed Time Diff (min)", "Average Flow Rate (L/min)"
+        "Elapsed Time Diff (min)", "Average Flow Rate (L/min)", "Latitude","Longitude"
     ]
 
     # Keep only existing columns

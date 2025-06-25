@@ -42,16 +42,16 @@ def show():
 
     ids = ["", '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
     site_id_map = {
-        '1': {'name': 'Kaneshie First Light', 'lat': 5.5600, 'lon': -0.2228},
-        '2': {'name': 'Tetteh Quarshie Roundabout', 'lat': 5.6306, 'lon': -0.1733},
-        '3': {'name': 'Achimota Interchange', 'lat': 5.6037, 'lon': -0.2355},
-        '4': {'name': 'La', 'lat': 5.5667, 'lon': -0.1500},
-        '5': {'name': 'Mallam Market', 'lat': 5.5767, 'lon': -0.2665},
-        '6': {'name': 'Graphic Road', 'lat': 5.5616, 'lon': -0.2171},
-        '7': {'name': 'Weija', 'lat': 5.5584, 'lon': -0.3109},
-        '8': {'name': 'Kasoa', 'lat': 5.5346, 'lon': -0.4222},
-        '9': {'name': 'Tantra Hill', 'lat': 5.6225, 'lon': -0.2526},
-        '10': {'name': 'Amasaman', 'lat': 5.7011, 'lon': -0.3261}
+        '1': {'name': 'Kaneshie First Light', 'lat': 5.568443, 'lon': -0.241189},
+        '2': {'name': 'Tetteh Quarshie Roundabout', 'lat': 5.618210, 'lon': -0.176112},
+        '3': {'name': 'Achimota Interchange', 'lat': 5.612332, 'lon':-0.229281},
+        '4': {'name': 'La', 'lat': 5.562830, 'lon': -0.144382},
+        '5': {'name': 'Mallam Market', 'lat': 5.571559, 'lon': -0.279552},
+        '6': {'name': 'Graphic Road', 'lat': 5.554906, 'lon': -0.216888},
+        '7': {'name': 'Weija', 'lat': 5.554087, 'lon': -0.308612},
+        '8': {'name': 'Kasoa', 'lat': 5.538664, 'lon': -0.399573},
+        '9': {'name': 'Tantra Hill', 'lat': 5.645072, 'lon': -0.247072},
+        '10': {'name': 'Amasaman', 'lat': 5.698762, 'lon': -0.292757}
     }
 
     st.markdown(required_label("📝 Select Entry Type"), unsafe_allow_html=True)

@@ -38,7 +38,7 @@ def ensure_main_sheet_initialized(spreadsheet, sheet_name):
 
     if not sheet.get_all_values():
         sheet.append_row([
-            "Entry Type", "ID", "Site", "Monitoring Officer", "Driver",
+            "Entry Type", "ID", "Site","Latitude","Longitude", "Monitoring Officer", "Driver",
             "Date", "Time", "Temperature (°C)", "RH (%)", "Pressure (mbar)",
             "Weather", "Wind Speed", "Wind Direction", "Elapsed Time (min)", "Flow Rate (L/min)", "Observation",
             "Submitted At","Latitude","Longitude"
@@ -150,7 +150,7 @@ def backup_deleted_row(row_data, original_sheet_name, row_number, deleted_by):
             title="Deleted Records", rows="1000", cols=str(num_columns)
         )
         header = [
-            "Entry Type", "ID", "Site", "Monitoring Officer", "Driver", "Date", "Time",
+            "Entry Type", "ID", "Site","Latitude","Longitude", "Monitoring Officer", "Driver", "Date", "Time",
             "Temperature (°C)", "RH (%)", "Pressure (mbar)", "Weather", "Wind Speed",
             "Wind Direction", "Elapsed Time (min)", "Flow Rate (L/min)", "Observation",
             "Submitted by", "Submitted At", "Deleted At", "Source", "Deleted By"
@@ -273,7 +273,7 @@ def merge_start_stop(df):
 
     # Define desired column order (adjusted for new Elapsed Time Diff column name)
     desired_order = [
-        "ID", "Site",
+        "ID", "Site","Latitude","Longitude",
         "Entry Type_Start", "Monitoring Officer_Start", "Driver_Start", "Date_Start", "Time_Start",
         "Temperature (°C)_Start", "RH (%)_Start", "Pressure (mbar)_Start", "Weather_Start",
         "Wind Speed_Start", "Wind Direction_Start", "Elapsed Time (min)_Start", "Flow Rate (L/min)_Start",
@@ -282,7 +282,7 @@ def merge_start_stop(df):
         "Temperature (°C)_Stop", "RH (%)_Stop", "Pressure (mbar)_Stop", "Weather_Stop",
         "Wind Speed_Stop", "Wind Direction_Stop", "Elapsed Time (min)_Stop", "Flow Rate (L/min)_Stop",
         "Observation_Stop", "Submitted At_Stop",
-        "Elapsed Time Diff (min)", "Average Flow Rate (L/min)", "Latitude","Longitude"
+        "Elapsed Time Diff (min)", "Average Flow Rate (L/min)"
     ]
 
     # Keep only existing columns

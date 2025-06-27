@@ -9,5 +9,5 @@ requests
 streamlit-option-menu
 email-validator 
 streamlit-aggrid
-
+gspread-formatting
 

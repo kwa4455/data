@@ -233,7 +233,7 @@ def merge_start_stop(df):
     # Clean column names
     df.columns = df.columns.str.strip()
 
-    merge_keys = ["ID", "Site"]
+    merge_keys = ["ID", "Site", "Latitude", "Longitude"]
 
     # Filter START and STOP entries
     start_df = df[df["Entry Type"] == "START"].copy()
@@ -255,10 +255,10 @@ def merge_start_stop(df):
     start_df = start_df.rename(columns=lambda x: f"{x}_Start" if x not in merge_keys + ["seq"] else x)
     stop_df = stop_df.rename(columns=lambda x: f"{x}_Stop" if x not in merge_keys + ["seq"] else x)
 
-    # Merge START and STOP records on keys + seq
+    # Merge START and STOP records
     merged = pd.merge(start_df, stop_df, on=merge_keys + ["seq"], how="inner")
 
-    # Elapsed Time Diff (in seconds)
+    # Compute Elapsed Time Diff (in seconds)
     if "Elapsed Time (min)_Start" in merged.columns and "Elapsed Time (min)_Stop" in merged.columns:
         merged["Elapsed Time (min)_Start"] = pd.to_numeric(merged["Elapsed Time (min)_Start"], errors="coerce")
         merged["Elapsed Time (min)_Stop"] = pd.to_numeric(merged["Elapsed Time (min)_Stop"], errors="coerce")
@@ -266,7 +266,7 @@ def merge_start_stop(df):
             merged["Elapsed Time (min)_Stop"] - merged["Elapsed Time (min)_Start"]
         ) * 60
 
-    # Flow rate average
+    # Calculate average flow rate
     flow_start_col = "Flow Rate (L/min)_Start"
     flow_stop_col = "Flow Rate (L/min)_Stop"
     if flow_start_col in merged.columns and flow_stop_col in merged.columns:
@@ -274,12 +274,12 @@ def merge_start_stop(df):
         merged[flow_stop_col] = pd.to_numeric(merged[flow_stop_col], errors="coerce")
         merged["Average Flow Rate (L/min)"] = (merged[flow_start_col] + merged[flow_stop_col]) / 2
 
-    # Drop the sequence column
+    # Drop sequence column
     merged = merged.drop(columns=["seq"])
 
-    # Define desired column order (adjusted for new Elapsed Time Diff column name)
+    # Updated column order
     desired_order = [
-        "ID", "Site","Latitude","Longitude",
+        "ID", "Site", "Latitude", "Longitude",
         "Entry Type_Start", "Monitoring Officer_Start", "Driver_Start", "Date_Start", "Time_Start",
         "Temperature (°C)_Start", "RH (%)_Start", "Pressure (mbar)_Start", "Weather_Start",
         "Wind Speed_Start", "Wind Direction_Start", "Elapsed Time (min)_Start", "Flow Rate (L/min)_Start",
@@ -291,10 +291,9 @@ def merge_start_stop(df):
         "Elapsed Time Diff (min)", "Average Flow Rate (L/min)"
     ]
 
-    # Keep only existing columns
     existing_cols = [col for col in desired_order if col in merged.columns]
-
     return merged[existing_cols]
+
 
 
 

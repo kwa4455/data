@@ -2,12 +2,16 @@
 import streamlit as st
 import pandas as pd
 import gspread
+
+from gspread_formatting import (
+    set_frozen,
+    format_cell_range,
+    CellFormat,
+    TextFormat
+)
 from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 from gspread.exceptions import APIError,WorksheetNotFound 
-
-
-
 
 import json
 import time
@@ -37,14 +41,22 @@ def ensure_main_sheet_initialized(spreadsheet, sheet_name):
         sheet = spreadsheet.add_worksheet(title=sheet_name, rows="100", cols="20")
 
     if not sheet.get_all_values():
-        sheet.append_row([
-            "Entry Type", "ID", "Site","Latitude","Longitude", "Monitoring Officer", "Driver",
+        header = [
+            "Entry Type", "ID", "Site", "Latitude", "Longitude", "Monitoring Officer", "Driver",
             "Date", "Time", "Temperature (°C)", "RH (%)", "Pressure (mbar)",
-            "Weather", "Wind Speed", "Wind Direction", "Elapsed Time (min)", "Flow Rate (L/min)", "Observation",
-            "Submitted At","Latitude","Longitude"
-        ])
-    return sheet
+            "Weather", "Wind Speed", "Wind Direction", "Elapsed Time (min)",
+            "Flow Rate (L/min)", "Observation", "Submitted At"
+        ]
+        sheet.append_row(header)
 
+        # Freeze the header row
+        set_frozen(sheet, rows=1)
+
+        # Format the header row to bold
+        fmt = CellFormat(textFormat=TextFormat(bold=True))
+        format_cell_range(sheet, '1:1', fmt)
+
+    return sheet
 sheet = ensure_main_sheet_initialized(spreadsheet, MAIN_SHEET)
 
 

@@ -33,7 +33,7 @@ def ensure_main_sheet_initialized(spreadsheet, sheet_name):
         "Entry Type", "ID", "Site", "Latitude", "Longitude", "Monitoring Officer", "Driver",
         "Date", "Time", "Temperature (°C)", "RH (%)", "Pressure (mbar)",
         "Weather", "Wind Speed", "Wind Direction", "Elapsed Time (min)", "Flow Rate (L/min)", "Observation",
-        "Submitted At"
+        "Submitted By","Submitted At"
     ]
     try:
         sheet = spreadsheet.worksheet(sheet_name)

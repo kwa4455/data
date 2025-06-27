@@ -3,12 +3,6 @@ import streamlit as st
 import pandas as pd
 import gspread
 
-from gspread_formatting import (
-    set_frozen,
-    format_cell_range,
-    CellFormat,
-    TextFormat
-)
 from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 from gspread.exceptions import APIError,WorksheetNotFound 
@@ -35,26 +29,26 @@ spreadsheet = client.open_by_key(SPREADSHEET_ID)
 
 # === Ensure Observations worksheet exists and is initialized ===
 def ensure_main_sheet_initialized(spreadsheet, sheet_name):
+    expected_header = [
+        "Entry Type", "ID", "Site", "Latitude", "Longitude", "Monitoring Officer", "Driver",
+        "Date", "Time", "Temperature (°C)", "RH (%)", "Pressure (mbar)",
+        "Weather", "Wind Speed", "Wind Direction", "Elapsed Time (min)", "Flow Rate (L/min)", "Observation",
+        "Submitted At"
+    ]
     try:
         sheet = spreadsheet.worksheet(sheet_name)
     except gspread.WorksheetNotFound:
         sheet = spreadsheet.add_worksheet(title=sheet_name, rows="100", cols="20")
 
-    if not sheet.get_all_values():
-        header = [
-            "Entry Type", "ID", "Site", "Latitude", "Longitude", "Monitoring Officer", "Driver",
-            "Date", "Time", "Temperature (°C)", "RH (%)", "Pressure (mbar)",
-            "Weather", "Wind Speed", "Wind Direction", "Elapsed Time (min)",
-            "Flow Rate (L/min)", "Observation", "Submitted At"
-        ]
-        sheet.append_row(header)
+    all_values = sheet.get_all_values()
 
-        # Freeze the header row
-        set_frozen(sheet, rows=1)
-
-        # Format the header row to bold
-        fmt = CellFormat(textFormat=TextFormat(bold=True))
-        format_cell_range(sheet, '1:1', fmt)
+    if not all_values:
+        sheet.append_row(expected_header)
+    else:
+        current_header = all_values[0]
+        if current_header != expected_header:
+            sheet.delete_rows(1)  # Remove existing header
+            sheet.insert_row(expected_header, index=1)  # Insert correct header
 
     return sheet
 sheet = ensure_main_sheet_initialized(spreadsheet, MAIN_SHEET)

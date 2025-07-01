@@ -90,7 +90,7 @@ def show():
                 start_obs = st.text_area("")
 
                 st.markdown("#### 🌧️ Initial Atmospheric Conditions")
-                weather_conditions = ["-- Select --", "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Windy", "Hazy", "Stormy", "Foggy"]
+                weather_conditions = ["-- Select --", "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Windy", "Hazy", "Overcast", "Foggy"]
                 weather_defaults = {
                     "Sunny": {"temp": list(range(25, 41)), "rh": list(range(40, 91))},
                     "Rainy": {"temp": list(range(20, 30)), "rh": list(range(70, 101))},
@@ -173,7 +173,7 @@ def show():
                 st.markdown(required_label("🧿 Final Day Observation"), unsafe_allow_html=True)
                 stop_obs = st.text_area("")
 
-                weather_conditions = ["-- Select --", "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Windy", "Hazy", "Stormy", "Foggy"]
+                weather_conditions = ["-- Select --", "Sunny", "Cloudy", "Partly Cloudy", "Rainy", "Windy", "Hazy", "Overcast", "Foggy"]
                 weather_defaults = {
                     "Sunny": {"temp": list(range(25, 41)), "rh": list(range(40, 91))},
                     "Rainy": {"temp": list(range(20, 30)), "rh": list(range(70, 101))},

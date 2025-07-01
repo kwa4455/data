@@ -98,7 +98,7 @@ def show():
                     "Partly Cloudy": {"temp": list(range(21, 35)), "rh": list(range(35, 91))},
                     "Windy": {"temp": list(range(20, 35)), "rh": list(range(40, 91))},
                     "Hazy": {"temp": list(range(20, 31)), "rh": list(range(40, 91))},
-                    "Stormy": {"temp": list(range(17, 28)), "rh": list(range(80, 101))},
+                    "Overcast": {"temp": list(range(18, 35)), "rh": list(range(60, 91))},
                     "Foggy": {"temp": list(range(15, 22)), "rh": list(range(85, 101))}
                 }
 
@@ -181,7 +181,7 @@ def show():
                     "Partly Cloudy": {"temp": list(range(21, 35)), "rh": list(range(35, 91))},
                     "Windy": {"temp": list(range(20, 35)), "rh": list(range(40, 91))},
                     "Hazy": {"temp": list(range(20, 31)), "rh": list(range(40, 91))},
-                    "Stormy": {"temp": list(range(17, 28)), "rh": list(range(80, 101))},
+                    "Overcast": {"temp": list(range(18, 35)), "rh": list(range(60, 91))},
                     "Foggy": {"temp": list(range(15, 22)), "rh": list(range(85, 101))}
                 }
 

@@ -159,12 +159,3 @@ def show():
             st.dataframe(df_saved, use_container_width=True)
         except Exception as e:
             st.warning(f"⚠ Could not load saved entries: {e}")
-
-    # --- Optional: Update MERGED SHEET with Pre/Post weights ---
-    # if st.checkbox("🔄 Update Merged Sheet with Pre/Post Weights"):
-    #     try:
-    #         merged_ws = spreadsheet.worksheet(MERGED_SHEET)
-    #         merged_ws.update('A2', save_df.values.tolist())  # Use correct range and logic
-    #         st.success("✅ Merged sheet updated.")
-    #     except Exception as e:
-    #         st.error(f"❌ Failed to update merged sheet: {e}")

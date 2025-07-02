@@ -129,25 +129,53 @@ def show():
     csv = edited_df.to_csv(index=False).encode("utf-8")
     st.download_button("⬇️ Download as CSV", data=csv, file_name="pm25_results.csv", mime="text/csv")
 
-    # --- Save to PM CALC Sheet ---
+    # --- Save only valid, non-duplicate rows to PM Calculation Sheet ---
     if st.button("✅ Save Results to PM Calculation Sheet"):
         try:
+            # Convert datetime columns to string
             save_df = edited_df.copy()
             for col in save_df.select_dtypes(include=["datetime64", "datetime64[ns]"]):
                 save_df[col] = save_df[col].dt.strftime("%Y-%m-%d %H:%M:%S")
 
-            rows = save_df.values.tolist()
+            # Filter only valid numeric PM₂.₅ values
+            valid_df = save_df[pd.to_numeric(save_df["PM₂.₅ (µg/m³)"], errors='coerce').notna()].copy()
 
-            # Ensure header exists
+            if valid_df.empty:
+                st.warning("⚠ No valid numeric PM₂.₅ rows to save.")
+                return
+
+            # Define unique key for duplicates
+            def create_key(df):
+                return df["Site"].astype(str) + "_" + df["Date_Start"].astype(str) + "_" + df["Time_Start"].astype(str)
+
+            valid_df["unique_key"] = create_key(valid_df)
+
+            # Load existing calc sheet
             sheet_titles = [ws.title for ws in spreadsheet.worksheets()]
             if CALC_SHEET not in sheet_titles:
-                calc_ws = spreadsheet.add_worksheet(title=CALC_SHEET, rows="1000", cols=str(len(save_df.columns)))
-                calc_ws.append_row(save_df.columns.tolist())
+                calc_ws = spreadsheet.add_worksheet(title=CALC_SHEET, rows="1000", cols=str(len(valid_df.columns)))
+                calc_ws.append_row(valid_df.drop(columns="unique_key").columns.tolist())
+                existing_keys = set()
             else:
                 calc_ws = spreadsheet.worksheet(CALC_SHEET)
+                existing_data = calc_ws.get_all_records()
+                df_existing = pd.DataFrame(existing_data)
+                if not df_existing.empty:
+                    df_existing.columns = df_existing.columns.str.strip()
+                    df_existing["unique_key"] = create_key(df_existing)
+                    existing_keys = set(df_existing["unique_key"].tolist())
+                else:
+                    existing_keys = set()
 
-            calc_ws.append_rows(rows, value_input_option="USER_ENTERED")
-            st.success(f"✅ Saved {len(rows)} rows to {CALC_SHEET}.")
+            # Filter out duplicates
+            new_rows = valid_df[~valid_df["unique_key"].isin(existing_keys)].drop(columns=["unique_key"])
+
+            if new_rows.empty:
+                st.info("ℹ️ No new unique rows to save. All entries already exist.")
+            else:
+                calc_ws.append_rows(new_rows.values.tolist(), value_input_option="USER_ENTERED")
+                st.success(f"✅ Saved {len(new_rows)} new rows to '{CALC_SHEET}' successfully.")
+
         except Exception as e:
             st.error(f"❌ Failed to save: {e}")
 

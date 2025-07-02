@@ -4,6 +4,7 @@ from datetime import datetime
 from resource import spreadsheet
 from constants import MERGED_SHEET, CALC_SHEET
 from modules.authentication import require_role
+from gspread.exceptions import APIError,WorksheetNotFound 
 
 def show():
     require_role(["admin", "officer"])

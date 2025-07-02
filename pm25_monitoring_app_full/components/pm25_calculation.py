@@ -4,12 +4,11 @@ from datetime import datetime
 from resource import spreadsheet
 from constants import MERGED_SHEET, CALC_SHEET
 from modules.authentication import require_role
-from gspread.exceptions import APIError,WorksheetNotFound 
+from gspread.exceptions import APIError, WorksheetNotFound
 
 def show():
     require_role(["admin", "officer"])
-    
-    
+
     # --- Page Title ---
     st.markdown("""
         <style>
@@ -32,69 +31,58 @@ def show():
         <hr>
     """, unsafe_allow_html=True)
 
-    # --- Load Merged Data ---
+    # --- Load Merged Sheet Data ---
     try:
-        merged_data = spreadsheet.worksheet(MERGED_SHEET).get_all_records()
-        df_merged = pd.DataFrame(merged_data)
-        df_merged.columns = df_merged.columns.str.strip()
+        raw_data = spreadsheet.worksheet(MERGED_SHEET).get_all_values()
+        df_merged = pd.DataFrame(raw_data[1:], columns=raw_data[0])
+        df_merged.columns = df_merged.columns.str.strip().str.replace('\s+', ' ', regex=True)
 
-        if not {"Elapsed Time Diff (min)", "Average Flow Rate (L/min)"}.issubset(df_merged.columns):
-            st.error("❌ Required columns missing: 'Elapsed Time Diff (min)', 'Average Flow Rate (L/min)'")
+        required_cols = {"Elapsed Time Diff (min)", "Average Flow Rate (L/min)"}
+        if not required_cols.issubset(df_merged.columns):
+            st.error(f"❌ Missing required columns: {required_cols - set(df_merged.columns)}")
             st.stop()
     except Exception as e:
-        st.error(f"❌ Failed to load merged sheet: {e}")
+        st.error(f"❌ Could not load merged sheet: {e}")
         st.stop()
 
-    # --- Site Filter ---
+    # --- Filter by Site ---
     if "Site" in df_merged.columns:
-        try:
-            available_sites = sorted(df_merged["Site"].dropna().unique())
-            site_options = ["All Sites"] + available_sites
-            most_recent_site = df_merged["Site"].dropna().iloc[0] if not df_merged.empty else "All Sites"
+        sites = sorted(df_merged["Site"].dropna().unique())
+        options = ["All Sites"] + sites
+        default = df_merged["Site"].dropna().iloc[0] if not df_merged.empty else "All Sites"
 
-            st.subheader("🗺️ Filter by Site")
-            selected_site = st.selectbox("📍 Select Site", options=site_options, index=site_options.index(most_recent_site))
-            if selected_site != "All Sites":
-                filtered_df = df_merged[df_merged["Site"] == selected_site].copy()
-            else:
-                filtered_df = df_merged.copy()
-        except Exception as e:
-            st.warning(f"⚠ Could not auto-select site: {e}")
-            filtered_df = df_merged.copy()
+        st.subheader("🗺️ Filter by Site")
+        selected_site = st.selectbox("📍 Select Site", options=options, index=options.index(default))
+        filtered_df = df_merged[df_merged["Site"] == selected_site] if selected_site != "All Sites" else df_merged.copy()
     else:
-        st.warning("⚠ 'Site' column not found — skipping site filter.")
+        st.warning("⚠ 'Site' column not found.")
         filtered_df = df_merged.copy()
 
-    # --- Date Filter ---
+    # --- Filter by Date ---
     if "Date_Start" in filtered_df.columns:
         try:
-            filtered_df = filtered_df.copy()
             filtered_df["Date_Start"] = pd.to_datetime(filtered_df["Date_Start"], errors="coerce")
             filtered_df = filtered_df.dropna(subset=["Date_Start"])
-
             min_date = filtered_df["Date_Start"].min().date()
             max_date = filtered_df["Date_Start"].max().date()
 
             st.subheader("📅 Filter by Start Date")
             date_range = st.date_input("Select Date Range", value=(min_date, max_date), min_value=min_date, max_value=max_date)
 
-            if isinstance(date_range, tuple) and len(date_range) == 2:
+            if isinstance(date_range, tuple):
                 start_date, end_date = date_range
                 mask = (filtered_df["Date_Start"].dt.date >= start_date) & (filtered_df["Date_Start"].dt.date <= end_date)
-                filtered_df = filtered_df.loc[mask].copy()
+                filtered_df = filtered_df[mask]
         except Exception as e:
-            st.warning(f"⚠ Could not filter by date: {e}")
-    else:
-        st.warning("⚠ 'Date_Start' column not found — skipping date filter.")
+            st.warning(f"⚠ Date filter failed: {e}")
 
-    # --- Add Pre/Post Weight Columns Safely ---
-    filtered_df = filtered_df.copy()
-    filtered_df["Pre Weight (g)"] = 0.0
-    filtered_df["Post Weight (g)"] = 0.0
+    # --- Add/Edit Pre/Post Weight Columns ---
+    filtered_df["Pre Weight (g)"] = filtered_df.get("Pre Weight (g)", 0.0)
+    filtered_df["Post Weight (g)"] = filtered_df.get("Post Weight (g)", 0.0)
 
     # --- Data Editor ---
     st.subheader("📊 Enter Weights")
-    editable_columns = ["Pre Weight (g)", "Post Weight (g)"]
+    editable_cols = ["Pre Weight (g)", "Post Weight (g)"]
     edited_df = st.data_editor(
         filtered_df,
         num_rows="dynamic",
@@ -103,10 +91,10 @@ def show():
             "Pre Weight (g)": st.column_config.NumberColumn("Pre Weight (g)", help="Mass before sampling (grams)"),
             "Post Weight (g)": st.column_config.NumberColumn("Post Weight (g)", help="Mass after sampling (grams)")
         },
-        disabled=[col for col in filtered_df.columns if col not in editable_columns],
+        disabled=[col for col in filtered_df.columns if col not in editable_cols],
     )
 
-    # --- PM₂.₅ Calculation Function ---
+    # --- PM₂.₅ Calculation ---
     def calculate_pm(row):
         try:
             elapsed = float(row["Elapsed Time Diff (min)"])
@@ -131,44 +119,40 @@ def show():
         except Exception as e:
             return f"Error: {e}"
 
-    # --- Calculate PM₂.₅ ---
     edited_df["PM₂.₅ (µg/m³)"] = edited_df.apply(calculate_pm, axis=1)
 
-    # --- Display Calculated Data ---
+    # --- Display Calculated Results ---
     st.subheader("📊 Calculated Results")
     st.dataframe(edited_df, use_container_width=True)
 
-    # --- CSV Export ---
+    # --- Download Button ---
     csv = edited_df.to_csv(index=False).encode("utf-8")
-    st.download_button(
-        label="⬇️ Download Results as CSV",
-        data=csv,
-        file_name="pm25_results.csv",
-        mime="text/csv"
-    )
+    st.download_button("⬇️ Download as CSV", data=csv, file_name="pm25_results.csv", mime="text/csv")
 
-    if st.button("✅ Save Edited DataFrame"):
+    # --- Save to PM CALC Sheet ---
+    if st.button("✅ Save Results to PM Calculation Sheet"):
         try:
-            safe_df = edited_df.copy()
-            for col in safe_df.select_dtypes(include=["datetime64[ns]", "datetime64", "object"]):
-                if pd.api.types.is_datetime64_any_dtype(safe_df[col]):
-                    safe_df[col] = safe_df[col].dt.strftime("%Y-%m-%d %H:%M:%S")
-            rows_to_save = safe_df.values.tolist()
-            st.write(f"First row to save: {rows_to_save[0]}")
+            save_df = edited_df.copy()
+            for col in save_df.select_dtypes(include=["datetime64", "datetime64[ns]"]):
+                save_df[col] = save_df[col].dt.strftime("%Y-%m-%d %H:%M:%S")
 
+            rows = save_df.values.tolist()
+
+            # Ensure header exists
             sheet_titles = [ws.title for ws in spreadsheet.worksheets()]
             if CALC_SHEET not in sheet_titles:
-                calc_ws = spreadsheet.add_worksheet(title=CALC_SHEET, rows="1000", cols=str(len(safe_df.columns)))
-                calc_ws.append_row(safe_df.columns.tolist())
+                calc_ws = spreadsheet.add_worksheet(title=CALC_SHEET, rows="1000", cols=str(len(save_df.columns)))
+                calc_ws.append_row(save_df.columns.tolist())
             else:
                 calc_ws = spreadsheet.worksheet(CALC_SHEET)
 
-            calc_ws.append_rows(rows_to_save, value_input_option="USER_ENTERED")
-            st.success(f"✅ Saved {len(rows_to_save)} rows successfully.")
+            calc_ws.append_rows(rows, value_input_option="USER_ENTERED")
+            st.success(f"✅ Saved {len(rows)} rows to {CALC_SHEET}.")
         except Exception as e:
-            st.error(f"❌ Error saving data: {e}")
+            st.error(f"❌ Failed to save: {e}")
 
-    if st.checkbox("📖 Show Saved Entries in Sheet"):
+    # --- Optional: Show Saved Entries ---
+    if st.checkbox("📖 Show Saved PM Calculation Entries"):
         try:
             saved_data = spreadsheet.worksheet(CALC_SHEET).get_all_records(head=1)
             df_saved = pd.DataFrame(saved_data)
@@ -176,3 +160,11 @@ def show():
         except Exception as e:
             st.warning(f"⚠ Could not load saved entries: {e}")
 
+    # --- Optional: Update MERGED SHEET with Pre/Post weights ---
+    # if st.checkbox("🔄 Update Merged Sheet with Pre/Post Weights"):
+    #     try:
+    #         merged_ws = spreadsheet.worksheet(MERGED_SHEET)
+    #         merged_ws.update('A2', save_df.values.tolist())  # Use correct range and logic
+    #         st.success("✅ Merged sheet updated.")
+    #     except Exception as e:
+    #         st.error(f"❌ Failed to update merged sheet: {e}")

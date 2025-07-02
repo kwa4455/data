@@ -4,12 +4,11 @@ from datetime import datetime
 from resource import spreadsheet
 from constants import MERGED_SHEET, CALC_SHEET
 from modules.authentication import require_role
-from gspread.exceptions import APIError, WorksheetNotFound
+from gspread.exceptions import WorksheetNotFound
 
 def show():
     require_role(["admin", "officer"])
 
-    # --- Page Title ---
     st.markdown("""
         <style>
             @media (prefers-color-scheme: dark) {
@@ -31,66 +30,55 @@ def show():
         <hr>
     """, unsafe_allow_html=True)
 
-    # --- Load Merged Data ---
+    # --- Load merged sheet ---
     try:
         raw_data = spreadsheet.worksheet(MERGED_SHEET).get_all_values()
         df_merged = pd.DataFrame(raw_data[1:], columns=raw_data[0])
         df_merged.columns = df_merged.columns.str.strip().str.replace('\s+', ' ', regex=True)
 
-        required_cols = {"Elapsed Time Diff (min)", "Average Flow Rate (L/min)"}
+        required_cols = {"Elapsed Time Diff (min)", "Average Flow Rate (L/min)", "Site", "Date_Start", "Time_Start"}
         if not required_cols.issubset(df_merged.columns):
-            st.error(f"❌ Missing required columns: {required_cols - set(df_merged.columns)}")
+            st.error(f"❌ Missing columns: {required_cols - set(df_merged.columns)}")
             st.stop()
     except Exception as e:
         st.error(f"❌ Could not load merged sheet: {e}")
         st.stop()
 
-    # --- Site Filter ---
-    if "Site" in df_merged.columns:
-        sites = sorted(df_merged["Site"].dropna().unique())
-        default_site = df_merged["Site"].dropna().iloc[0] if not df_merged.empty else "All Sites"
-        site_options = ["All Sites"] + sites
+    # --- Filter by Site ---
+    sites = sorted(df_merged["Site"].dropna().unique())
+    default_site = df_merged["Site"].dropna().iloc[0]
+    site_options = ["All Sites"] + sites
 
-        st.subheader("🗺️ Filter by Site")
-        selected_site = st.selectbox("📍 Select Site", options=site_options, index=site_options.index(default_site))
-        filtered_df = df_merged[df_merged["Site"] == selected_site] if selected_site != "All Sites" else df_merged.copy()
-    else:
-        st.warning("⚠ 'Site' column not found.")
-        filtered_df = df_merged.copy()
+    st.subheader("🗺️ Filter by Site")
+    selected_site = st.selectbox("📍 Select Site", options=site_options, index=site_options.index(default_site))
+    filtered_df = df_merged[df_merged["Site"] == selected_site] if selected_site != "All Sites" else df_merged.copy()
 
-    # --- Date Filter ---
-    if "Date_Start" in filtered_df.columns:
-        try:
-            filtered_df["Date_Start"] = pd.to_datetime(filtered_df["Date_Start"], errors="coerce")
-            filtered_df = filtered_df.dropna(subset=["Date_Start"])
+    # --- Filter by Date Range ---
+    try:
+        filtered_df["Date_Start"] = pd.to_datetime(filtered_df["Date_Start"], errors="coerce")
+        filtered_df = filtered_df.dropna(subset=["Date_Start"])
+        min_date = filtered_df["Date_Start"].min().date()
+        max_date = filtered_df["Date_Start"].max().date()
 
-            min_date = filtered_df["Date_Start"].min().date()
-            max_date = filtered_df["Date_Start"].max().date()
+        st.subheader("📅 Filter by Start Date")
+        date_range = st.date_input("Select Date Range", value=(min_date, max_date), min_value=min_date, max_value=max_date)
+        if isinstance(date_range, tuple):
+            start_date, end_date = date_range
+            filtered_df = filtered_df[
+                (filtered_df["Date_Start"].dt.date >= start_date) &
+                (filtered_df["Date_Start"].dt.date <= end_date)
+            ]
+    except Exception as e:
+        st.warning(f"⚠ Could not filter by date: {e}")
 
-            st.subheader("📅 Filter by Start Date")
-            date_range = st.date_input("Select Date Range", value=(min_date, max_date), min_value=min_date, max_value=max_date)
+    # --- Add Pre/Post columns if missing ---
+    for col in ["Pre Weight (g)", "Post Weight (g)"]:
+        if col not in filtered_df.columns:
+            filtered_df[col] = 0.0
+        else:
+            filtered_df[col] = pd.to_numeric(filtered_df[col], errors="coerce").fillna(0.0)
 
-            if isinstance(date_range, tuple):
-                start_date, end_date = date_range
-                mask = (filtered_df["Date_Start"].dt.date >= start_date) & (filtered_df["Date_Start"].dt.date <= end_date)
-                filtered_df = filtered_df[mask]
-        except Exception as e:
-            st.warning(f"⚠ Could not filter by date: {e}")
-    else:
-        st.warning("⚠ 'Date_Start' column not found — skipping date filter.")
-
-    # --- Pre/Post Weight Columns ---
-    if "Pre Weight (g)" not in filtered_df.columns:
-        filtered_df["Pre Weight (g)"] = 0.0
-    else:
-        filtered_df["Pre Weight (g)"] = pd.to_numeric(filtered_df["Pre Weight (g)"], errors="coerce").fillna(0.0)
-    if "Post Weight (g)" not in filtered_df.columns:
-        filtered_df["Post Weight (g)"] = 0.0
-    else:
-        filtered_df["Post Weight (g)"] = pd.to_numeric(filtered_df["Post Weight (g)"], errors="coerce").fillna(0.0)
-        
-
-    # --- Data Editor ---
+    # --- Editable Table ---
     st.subheader("📊 Enter Weights")
     editable_cols = ["Pre Weight (g)", "Post Weight (g)"]
     edited_df = st.data_editor(
@@ -126,97 +114,69 @@ def show():
 
             conc = (mass_mg * 1000) / volume_m3
             return round(conc, 2)
-        except Exception as e:
-            return f"Error: {e}"
+        except Exception:
+            return "Error"
 
     edited_df["PM₂.₅ (µg/m³)"] = edited_df.apply(calculate_pm, axis=1)
 
-    # --- Display Calculated Data ---
+    # --- Show Table ---
     st.subheader("📊 Calculated Results")
     st.dataframe(edited_df, use_container_width=True)
 
-    # --- CSV Export ---
+    # --- Download CSV ---
     csv = edited_df.to_csv(index=False).encode("utf-8")
     st.download_button("⬇️ Download as CSV", data=csv, file_name="pm25_results.csv", mime="text/csv")
 
-    # --- Save Options ---
-    st.markdown("#### 💾 Save Options")
-    overwrite_enabled = st.checkbox("🖊️ Overwrite existing entries if they already exist", value=False)
-
-    # --- Save to PM Calculation Sheet ---
-    if st.button("✅ Save Results to PM Calculation Sheet"):
+    # --- Partial Sync Button ---
+    if st.button("🔄 Sync to PM Calculation Sheet (Partial Update)"):
         try:
-            save_df = edited_df.copy()
-            for col in save_df.select_dtypes(include=["datetime64", "datetime64[ns]"]):
-                save_df[col] = save_df[col].dt.strftime("%Y-%m-%d %H:%M:%S")
+            sync_df = edited_df.copy()
+            for col in sync_df.select_dtypes(include=["datetime64[ns]", "datetime64"]):
+                sync_df[col] = sync_df[col].dt.strftime("%Y-%m-%d %H:%M:%S")
+            sync_df = sync_df[pd.to_numeric(sync_df["PM₂.₅ (µg/m³)"], errors="coerce").notna()].copy()
 
-            # Filter only valid numeric PM values
-            valid_df = save_df[pd.to_numeric(save_df["PM₂.₅ (µg/m³)"], errors='coerce').notna()].copy()
-            if valid_df.empty:
-                st.warning("⚠ No valid numeric PM₂.₅ rows to save.")
-                return
+            # Create unique key for matching
+            sync_df["unique_key"] = sync_df["Site"].astype(str) + "_" + sync_df["Date_Start"].astype(str) + "_" + sync_df["Time_Start"].astype(str)
 
-            # Create unique key
-            def create_key(df):
-                return df["Site"].astype(str) + "_" + df["Date_Start"].astype(str) + "_" + df["Time_Start"].astype(str)
-
-            valid_df["unique_key"] = create_key(valid_df)
-
-            # Load existing sheet
+            # Load existing data
             sheet_titles = [ws.title for ws in spreadsheet.worksheets()]
             if CALC_SHEET not in sheet_titles:
-                calc_ws = spreadsheet.add_worksheet(title=CALC_SHEET, rows="1000", cols=str(len(valid_df.columns)))
-                calc_ws.append_row(valid_df.drop(columns="unique_key").columns.tolist())
-                existing_keys = set()
-                existing_rows = []
+                calc_ws = spreadsheet.add_worksheet(title=CALC_SHEET, rows="1000", cols=str(len(sync_df.columns)))
+                calc_ws.append_row(sync_df.drop(columns="unique_key").columns.tolist())
+                existing_keys = {}
+                rows_data = []
             else:
                 calc_ws = spreadsheet.worksheet(CALC_SHEET)
                 existing_data = calc_ws.get_all_values()
-                if not existing_data:
-                    existing_keys = set()
-                    existing_rows = []
+                headers = existing_data[0]
+                rows_data = existing_data[1:]
+                df_existing = pd.DataFrame(rows_data, columns=headers)
+                df_existing["unique_key"] = df_existing["Site"].astype(str) + "_" + df_existing["Date_Start"].astype(str) + "_" + df_existing["Time_Start"].astype(str)
+                existing_keys = dict(zip(df_existing["unique_key"], df_existing.index))
+
+            updates = 0
+            additions = 0
+
+            for _, row in sync_df.iterrows():
+                row_data = row.drop(labels="unique_key").tolist()
+                key = row["unique_key"]
+                if key in existing_keys:
+                    row_number = existing_keys[key] + 2  # account for header and 1-based indexing
+                    calc_ws.update(f"A{row_number}", [row_data])
+                    updates += 1
                 else:
-                    headers = existing_data[0]
-                    data = existing_data[1:]
-                    df_existing = pd.DataFrame(data, columns=headers)
-                    df_existing["unique_key"] = create_key(df_existing)
-                    existing_keys = set(df_existing["unique_key"].tolist())
-                    existing_rows = data
+                    calc_ws.append_row(row_data, value_input_option="USER_ENTERED")
+                    additions += 1
 
-            # Overwrite logic
-            new_rows = []
-            if overwrite_enabled:
-                updated_data = []
-                for _, row in valid_df.iterrows():
-                    if row["unique_key"] in existing_keys:
-                        match_indices = [
-                            i for i, old_row in enumerate(existing_rows)
-                            if "_".join([old_row[headers.index("Site")],
-                                         old_row[headers.index("Date_Start")],
-                                         old_row[headers.index("Time_Start")]]) == row["unique_key"]
-                        ]
-                        for idx in reversed(match_indices):
-                            calc_ws.delete_rows(idx + 2)
-                    updated_data.append(row.drop("unique_key").tolist())
-                new_rows = updated_data
-            else:
-                filtered_df = valid_df[~valid_df["unique_key"].isin(existing_keys)]
-                new_rows = filtered_df.drop(columns=["unique_key"]).values.tolist()
-
-            if not new_rows:
-                st.info("ℹ️ No new rows to save.")
-            else:
-                calc_ws.append_rows(new_rows, value_input_option="USER_ENTERED")
-                st.success(f"✅ Saved {len(new_rows)} rows to '{CALC_SHEET}' successfully.")
-
+            st.success(f"✅ Sync complete: {updates} updated, {additions} added.")
         except Exception as e:
-            st.error(f"❌ Failed to save: {e}")
+            st.error(f"❌ Sync failed: {e}")
 
-    # --- View Saved Data ---
-    if st.checkbox("📖 Show Saved PM Calculation Entries"):
+    # --- Show Sheet ---
+    if st.checkbox("📖 Show Synced PM Calculation Sheet"):
         try:
             saved_data = spreadsheet.worksheet(CALC_SHEET).get_all_records(head=1)
             df_saved = pd.DataFrame(saved_data)
             st.dataframe(df_saved, use_container_width=True)
         except Exception as e:
-            st.warning(f"⚠ Could not load saved entries: {e}")
+            st.warning(f"⚠ Could not load synced entries: {e}")

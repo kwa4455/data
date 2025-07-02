@@ -80,8 +80,15 @@ def show():
         st.warning("⚠ 'Date_Start' column not found — skipping date filter.")
 
     # --- Pre/Post Weight Columns ---
-    filtered_df["Pre Weight (g)"] = pd.to_numeric(filtered_df.get("Pre Weight (g)", 0.0), errors="coerce").fillna(0.0)
-    filtered_df["Post Weight (g)"] = pd.to_numeric(filtered_df.get("Post Weight (g)", 0.0), errors="coerce").fillna(0.0)
+    if "Pre Weight (g)" not in filtered_df.columns:
+        filtered_df["Pre Weight (g)"] = 0.0
+    else:
+        filtered_df["Pre Weight (g)"] = pd.to_numeric(filtered_df["Pre Weight (g)"], errors="coerce").fillna(0.0)
+    if "Post Weight (g)" not in filtered_df.columns:
+        filtered_df["Post Weight (g)"] = 0.0
+    else:
+        filtered_df["Post Weight (g)"] = pd.to_numeric(filtered_df["Post Weight (g)"], errors="coerce").fillna(0.0)
+        
 
     # --- Data Editor ---
     st.subheader("📊 Enter Weights")

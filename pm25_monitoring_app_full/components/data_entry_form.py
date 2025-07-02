@@ -12,6 +12,7 @@ from resource import (
 )
 from constants import MERGED_SHEET
 from modules.authentication import require_role
+from gspread.exceptions import APIError,WorksheetNotFound 
 
 def get_custom_time(label, key_prefix, hour_key="hour", minute_key="minute"):
     col1, col2 = st.columns(2)

@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 from resource import spreadsheet
-from constants import MERGED_SHEET, CALC_SHEET
+from constants import MERGED_SHEET, CALC_SHEET, WEIGHTS_SHEET 
 from modules.authentication import require_role
 from gspread.exceptions import WorksheetNotFound
 

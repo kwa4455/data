@@ -103,7 +103,7 @@ def show():
             if post < pre: return "Post < Pre"
             volume_m3 = (flow * elapsed) / 1000
             if volume_m3 == 0: return "Zero Volume"
-            return round((mass_mg * 1000) / volume_m3, 2)
+            return (mass_mg * 1000) / volume_m3
         except Exception:
             return "Error"
 

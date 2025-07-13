@@ -28,197 +28,164 @@ st.set_page_config(layout="wide")
 
 st.markdown("""
 <style>
-
-/* Universal styles */
+/* GLOBAL */
 * {
-    font-family: 'Segoe UI', sans-serif;
     transition: all 0.2s ease-in-out;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-/* =======================
-   LIGHT MODE
-======================= */
-@media (prefers-color-scheme: light) {
-    html, body, .stApp {
-        background: url('https://source.unsplash.com/1600x900/?clouds,day') no-repeat center center fixed;
-        background-size: cover;
-        min-height: 100vh;
-        backdrop-filter: blur(15px);
-    }
-
-    section.main > div {
-        background: rgba(255, 255, 255, 0.55);
-        color: #111;
-        border-radius: 16px;
-        padding: 1rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    section[data-testid="stSidebar"] {
-        background: rgba(255, 255, 255, 0.3);
-        border-right: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    input, textarea, select {
-        background: rgba(255, 255, 255, 0.6) !important;
-        color: #111 !important;
-        border-radius: 8px !important;
-        padding: 6px 10px !important;
-        font-size: 1rem !important;
-    }
-
-    thead, tbody, tr, th, td {
-        background: rgba(255, 255, 255, 0.4) !important;
-        color: #111 !important;
-        font-size: 0.95rem !important;
-    }
-
-    button[data-testid="baseButton-primary"] {
-        background: linear-gradient(to right, #ff5f6d, #ffc371) !important;
-        color: white !important;
-        border-radius: 12px;
-        font-weight: bold;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    button[data-testid="baseButton-primary"]:hover {
-        transform: scale(1.03);
-        background: linear-gradient(to right, #ff3d5a, #ffb347) !important;
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    div[data-testid="stAlert-info"] {
-        background: rgba(0, 0, 0, 0.05);
-        color: #111;
-        border-radius: 10px;
-    }
-
-    a {
-        color: #0056cc !important;
-        text-decoration: underline;
-        font-weight: 500;
-    }
+/* App background */
+html, .stApp {
+    background: url('https://i.postimg.cc/pTr1rWy0/blur-chemistry-equipments-laboratory-background-260nw-391560133.webp');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    backdrop-filter: blur(40px);
 }
 
-/* =======================
-   DARK MODE
-======================= */
-@media (prefers-color-scheme: dark) {
-    html, body, .stApp {
-        background: url('https://i.postimg.cc/tCMmM50P/temp-Imageqld-VCj.avif');
-        background-size: cover;
-        min-height: 100vh;
-        backdrop-filter: blur(8px);
-        color: #f5f5f5 !important;
-    }
-
-    section.main > div {
-        background: rgba(20, 20, 20, 0.85) !important;
-        color: #f5f5f5 !important;
-        border-radius: 16px;
-        padding: 1rem;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-    }
-
-    section[data-testid="stSidebar"] {
-        background: rgba(30, 30, 30, 0.95) !important;
-        color: #ffffff !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    input, textarea, select {
-        background: rgba(255, 255, 255, 0.07) !important;
-        color: #ffffff !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        border-radius: 8px !important;
-        font-weight: 500;
-        padding: 6px 10px !important;
-        font-size: 1rem !important;
-    }
-
-    thead, tbody, tr, th, td {
-        background: rgba(255, 255, 255, 0.05) !important;
-        color: #ffffff !important;
-        font-size: 0.95rem !important;
-    }
-
-    button[data-testid="baseButton-primary"] {
-        background: linear-gradient(to right, #0099f7, #0652dd) !important;
-        color: #fff !important;
-        border-radius: 12px;
-        font-weight: bold;
-        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    button[data-testid="baseButton-primary"]:hover {
-        transform: scale(1.03);
-        background: linear-gradient(to right, #007be5, #0044aa) !important;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    }
-
-    div[data-testid="stAlert-info"] {
-        background: rgba(255, 255, 255, 0.15);
-        color: white !important;
-        border-radius: 10px;
-    }
-
-    a {
-        color: #66ccff !important;
-        font-weight: 500;
-        text-decoration: underline;
-    }
-
-    h1, h2, h3, h4, h5, h6, p, li, label, span {
-        color: #f5f5f5 !important;
-    }
-
-    .element-container {
-        background: rgba(0, 0, 0, 0.6) !important;
-        color: #f5f5f5 !important;
-    }
-}
-
-/* =======================
-   SHARED STYLES
-======================= */
-
-section.main > div,
-.stDataFrame, .stTable,
-.element-container {
+/* Main content container glass style */
+.logged_in {
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 16px;
+    padding: 20px;
+    margin: 20px auto;
     backdrop-filter: blur(12px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-    padding: 1rem;
-    transition: transform 0.3s, box-shadow 0.3s;
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    width: 80%;
 }
 
-/* Hover effects for tables and graphs */
-.stDataFrame:hover, .stTable:hover, .element-container:hover {
-    transform: scale(1.02);
-    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.3);
+/* Text Input Fields */
+div[data-testid="stTextInput"] input {
+    background: rgba(255, 255, 255, 0.25) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border-radius: 10px !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #000 !important;
 }
 
-/* Optional: lighter hover for performance */
-button:hover, input:hover, select:hover, textarea:hover {
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+/* Text Area Fields */
+div[data-testid="stTextArea"] textarea {
+    background: rgba(255, 255, 255, 0.25) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border-radius: 10px !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #000 !important;
+}
+/* Info alert (Logged in as...) */
+div[data-testid="stAlert-info"] {
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: #000 !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 16px !important;
+    font-weight: 500;
 }
 
-/* HR and spacing */
+/* Optional: info icon color */
+div[data-testid="stAlert-info"] svg {
+    color: #0099cc !important;
+}
+/* Buttons */
+button[data-testid="baseButton-primary"] {
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: #000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 12px !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+button[data-testid="baseButton-primary"]:hover {
+    background: rgba(255, 255, 255, 0.35) !important;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+div[data-testid="stForm"] {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+/* Selectbox */
+div[data-testid="stSelectbox"] {
+    background: rgba(255, 255, 255, 0.25) !important;
+    border-radius: 12px;
+    padding: 6px 12px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #000 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+/* Optional - make sidebar translucent */
+section[data-testid="stSidebar"] {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+/* Slider */
+div[data-testid="stSlider"] {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 10px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Slider handle and track text */
+div[data-testid="stSlider"] .stSlider > div {
+    color: #000 !important;
+}
+
+/* Dataframe / Table Styling */
+.css-1d391kg, .css-1r6slb0, .stDataFrame, .stTable {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 10px !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    color: black !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
 hr {
     border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    margin: 1rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.footer-text {
+    color: rgba(255, 255, 255, 0.7);
+}
+/* Table Cells */
+thead, tbody, tr, th, td {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #000 !important;
+    backdrop-filter: blur(4px);
+}
+
+/* Sidebar Styling */
+section[data-testid="stSidebar"] {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 </style>
 """, unsafe_allow_html=True)
-
-
-
-
-
-
 
 
 

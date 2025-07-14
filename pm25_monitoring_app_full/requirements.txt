@@ -9,4 +9,3 @@ streamlit-option-menu
 email-validator 
 streamlit-aggrid
 gspread-formatting
-streamlit-dataframe-editor>=0.1.4

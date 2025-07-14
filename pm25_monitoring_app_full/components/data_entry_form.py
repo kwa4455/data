@@ -12,7 +12,9 @@ from resource import (
 )
 from constants import MERGED_SHEET
 from modules.authentication import require_role
-from gspread.exceptions import APIError,WorksheetNotFound 
+from gspread.exceptions import APIError, WorksheetNotFound
+import streamlit_dataframe_editor as sde
+
 
 def get_custom_time(label, key_prefix, hour_key="hour", minute_key="minute"):
     col1, col2 = st.columns(2)
@@ -21,6 +23,7 @@ def get_custom_time(label, key_prefix, hour_key="hour", minute_key="minute"):
     with col2:
         minute = st.selectbox(f"{label} - Minute", list(range(0, 60, 1)), key=f"{key_prefix}_{minute_key}")
     return datetime.strptime(f"{hour}:{minute}", "%H:%M").time()
+
 
 def required_label(label):
     return f"<span style='color:red;'>*</span> <strong>{label}</strong>"
@@ -255,4 +258,18 @@ def show():
         if df.empty:
             st.info("ℹ️ No observation data found.")
         else:
-            display_and_merge_data(df, spreadsheet, MERGED_SHEET)
+            st.markdown("### 🔍 Review Submitted Entries")
+            edited_df = sde.dataframe_editor(
+                df,
+                use_container_width=True,
+                num_rows="dynamic",
+                key="review_editor"
+            )
+
+            # Optional save action
+            if st.button("💾 Save Edited Data"):
+                save_merged_data_to_sheet(edited_df, spreadsheet, MERGED_SHEET)
+                st.success("✅ Edited data saved successfully!")
+
+            # Continue your existing merge and review logic
+            display_and_merge_data(edited_df, spreadsheet, MERGED_SHEET)

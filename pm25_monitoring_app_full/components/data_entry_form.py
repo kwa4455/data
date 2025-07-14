@@ -255,4 +255,4 @@ def show():
         if df.empty:
             st.info("ℹ️ No observation data found.")
         else:
-            display_and_merge_data(df, spreadsheet, MERGED_SHEET) full corrected code
+            display_and_merge_data(df, spreadsheet, MERGED_SHEET) 

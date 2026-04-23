@@ -265,15 +265,13 @@ role_pages = {
         ("🏠 Home", "Home"),
         ("✍️ Data Entry Form", "Data Entry Form"),
         ("🔖 Edit Data Entry Form", "Edit Data Entry Form"),
-        ("📟 PM Calculator", "PM Calculator"),
         ("📖 Supervisor Review Section", "Supervisor Review Section"),
         ("⚙️ Admin Panel", "Admin Panel")
     ],
     "officer": [
         ("🏠 Home", "Home"),
         ("✍️ Data Entry Form", "Data Entry Form"),
-        ("🔖 Edit Data Entry Form", "Edit Data Entry Form"),
-        ("📟 PM Calculator", "PM Calculator"),
+        ("🔖 Edit Data Entry Form", "Edit Data Entry Form")
     ],
     
     "supervisor": [
@@ -355,8 +353,6 @@ elif choice == "Data Entry Form":
     data_entry_form.show()
 elif choice == "Edit Data Entry Form":
     edit_data_entry_form.show()
-elif choice == "PM Calculator":
-    pm25_calculation.show()
 elif choice == "Supervisor Review Section":
     supervisor_review_section.show()
 elif choice == "Admin Panel":

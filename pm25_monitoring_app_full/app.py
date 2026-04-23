@@ -265,7 +265,7 @@ role_pages = {
         ("🏠 Home", "Home"),
         ("✍️ Data Entry Form", "Data Entry Form"),
         ("🔖 Edit Data Entry Form", "Edit Data Entry Form"),
-        ("📊 PM Calculation","PM Calculation")
+        ("📊 PM Calculation","PM Calculation"),
         ("📖 Supervisor Review Section", "Supervisor Review Section"),
         ("⚙️ Admin Panel", "Admin Panel")
     ],

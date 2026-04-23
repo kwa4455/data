@@ -352,7 +352,7 @@ if choice == "Home":
     apartment.show()
 elif choice == "Data Entry Form":
     data_entry_form.show()
-elif choice == "📊 PM Calculation":
+elif choice == "📊 PM25 Calculation":
     pm25_calculation.show()
 elif choice == "Edit Data Entry Form":
     edit_data_entry_form.show()

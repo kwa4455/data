@@ -265,6 +265,7 @@ role_pages = {
         ("🏠 Home", "Home"),
         ("✍️ Data Entry Form", "Data Entry Form"),
         ("🔖 Edit Data Entry Form", "Edit Data Entry Form"),
+        ("📊 PM Calculation","PM Calculation")
         ("📖 Supervisor Review Section", "Supervisor Review Section"),
         ("⚙️ Admin Panel", "Admin Panel")
     ],
@@ -351,6 +352,8 @@ if choice == "Home":
     apartment.show()
 elif choice == "Data Entry Form":
     data_entry_form.show()
+elif menu == "📊 PM Calculation":
+    pm_calculation.show()
 elif choice == "Edit Data Entry Form":
     edit_data_entry_form.show()
 elif choice == "Supervisor Review Section":

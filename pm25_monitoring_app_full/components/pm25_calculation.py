@@ -7,7 +7,7 @@ from modules.authentication import require_role
 from gspread.exceptions import WorksheetNotFound
 
 def show():
-    require_role(["admin", "officer"])
+    require_role(["admin"])
 
     st.markdown("""
         <style>
